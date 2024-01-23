@@ -1,0 +1,18 @@
+# In Minidesktops, Users might actually want to run an X2Go-KDrive session that doesn't span the entire screen
+if ! [ -f "/etc/x2go/x2gothinclient-minidesktop_start" ] ; then
+	(
+		while true ; do
+			if ps -C x2gokdriveclient --no-header >/dev/null; then
+				# whenever x2gokdriveclient loads, make sure it is forced into fullscreen
+				xdotool search --onlyvisible --classname --maxdepth 1 x2gokdriveclient behave %@ focus windowsize $(xdotool getdisplaygeometry) &
+				TOOLPID=$!
+				xdotool search --onlyvisible --classname --maxdepth 1 x2gokdriveclient behave %@ blur windowsize $(xdotool getdisplaygeometry)
+				kill $TOOLPID
+			else
+				# exit if X11 is no longer running, else sleep for a bit
+				ps -C Xorg || exit 0
+				sleep 1
+			fi
+		done
+	) &
+fi
