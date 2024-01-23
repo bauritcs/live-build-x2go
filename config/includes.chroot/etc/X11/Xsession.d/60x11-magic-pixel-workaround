@@ -6,6 +6,8 @@ if grep 'nomagicpixel=2' /proc/cmdline ; then
 		done ;
 		echo -en "\n$(date +'%F | %T | ')'$0' spawning window foreground monitor (magic-pixel-fix 2)." | tee -a /dev/tty8
 		xdotool search --class X2GoAgent behave %@ blur windowmap || xdotool search --class NXAgent behave %@ blur windowmap
+		# exit if X11 is no longer running, else sleep for a bit
+		ps -C Xorg || exit 0
 	done &
 elif grep 'nomagicpixel=1' /proc/cmdline ; then
 	echo -en "\n$(date +'%F | %T | ')'$0' spawning openbox monitor (magic-pixel-fix 1)." | tee -a /dev/tty8
@@ -18,6 +20,8 @@ elif grep 'nomagicpixel=1' /proc/cmdline ; then
 			killall openbox
 			echo -en "\n$(date +'%F | %T | ')'$0' killed OpenBox." | tee -a /dev/tty8
 		done
+		# exit if X11 is no longer running, else sleep for a bit
+		ps -C Xorg || exit 0
 		sleep 1 # to save cpu cycles
 	done &
 else
