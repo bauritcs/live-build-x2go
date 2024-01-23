@@ -99,7 +99,7 @@ if [ -n "$THROTTLEVALUES" ]; then
 	if [ -n "$THROTTLEARR4" ] ; then
 		THROTTLELENGTH="-l $THROTTLEARR4"  # default 20
 	fi
-	if [ -n "${THROTTLEARR5" ] ; then
+	if [ -n "$THROTTLEARR5" ] ; then
 		THROTTLELATENCY="-L $THROTTLEARR5" # default 0
 	fi
 	# only set THROTTLINGCOMMAND if at least one value was detected and sanitized properly
