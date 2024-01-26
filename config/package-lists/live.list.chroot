@@ -1,7 +1,7 @@
 cifs-utils
 console-setup
 console-setup-linux
-fuse
+fuse3
 gpg
 initramfs-tools
 kbd
