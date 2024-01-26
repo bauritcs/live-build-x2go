@@ -3,6 +3,11 @@
 
 WINDOWWIDTH=$(cat /proc/cmdline | tr ' ' '\n' | awk -F'=' '"windowwidth"==$1 {print $2}' | tr -dc '0-9')
 
+# sanitize input
+if  [ $WINDOWWIDTH -lt 0 ] || [ $WINDOWWIDTH -gt 101 ]; then
+	unset $WINDOWWIDTH
+fi
+
 # default to 50(%) if unset
 if [ -z "$WINDOWWIDTH" ]; then
         WINDOWWIDTH=50"
