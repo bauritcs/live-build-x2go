@@ -1,0 +1,36 @@
+#!/bin/bash
+# move X2GoClient window to right screen border and resize - but only
+# when in minidesktop mode
+if [ -z "$X2GO_HANDLE_DAEMON" ] ; then
+	# we need to background this so it doesn't block the startup
+	(
+		# we have at least two matching window ids:
+		# actual client window and taskbar icon
+		# so let's wait until we have them both
+		X2GOCLIENTWINDOWIDS=""
+		while [ $(echo -e "$X2GOCLIENTWINDOWIDS" | wc -l) -lt 2 ] ; do
+			X2GOCLIENTWINDOWIDS=$(xdotool search --onlyvisible --name X2GoClient)
+		done
+		
+		# now wait until there is only one window id left that's visible and
+		# which matches our expected window name
+		while [ $(echo -e "$X2GOCLIENTWINDOWIDS" | wc -l) -gt 1 ] ; do
+			X2GOCLIENTWINDOWIDS=$(xdotool search --onlyvisible --name X2GoClient)
+		done
+		
+		# while there SHOULD be only one ID left by now ...
+		# let's handle this in a safe manner - as a list
+		for WINDOW in $X2GOCLIENTWINDOWIDS; do
+			# the id belonging to the taskbar icon cannot be activated
+			# xdotool does not return a non-zero error code when windowactivate
+			# fails, so we need to check for the presence of an error message
+			if xdotool windowactivate $WINDOW 2>/dev/null; then
+				# if we succeeded in activating the window,
+				# it's the actual client window
+				sleep 0.5s
+				xdotool windowsize $WINDOW 30% 100% # resize it
+				xdotool windowmove $WINDOW 70% 0 # move it to the right
+			fi
+		done
+	) &
+fi
