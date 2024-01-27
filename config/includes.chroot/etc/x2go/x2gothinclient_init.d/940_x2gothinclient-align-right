@@ -10,7 +10,7 @@ fi
 
 # default to 50(%) if unset
 if [ -z "$WINDOWWIDTH" ]; then
-        WINDOWWIDTH=50"
+        WINDOWWIDTH="50"
 fi
 
 if [ -z "$X2GO_HANDLE_DAEMON" ] ; then
