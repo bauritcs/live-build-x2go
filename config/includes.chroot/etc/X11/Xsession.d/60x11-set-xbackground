@@ -7,7 +7,7 @@ if [ -n "$XROOT" ] ; then
 
 	#input validation
 	# allowed values for POSITION: center fill max scale tile; default: max
-	case "${XROOTMODE,,}" in # force lowercase
+	case "$(echo $XROOTMODE | tr '[:upper:]' '[:lower:]')" in # force lowercase
 		"center") POSITION=center ;;
 		"fill") POSITION=fill ;;
 		"scale") POSITION=scale ;;
