@@ -1,0 +1,13 @@
+[Desktop Entry]
+Encoding=UTF-8
+Name=Start Menu
+Comment=Start Menu
+X-GNOME-FullName=Start Menu
+NoExec=xdotool mousemove 0 $(($(xdotool getdisplaygeometry | awk '{ print $2}')-$(awk '$1=="panel_size" {print $NF}' ~/.config/tint2/tint2rc))) key Super_L+Escape
+Exec=/usr/local/bin/gotostartbuttonposition.sh
+Terminal=false
+X-MultipleArgs=false
+Type=Application
+Icon=/usr/share/x2goclient/icons/x2gosession.png
+Categories=Menu;
+StartupNotify=true
