@@ -8,6 +8,6 @@ Exec=/usr/local/bin/gotostartbuttonposition.sh
 Terminal=false
 X-MultipleArgs=false
 Type=Application
-Icon=/usr/share/x2goclient/icons/x2gosession.png
+Icon=/etc/x2go/x2golauncher.png
 Categories=Menu;
 StartupNotify=true
