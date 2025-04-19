@@ -153,7 +153,7 @@ else
 				# the actual client window and possibly the taskbar icon
 				X2GOCLIENTWINDOWIDS=$(xdotool search --onlyvisible --name X2GoClient)
 				# make sure we terminate if X11 terminates
-				ps -C Xorg || exit 0
+				ps -C Xorg 2>&1 >/dev/null || exit 0
 			done
 
 			while [ $(echo -n "$X2GOCLIENTWINDOWIDS" | wc -l) -gt 2 ] ; do
@@ -161,7 +161,7 @@ else
 				# which matches our expected window name
 				X2GOCLIENTWINDOWIDS=$(xdotool search --onlyvisible --name X2GoClient)
 				# make sure we terminate if X11 terminates
-				ps -C Xorg || exit 0
+				ps -C Xorg 2>&1 >/dev/null || exit 0
 			done
 
 			# while there SHOULD be only one ID left by now ...
@@ -178,7 +178,7 @@ else
 					xdotool windowmove $WINDOW $(((100-WINDOWWIDTH)*DISPLAYWIDTH/100)) 20 # move it to the right and slightly down (window decoration)
 				fi
 				# make sure we terminate if X11 terminates
-				ps -C Xorg || exit 0
+				ps -C Xorg 2>&1 >/dev/null || exit 0
 			done
 		) &
 	fi
