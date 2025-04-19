@@ -120,6 +120,7 @@ else
 	WINDOWWIDTH=$(cat /proc/cmdline | tr ' ' '\n' | awk -F'=' '"windowwidth"==$1 {print $2}' | tr -dc '0-9')
 
 	# sanitize input
+	WINDOWWIDTH=${WINDOWWIDTH%\%})
 	if  [ $WINDOWWIDTH -lt 0 ] || [ $WINDOWWIDTH -gt 101 ]; then
 		unset $WINDOWWIDTH
 	fi
@@ -128,7 +129,18 @@ else
 	if [ -z "$WINDOWWIDTH" ]; then
 		WINDOWWIDTH="50"
 	fi
-
+	REQUESTED_WINDOWWIDTH=$WINDOWWIDTH
+	DISPLAYWIDTH=$(xdotool getdisplaygeometry | awk '{ print $1 }')
+	MIN_WINDOWWIDTH=895 # determined by experiment, may need further adjustment
+	while [ $(($DISPLAYWIDTH*$WINDOWWIDTH)) -lt $(($MIN_WINDOWWIDTH*100)) ] ; do
+		WINDOWWIDTH=$((WINDOWWIDTH+1))
+	done
+	if [ $REQUESTED_WINDOWWIDTH -ne $WINDOWWIDTH ]; then
+		[ -z "$OLDCON" ] && OLDCON="$(fgconsole)"
+		chvt "1"
+		echo "'$0' - WARNING: WINDOWWIDTH was set too low, adjusting to $WINDOWWIDTH"
+		[ -n "$OLDCON" ] && chvt "$OLDCON"
+	fi
 	if [ -z "$X2GO_HANDLE_DAEMON" ] ; then
 		# we need to background this so it doesn't block the startup
 		(
