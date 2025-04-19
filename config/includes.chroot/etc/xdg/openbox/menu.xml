@@ -34,7 +34,7 @@
   </item -->
   <separator/>
   <item label="Abmelden">
-	  <action name="Execute"><execute>killall -u user tint2</execute></action>
+	  <action name="Execute"><execute>openbox --exit</execute></action>
   </item>
   <item label="Herunterfahren">
 	  <action name="Execute"><execute>sudo /sbin/poweroff</execute></action>
