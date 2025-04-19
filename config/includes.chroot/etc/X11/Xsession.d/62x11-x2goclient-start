@@ -1,7 +1,7 @@
 # Spawn x2goclient wrapper
 if [ -x /usr/local/bin/x2goclient ] ; then
-        if ps -C x2goclient >/dev/null 2>&1 ; then
-		echo -en "\n$(date +'%F | %T | ')'$0' Not spawning x2goclient wrapper - already running." | tee -a /dev/tty8
+        if ps -C x2goclient -ouser --no-header | grep -q "$USER" ; then
+		echo -en "\n$(date +'%F | %T | ')'$0' Not spawning x2goclient wrapper - already running for user '$USER'." | tee -a /dev/tty8
 	else
 		/usr/local/bin/x2goclient &
 		echo -en "\n$(date +'%F | %T | ')'$0' spawned x2goclient wrapper." | tee -a /dev/tty8
