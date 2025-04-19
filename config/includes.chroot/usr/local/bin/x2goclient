@@ -170,6 +170,4 @@ else
 	fi
 fi
 # spawn actual x2goclient here
-# FIXME TODO Remove debug output
-($THROTTLINGCOMMAND /usr/bin/x2goclient --no-session-edit --no-menu --add-to-known-hosts --read-exports-from=/home/user/export $TCPARAMS $LDAPPARAMS $SESSIONFROM $BACKGROUND $BRANDING $STARTSESSION 2>&1 | tee -a /tmp/x2golog.txt) &
-echo "Called at $(date)" | tee -a /tmp/x2golog.txt
+($THROTTLINGCOMMAND /usr/bin/x2goclient --no-session-edit --no-menu --add-to-known-hosts --read-exports-from=/home/user/export $TCPARAMS $LDAPPARAMS $SESSIONFROM $BACKGROUND $BRANDING $STARTSESSION) &
