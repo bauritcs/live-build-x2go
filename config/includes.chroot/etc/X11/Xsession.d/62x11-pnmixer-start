@@ -1,0 +1,7 @@
+# Spawn pnmixer
+if [ -x /usr/bin/pnmixer ] ; then
+	pnmixer &
+	echo -en "\n$(date +'%F | %T | ')'$0' spawned pnmixer." | tee -a /dev/tty8
+else
+	echo -en "\n$(date +'%F | %T | ')'$0' Not spawning pnmixer - executable not found." | tee -a /dev/tty8
+fi
