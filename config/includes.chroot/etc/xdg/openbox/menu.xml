@@ -37,10 +37,10 @@
 	  <action name="Execute"><execute>killall -u user tint2</execute></action>
   </item>
   <item label="Herunterfahren">
-	  <action name="Execute"><execute>/sbin/poweroff</execute></action>
+	  <action name="Execute"><execute>sudo /sbin/poweroff</execute></action>
   </item>
   <item label="Neu Starten">
-	  <action name="Execute"><execute>/sbin/reboot</execute></action>
+	  <action name="Execute"><execute>sudo /sbin/reboot</execute></action>
   </item>
   <!-- item label="Abmelden">
     <action name="Exit" />
