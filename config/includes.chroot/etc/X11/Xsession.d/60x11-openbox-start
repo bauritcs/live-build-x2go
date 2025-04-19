@@ -1,7 +1,11 @@
 # Spawn openbox
 if [ -x /usr/bin/openbox ] ; then
-	openbox &
-	echo -en "\n$(date +'%F | %T | ')'$0' spawned OpenBox." | tee -a /dev/tty8
+        if [ -x /usr/bin/tint2 ] ; then
+		echo -en "\n$(date +'%F | %T | ')'$0' Not spawning OpenBox - tint2 executable found. (MicroDesktop active?)" | tee -a /dev/tty8
+	else
+		openbox &
+		echo -en "\n$(date +'%F | %T | ')'$0' spawned OpenBox." | tee -a /dev/tty8
+	fi
 else
 	echo -en "\n$(date +'%F | %T | ')'$0' Not spawning OpenBox - executable not found. (MiniDesktop active?)" | tee -a /dev/tty8
 fi
