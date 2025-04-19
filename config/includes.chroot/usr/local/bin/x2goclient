@@ -168,6 +168,20 @@ else
 			done
 		) &
 	fi
+
+	# create settings file if not already present (to minimize/confine x2goclient to the tray)
+	if ! [ -f ~/.x2goclient/settings ]; then
+		# this code was also shamelessly lifted from the minidesktop branch, but at 3aae8b11c0e3e72ab58eeccef10675662f627eb8
+		mkdir -p ~/.x2goclient
+		echo '[trayicon]' >>~/.x2goclient/settings.tmp
+		echo 'enabled=true' >>~/.x2goclient/settings.tmp
+		echo 'mintotray=true' >>~/.x2goclient/settings.tmp
+		echo 'noclose=true' >>~/.x2goclient/settings.tmp
+		echo 'mincon=true' >>~/.x2goclient/settings.tmp
+		echo 'maxdiscon=true' >>~/.x2goclient/settings.tmp
+		# make this an atomic change
+		mv ~/.x2goclient/settings.tmp ~/.x2goclient/settings
+	fi
 fi
 # spawn actual x2goclient here
 ($THROTTLINGCOMMAND /usr/bin/x2goclient --no-session-edit --no-menu --add-to-known-hosts --read-exports-from=/home/user/export $TCPARAMS $LDAPPARAMS $SESSIONFROM $BACKGROUND $BRANDING $STARTSESSION) &
