@@ -131,7 +131,7 @@ else
 	fi
 	REQUESTED_WINDOWWIDTH=$WINDOWWIDTH
 	DISPLAYWIDTH=$(xdotool getdisplaygeometry | awk '{ print $1 }')
-	MIN_WINDOWWIDTH=895 # determined by experiment, may need further adjustment
+	MIN_WINDOWWIDTH=1017 # determined by experiment, may need further adjustment
 	while [ $(($DISPLAYWIDTH*$WINDOWWIDTH)) -lt $(($MIN_WINDOWWIDTH*100)) ] ; do
 		WINDOWWIDTH=$((WINDOWWIDTH+1))
 	done
@@ -144,7 +144,7 @@ else
 	if [ -z "$X2GO_HANDLE_DAEMON" ] ; then
 		# we need to background this so it doesn't block the startup
 		DISPLAYHEIGHT=$(xdotool getdisplaygeometry | awk '{ print $2 }')
-		WINDOWHEIGHT=$((DISPLAYHEIGHT - 70)) # determined by experiment, may need further adjustment
+		WINDOWHEIGHT=$((DISPLAYHEIGHT - 75)) # determined by experiment, may need further adjustment (window decoration and tint2 height)
 		(
 			# wait for window ids to show up
 			X2GOCLIENTWINDOWIDS=""
@@ -174,9 +174,8 @@ else
 					# if we succeeded in activating the window,
 					# it's the actual client window
 					sleep 0.5s
-					#xdotool windowsize $WINDOW ${WINDOWWIDTH}% 100% # resize it
 					xdotool windowsize $WINDOW ${WINDOWWIDTH}% $WINDOWHEIGHT # resize it
-					xdotool windowmove $WINDOW $((100-WINDOWWIDTH))% 0 # move it to the right
+					xdotool windowmove $WINDOW $(((100-WINDOWWIDTH)*DISPLAYWIDTH/100)) 20 # move it to the right and slightly down (window decoration)
 				fi
 				# make sure we terminate if X11 terminates
 				ps -C Xorg || exit 0
