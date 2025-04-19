@@ -110,5 +110,66 @@ if [ -n "$THROTTLEVALUES" ]; then
 fi
 
 # if tint2 is installed, we're an OMD, not a TCE, so we need to skip these parameters
-[ -x /usr/bin/tint2 ] || TCPARAMS="--thinclient --maximize --haltbt" 
-($THROTTLINGCOMMAND /usr/bin/x2goclient --no-session-edit --no-menu --add-to-known-hosts --read-exports-from=/home/user/export $TCPARAMS $LDAPPARAMS $SESSIONFROM $BACKGROUND $BRANDING $STARTSESSION) &
+if ! [ -x /usr/bin/tint2 ] ; then
+	TCPARAMS="--thinclient --maximize --haltbt" 
+else
+	# move X2GoClient window to right screen border and resize - but only when in minidesktop/microdesktop mode
+
+	# this code was shamelessly lifted from the minidesktop branch at a5bcbe9fec8e4e9447a991cae50c282db21736c5
+
+	WINDOWWIDTH=$(cat /proc/cmdline | tr ' ' '\n' | awk -F'=' '"windowwidth"==$1 {print $2}' | tr -dc '0-9')
+
+	# sanitize input
+	if  [ $WINDOWWIDTH -lt 0 ] || [ $WINDOWWIDTH -gt 101 ]; then
+		unset $WINDOWWIDTH
+	fi
+
+	# default to 50(%) if unset
+	if [ -z "$WINDOWWIDTH" ]; then
+		WINDOWWIDTH="50"
+	fi
+
+	if [ -z "$X2GO_HANDLE_DAEMON" ] ; then
+		# we need to background this so it doesn't block the startup
+		(
+			# wait for window ids to show up
+			X2GOCLIENTWINDOWIDS=""
+			while [ -z "$X2GOCLIENTWINDOWIDS" ] ; do
+				# if this var is of nonzero length, we have at least one matching window id:
+				# the actual client window and possibly the taskbar icon
+				X2GOCLIENTWINDOWIDS=$(xdotool search --onlyvisible --name X2GoClient)
+				# make sure we terminate if X11 terminates
+				ps -C Xorg || exit 0
+			done
+
+			while [ $(echo -n "$X2GOCLIENTWINDOWIDS" | wc -l) -gt 2 ] ; do
+				# now wait until there is only one window id left that's visible and
+				# which matches our expected window name
+				X2GOCLIENTWINDOWIDS=$(xdotool search --onlyvisible --name X2GoClient)
+				# make sure we terminate if X11 terminates
+				ps -C Xorg || exit 0
+			done
+
+			# while there SHOULD be only one ID left by now ...
+			# let's handle this in a safe manner - as a list
+			for WINDOW in $X2GOCLIENTWINDOWIDS; do
+				# the id belonging to the taskbar icon cannot be activated
+				# xdotool does not return a non-zero error code when windowactivate
+				# fails, so we need to check for the presence of an error message
+				if xdotool windowactivate $WINDOW 2>/dev/null; then
+					# if we succeeded in activating the window,
+					# it's the actual client window
+					sleep 0.5s
+					xdotool windowsize $WINDOW ${WINDOWWIDTH}% 100% # resize it
+					xdotool windowmove $WINDOW $((100-WINDOWWIDTH))% 0 # move it to the right
+				fi
+				# make sure we terminate if X11 terminates
+				ps -C Xorg || exit 0
+			done
+		) &
+	fi
+fi
+# spawn actual x2goclient here
+# FIXME TODO Remove debug output
+($THROTTLINGCOMMAND /usr/bin/x2goclient --no-session-edit --no-menu --add-to-known-hosts --read-exports-from=/home/user/export $TCPARAMS $LDAPPARAMS $SESSIONFROM $BACKGROUND $BRANDING $STARTSESSION 2>&1 | tee -a /tmp/x2golog.txt) &
+echo "Called at $(date)" | tee -a /tmp/x2golog.txt
