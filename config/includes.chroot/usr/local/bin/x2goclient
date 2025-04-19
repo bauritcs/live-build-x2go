@@ -111,4 +111,4 @@ fi
 
 # if tint2 is installed, we're an OMD, not a TCE, so we need to skip these parameters
 [ -x /usr/bin/tint2 ] || TCPARAMS="--thinclient --maximize --haltbt" 
-(eval $THROTTLINGCOMMAND /usr/bin/x2goclient --no-session-edit --no-menu --add-to-known-hosts --read-exports-from=/home/user/export $TCPARAMS $LDAPPARAMS $SESSIONFROM $BACKGROUND $BRANDING $STARTSESSION) &
+($THROTTLINGCOMMAND /usr/bin/x2goclient --no-session-edit --no-menu --add-to-known-hosts --read-exports-from=/home/user/export $TCPARAMS $LDAPPARAMS $SESSIONFROM $BACKGROUND $BRANDING $STARTSESSION) &
