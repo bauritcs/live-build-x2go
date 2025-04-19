@@ -1,1 +1,2 @@
+# this is so poweroff and reboot even work with "noroot" boot parameter set
 user ALL = NOPASSWD: /sbin/poweroff, /sbin/reboot
