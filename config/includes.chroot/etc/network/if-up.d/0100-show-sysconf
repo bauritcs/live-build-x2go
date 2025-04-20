@@ -52,18 +52,18 @@ fi
 			while ! [ -s /etc/x2go/branding.svg ]; do 
 				sleep 1
 			done
-				IPLIST=$(echo -e "$IPRAW" | \
-					awk '$1~/^inet/ {print $2}' | \
-					tr '\n' '|' \
-					grep -v "127.0.0.1" | \
-					grep -v "^::1/"
-				)
-				IPLIST=${IPLIST%|}
-				MACLIST=$(echo -e "$IPRAW" | \
-					awk '$1=="link/ether" {print $2}' | \
-					tr '\n' '|'
-				)
-				MACLIST=${MACLIST%|}
+			IPLIST=$(echo -e "$IPRAW" | \
+				awk '$1~/^inet/ {print $2}' | \
+				tr '\n' '|' \
+				grep -v "127.0.0.1" | \
+				grep -v "^::1/"
+			)
+			IPLIST=${IPLIST%|}
+			MACLIST=$(echo -e "$IPRAW" | \
+				awk '$1=="link/ether" {print $2}' | \
+				tr '\n' '|'
+			)
+			MACLIST=${MACLIST%|}
 
 			sed	-e "s/BOOTEDENVPLACEHOLDER/$BOOTEDENV/g" -e "s/TIMESTAMPPLACEHOLDER/$TIMESTAMP - $HUMANTIMESTAMP/g" \
 				-e "s/IPPLACEHOLDER/$IPLIST/g" -e "s/MACPLACEHOLDER/$MACLIST/" -i /etc/x2go/branding.svg
