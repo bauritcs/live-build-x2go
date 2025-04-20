@@ -58,9 +58,9 @@ fi
 			done
 			IPLIST=$(echo -e "$IPRAW" | \
 				awk '$1~/^inet/ {print $2}' | \
-				tr '\n' '|' | \
 				grep -v "127.0.0.1" | \
-				grep -v "^::1/"
+				grep -v "^::1/" | \
+				tr '\n' '|'
 			)
 			IPLIST=${IPLIST%|}
 			MACLIST=$(echo -e "$IPRAW" | \
