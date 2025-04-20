@@ -18,20 +18,6 @@
   <item label="Chromium">
     <action name="Execute"><execute>chromium</execute></action>
   </item>
-  <!-- This requires the presence of the 'obamenu' package to work -->
-  <!-- menu id="/Debian" />
-  <separator />
-  <menu id="applications-menu" label="Applications" execute="/usr/bin/obamenu"/>
-  <separator / -->
-  <!-- item label="ObConf">
-    <action name="Execute"><execute>obconf</execute></action>
-  </item>
-  <item label="Reconfigure">
-    <action name="Reconfigure" />
-  </item>
-  <item label="Restart">
-    <action name="Restart" />
-  </item -->
   <separator/>
   <item label="Abmelden">
 	  <action name="Execute"><execute>openbox --exit</execute></action>
@@ -42,9 +28,6 @@
   <item label="Neu Starten">
 	  <action name="Execute"><execute>sudo /sbin/reboot</execute></action>
   </item>
-  <!-- item label="Abmelden">
-    <action name="Exit" />
-  </item -->
 </menu>
 
 </openbox_menu>
