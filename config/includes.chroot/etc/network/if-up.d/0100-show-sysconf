@@ -36,8 +36,8 @@ fi
 		sleep 2
 	done
 
-	IPMSG=$(LANG=C \
-		/sbin/ip a | \
+	IPRAW=$(LANG=C /sbin/ip a)
+	IPMSG=$(echo -e "$IPRAW" | \
 		/bin/grep -P --color=always "inet.*? [\. 0-9a-f:/]*? |$" | \
 		GREP_COLOR="1;32" \
 		/bin/grep -P --color=always "link/ether .*? |$" )
@@ -47,6 +47,27 @@ fi
 	[ -n "$BOOTEDENV" ] && echo "- Booted Environment: $BOOTEDENV" | tee -a /etc/motd >> /etc/issue
 	[ -n "$TIMESTAMP" ] && echo "- Build Version: $TIMESTAMP ($HUMANTIMESTAMP)" | tee -a /etc/motd >> /etc/issue
 
+	if grep -q branding= /proc/cmdline ; then
+		(
+			while ! [ -s /etc/x2go/branding.svg ]; do 
+				sleep 1
+			done
+				IPLIST=$(echo -e "$IPRAW" | \
+					awk '$1=="inet" {print $2}' | \
+					sed -e 's#/[0-9]*##' | \
+					tr '\n' '|'
+				)
+
+				MACLIST=$(echo -e "$IPRAW" | \
+					awk '$1=="link/ether" {print $2}' | \
+					sed -e 's#/[0-9]*##' | \
+					tr '\n' '|'
+				)
+
+			sed	-e "s/BOOTEDENVPLACEHOLDER/$BOOTEDENV/g" -e "s/TIMESTAMPPLACEHOLDER/$TIMESTAMP/g" \
+				-e "s/IPPLACEHOLDER/$IPLIST/g" -e "s/MACPLACEHOLDER/$MACLIST/" -i /etc/x2go/branding.svg
+		) &
+	fi
 	# make sure all unused VTs show the new /etc/issue
 	ps -C getty --no-header | awk '{ print $1 }' | xargs -n 1 --no-run-if-empty kill -1
 ) &
