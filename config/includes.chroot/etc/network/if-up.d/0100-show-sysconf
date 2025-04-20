@@ -59,6 +59,7 @@ fi
 		tr '\n' '|'
 	)
 	MACLIST=${MACLIST%|}
+	[ -z "$BOOTEDENV" ] && BOOTEDENV="Readonly or Netboot" 
 
 	if grep -q "branding=qrcode" /proc/cmdline ; then
 		if [ -x /usr/bin/qrencode ]; then
@@ -70,7 +71,6 @@ fi
 			while ! [ -s /etc/x2go/branding.svg ]; do 
 				sleep 1
 			done
-			[ -z "$BOOTEDENV" ] && BOOTEDENV="Readonly or Netboot" 
 			sed	-e "s/BOOTEDENVPLACEHOLDER/$BOOTEDENV/g" -e "s/TIMESTAMPPLACEHOLDER/$TIMESTAMP - $HUMANTIMESTAMP/g" \
 				-e "s/IPPLACEHOLDER/$IPLIST/g" -e "s/MACPLACEHOLDER/$MACLIST/" -i /etc/x2go/branding.svg
 		) &
