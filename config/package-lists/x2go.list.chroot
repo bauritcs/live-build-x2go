@@ -23,6 +23,7 @@ libxv1
 pinentry-x2go
 pulseaudio
 pulseaudio-utils
+qrencode
 rdesktop
 udev
 x2goclient
