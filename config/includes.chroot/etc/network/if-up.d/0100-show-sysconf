@@ -15,7 +15,9 @@ fi
 	fi
 	for TIMESTAMPFILE in /lib/live/mount/rootfs/*/lib; do
 		TIMESTAMP=$(stat -c %Y $TIMESTAMPFILE)
-		HUMANTIMESTAMP=$(date --date="@$TIMESTAMP" +"%x %X")
+		LOCALESETTING=$(cat /proc/cmdline | tr ' ' '\n' | awk -F'[=|,]' '$1=="locales" { print $2 }')
+		[ -z "$LOCALESETTING" ] && LOCALESETTING="C"
+		HUMANTIMESTAMP=$(LANG=$LOCALESETTING date --date="@$TIMESTAMP" +"%x %X")
 	done
 
 	# clear old entries
