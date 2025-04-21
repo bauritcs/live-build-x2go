@@ -15,7 +15,7 @@ fi
 	fi
 	for TIMESTAMPFILE in /lib/live/mount/rootfs/*/lib; do
 		TIMESTAMP=$(stat -c %Y $TIMESTAMPFILE)
-		HUMANTIMESTAMP=$(date --date="@$TIMESTAMP")
+		HUMANTIMESTAMP=$(date --date="@$TIMESTAMP" +"%x %X")
 	done
 
 	# clear old entries
