@@ -71,8 +71,8 @@ fi
 			while ! [ -s /etc/x2go/branding.svg ]; do 
 				sleep 1
 			done
-			sed	-e "s/BOOTEDENVPLACEHOLDER/$BOOTEDENV/g" -e "s/TIMESTAMPPLACEHOLDER/$TIMESTAMP - $HUMANTIMESTAMP/g" \
-				-e "s/IPPLACEHOLDER/$IPLIST/g" -e "s/MACPLACEHOLDER/$MACLIST/" -i /etc/x2go/branding.svg
+			sed	-e "s#BOOTEDENVPLACEHOLDER#$BOOTEDENV#g" -e "s#TIMESTAMPPLACEHOLDER#$TIMESTAMP - $HUMANTIMESTAMP#g" \
+				-e "s#IPPLACEHOLDER#$IPLIST#g" -e "s#MACPLACEHOLDER#$MACLIST#" -i /etc/x2go/branding.svg
 		) &
 	fi
 	# make sure all unused VTs show the new /etc/issue
