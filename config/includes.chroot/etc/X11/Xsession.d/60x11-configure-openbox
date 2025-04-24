@@ -12,9 +12,9 @@ IFS=$oldIFS
 mkdir -p ~/.config/openbox/
 cp /etc/xdg/openbox/*.xml  ~/.config/openbox/
 
-sed	-e "s/Logout/$BUTTON1/" \
-	-e "s/Reboot/$BUTTON2/" \
-	-e "s/Shutdown/$BUTTON3/" \
+sed	-e "s/label=\"Logout\"/label=\"$BUTTON1\"/" \
+	-e "s/label=\"Reboot\"/label=\"$BUTTON2\"/" \
+	-e "s/label=\"Shutdown\"/label=\"$BUTTON3\"/" \
 	-i  ~/.config/openbox/menu.xml
 
 # reload config if openbox is already running
