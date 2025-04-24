@@ -1,0 +1,71 @@
+# set screen background to X2Go default blue on all detected screens, unless color or image is specified
+X5250SERVERS=$(sed -e 's/ \([^ ]*\)=/\n\1=/g' -e 's/\([^=]["'"'"']\) /\1\n/g' -e 's/ \([^ "'"'"']\)/\n\1/g' /proc/cmdline | awk -F '=' '$1 == "x5250servers" { print $2 }' | tr -dc '0-9a-zA-Z,$-_.+!*'"'"'();/?:@=&|')
+
+# check if we have an x5250 command or if we need to emulate it with x3270
+if [ -x /usr/local/bin/x5250 ] ; then
+	X5250COMMAND="/usr/local/bin/x5250"
+elif [ -x /usr/bin/x5250 ] ; then
+	X5250COMMAND="/usr/bin/x5250"
+elif [ -x /usr/bin/x3270 ] ; then
+	X5250COMMAND="/usr/bin/x3270 -model 2"
+else
+	X5250COMMAND=""
+fi
+
+if [ -n "$X5250SERVERS" ] && [ -n "$X5250COMMAND" ] ; then
+
+	# determine icon path
+	if [ -s /usr/share/icons/hicolor/48x48/apps/x5250.png ]; then
+		X5250ICON="/usr/share/icons/hicolor/48x48/apps/x5250.png"
+	else
+		X5250ICON="/usr/share/icons/hicolor/48x48/apps/x3270.png"
+	fi
+
+	# add entries to tint2 taskbar: a two-step process
+	
+	# step 1: append config at end of file
+	for X5250SESSION in $(echo "$X5250SERVERS" | tr '|' ' '); do
+		echo >>/etc/xdg/tint2/tint2rc <<NEWX5250SESSIONTINT2
+	#----------------
+	# Executor for $X5250SESSION
+		execp = new
+		execp_command = echo $X5250ICON
+		execp_has_icon = 1
+		execp_interval = 0
+		execp_centered = 1
+		execp_font = sans 9
+		execp_markup = 1
+		execp_font_color = #aaffaa 100
+		execp_padding = 2 0
+		execp_tooltip = 5250 Terminal $X5250SESSION
+		execp_lclick_command = $X5250COMMAND $X5250SESSION
+		execp_background_id = 2
+NEWX5250SESSIONTINT2
+	# step 2: add entry for executor button in panel item sequence
+	sed -e 's/^panel_items = L/panel_items = LE/' -i /etc/xdg/tint2/tint2rc
+	done
+
+	# copy tint2 master config to user directories
+	for USERCONFIG in $(ls -1 /home/*/.config/tint2/tint2rc); do
+		cat /etc/xdg/tint2/tint2rc > $USERCONFIG
+	done
+
+	# add entries to openbox starter
+	for X5250SESSION in $(echo "$X5250SERVERS" | tr '|' ' '); do
+		NEWENTRY=$(
+		echo <<NEWX5250SESSIONOPENBOX
+	  <item label="5250 Terminal $X5250SESSION">
+	    <action name="Execute"><execute>$X5250COMMAND $X5250SESSION</execute></action>
+	  </item>
+NEWX5250SESSIONOPENBOX
+	)
+		sed -e "s/<menu id=\"root-menu\" label=\"Openbox 3\">/<menu id=\"root-menu\" label=\"Openbox 3\">\n$NEWENTRY/" -i /etc/xdg/openbox/menu.xml
+	done
+	
+	# reload config for both openbox and tint2
+	openbox --reconfigure
+	killall -s SIGUSR1 tint2
+
+fi
+
+echo -en "\n$(date +'%F | %T | ')'$0' Done." | tee -a /dev/tty8
