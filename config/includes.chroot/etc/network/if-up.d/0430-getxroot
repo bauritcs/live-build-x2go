@@ -24,7 +24,7 @@ if [ -n "$XROOT" ] ; then
 
 		echo -en "\n$(date +'%F | %T | ')'$0': Attempting X background download ..." | tee -a /dev/tty8
 		if echo "$XROOT" | grep -q "^tftp://" ; then
-			for SINGLEROOTURL in ${XROOT//|/ }; do
+			for SINGLEROOTURL in ${XROOT//[,|]/ }; do
 				XROOTSERVER=$(echo "$SINGLEROOTURL" | sed 's#^tftp://\([^/;]*\)/.*$#\1#' )
 				XROOTPATH=$(echo "$SINGLEROOTURL" | sed 's#^tftp://[^/;]*/\([^;]*\)$#\1#' )
 				if [ -n "$XROOTSERVER" ] && [ -n "$XROOTPATH" ] ; then
@@ -35,7 +35,7 @@ if [ -n "$XROOT" ] ; then
 				fi
 			done
 		elif echo "$XROOT" | grep -q "://" ; then
-			while ! wget -q -N -P $BACKGROUNDDIR ${XROOT//|/ } ; do
+			while ! wget -q -N -P $BACKGROUNDDIR ${XROOT//[,|]/ } ; do
 				echo -en "\n$(date +'%F | %T | ')still waiting for X background download (wget) ..." | tee -a /dev/tty8
 				sleep 5 
 			done
