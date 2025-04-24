@@ -17,7 +17,7 @@
   </item>
   <separator/>
   <item label="Abmelden">
-	  <action name="Execute"><execute>/usr/bin/bash -c 'killall -9 x2goclient ; openbox --exit'</execute></action>
+	  <action name="Execute"><execute>/usr/bin/bash -c 'killall -9 x2goclient chromium firefox-esr ; rm -rf ~/.config/chromium ~/.mozilla ~/.cache/* ; openbox --exit'</execute></action>
   </item>
   <item label="Neustart">
 	  <action name="Execute"><execute>sudo /sbin/reboot</execute></action>
