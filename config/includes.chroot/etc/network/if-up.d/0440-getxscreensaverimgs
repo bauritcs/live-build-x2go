@@ -42,7 +42,7 @@ if [ -n "$XSAVERIMAGES" ] ; then
 		echo -en "\n$(date +'%F | %T | ')'$0': Attempting screensaver image/images download ..." | tee -a /dev/tty8
 		XSAVERIMAGES=$(echo -e "$(urldecode "$XSAVERIMAGES")")
 		if echo "$XSAVERIMAGES" | grep -q "^tftp://" ; then
-			for SINGLEXSAVERIMAGEURL in ${XSAVERIMAGES//|/ }; do
+			for SINGLEXSAVERIMAGEURL in ${XSAVERIMAGES//[,|]/ }; do
 				XSAVERIMAGESERVER=$(echo "$SINGLEXSAVERIMAGEURL" | sed 's#^tftp://\([^/;]*\)/.*$#\1#' )
 				XSAVERIMAGEPATH=$(echo "$SINGLEXSAVERIMAGEURL" | sed 's#^tftp://[^/;]*/\([^;]*\)$#\1#' )
 				if [ -n "$XSAVERIMAGESERVER" ] && [ -n "$XSERVERIMAGEPATH" ] ; then
@@ -53,7 +53,7 @@ if [ -n "$XSAVERIMAGES" ] ; then
 				fi
 			done
 		elif echo "$XSAVERIMAGES" | grep -q "://" ; then
-			while ! wget -q -N -P $SLIDESDIR ${XSAVERIMAGES//|/ } ; do
+			while ! wget -q -N -P $SLIDESDIR ${XSAVERIMAGES//[,|]/ } ; do
 				echo -en "\n$(date +'%F | %T | ')still waiting for screensaver download (wget) ..." | tee -a /dev/tty8
 				sleep 5 
 			done
