@@ -1,0 +1,9 @@
+# configure tint2
+
+mkdir -p ~/.config/tint2/
+cp /etc/xdg/tint2/*  ~/.config/tint2/
+
+# reload config if tint2 is already running
+ps -C tint2 >/dev/null && killall -s SIGUSR1 tint2
+
+echo -en "\n$(date +'%F | %T | ')'$0' Done." | tee -a /dev/tty8

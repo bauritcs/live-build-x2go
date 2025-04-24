@@ -4,7 +4,7 @@ if grep -q '\W*allowuxterm\W*' /proc/cmdline && [ -x /usr/bin/uxterm ] ; then
 	# add entries to tint2 taskbar: a two-step process
 	
 	# step 1: append config at end of file
-	cat >>/etc/xdg/tint2/tint2rc <<NEWUXTERMTINT2
+	cat >>~/.config/tint2/tint2rc <<NEWUXTERMTINT2
 #----------------
 # Executor for uxterm
 execp = new
@@ -22,16 +22,11 @@ execp_background_id = 2
 
 NEWUXTERMTINT2
 	# step 2: add entry for executor button in panel item sequence
-	sed -e 's/^panel_items = L/panel_items = LE/' -i /etc/xdg/tint2/tint2rc
-
-	# copy tint2 master config to user directories
-	for USERCONFIG in $(ls -1 /home/*/.config/tint2/tint2rc); do
-		cat /etc/xdg/tint2/tint2rc > $USERCONFIG
-	done
+	sed -e 's/^panel_items = L/panel_items = LE/' -i ~/.config/tint2/tint2rc
 
 	# add entries to openbox starter
 	NEWENTRY="  <item label=\"UX Terminal\">\n    <action name=\"Execute\"><execute>uxterm</execute></action>\n  </item>"
-	sed -e "s#<menu id=\"root-menu\" label=\"Openbox 3\">#<menu id=\"root-menu\" label=\"Openbox 3\">\n$NEWENTRY#" -i /etc/xdg/openbox/menu.xml
+	sed -e "s#<menu id=\"root-menu\" label=\"Openbox 3\">#<menu id=\"root-menu\" label=\"Openbox 3\">\n$NEWENTRY#" -i ~/.config/openbox/menu.xml
 	
 	# reload config for both openbox and tint2
 	ps -C openbox >/dev/null && openbox --reconfigure

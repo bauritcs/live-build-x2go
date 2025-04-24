@@ -1,0 +1,9 @@
+# configure openbox
+
+mkdir -p ~/.config/openbox/
+cp /etc/xdg/openbox/*.xml  ~/.config/openbox/
+
+# reload config if openbox is already running
+ps -C openbox >/dev/null && openbox --reconfigure
+
+echo -en "\n$(date +'%F | %T | ')'$0' Done." | tee -a /dev/tty8

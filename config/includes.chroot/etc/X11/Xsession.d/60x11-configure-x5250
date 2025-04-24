@@ -25,7 +25,7 @@ if [ -n "$X5250SERVERS" ] && [ -n "$X5250COMMAND" ] ; then
 	
 	# step 1: append config at end of file
 	for X5250SESSION in $(echo "$X5250SERVERS" | tr '|,' ' '); do
-		cat >>/etc/xdg/tint2/tint2rc <<NEWX5250SESSIONTINT2
+		cat >>~/.config/tint2/tint2rc <<NEWX5250SESSIONTINT2
 #----------------
 # Executor for $X5250SESSION
 execp = new
@@ -42,18 +42,13 @@ execp_lclick_command = $X5250COMMAND $X5250SESSION
 execp_background_id = 2
 NEWX5250SESSIONTINT2
 	# step 2: add entry for executor button in panel item sequence
-	sed -e 's/^panel_items = L/panel_items = LE/' -i /etc/xdg/tint2/tint2rc
-	done
-
-	# copy tint2 master config to user directories
-	for USERCONFIG in $(ls -1 /home/*/.config/tint2/tint2rc); do
-		cat /etc/xdg/tint2/tint2rc > $USERCONFIG
+	sed -e 's/^panel_items = L/panel_items = LE/' -i ~/.config/tint2/tint2rc
 	done
 
 	# add entries to openbox starter
 	for X5250SESSION in $(echo "$X5250SERVERS" | tr '|' ' '); do
 		NEWENTRY="  <item label=\"5250 Terminal $X5250SESSION\">\n    <action name=\"Execute\"><execute>$X5250COMMAND $X5250SESSION</execute></action>\n  </item>\n"
-		sed -e "s#<menu id=\"root-menu\" label=\"Openbox 3\">#<menu id=\"root-menu\" label=\"Openbox 3\">\n$NEWENTRY#" -i /etc/xdg/openbox/menu.xml
+		sed -e "s#<menu id=\"root-menu\" label=\"Openbox 3\">#<menu id=\"root-menu\" label=\"Openbox 3\">\n$NEWENTRY#" -i ~/.config/openbox/menu.xml
 	done
 	
 	# reload config for both openbox and tint2
