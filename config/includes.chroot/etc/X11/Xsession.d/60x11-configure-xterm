@@ -30,7 +30,7 @@ NEWXTERMTINT2
 
 	# add entries to openbox starter
 	NEWENTRY="  <item label=\"X Terminal\">\n    <action name=\"Execute\"><execute>xterm</execute></action>\n  </item>"
-	sed -e "s/<menu id=\"root-menu\" label=\"Openbox 3\">/<menu id=\"root-menu\" label=\"Openbox 3\">\n$NEWENTRY/" -i /etc/xdg/openbox/menu.xml
+	sed -e "s#<menu id=\"root-menu\" label=\"Openbox 3\">#<menu id=\"root-menu\" label=\"Openbox 3\">\n$NEWENTRY#" -i /etc/xdg/openbox/menu.xml
 	
 	# reload config for both openbox and tint2
 	ps -C openbox >/dev/null && openbox --reconfigure

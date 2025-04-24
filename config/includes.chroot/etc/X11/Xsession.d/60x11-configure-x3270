@@ -34,7 +34,7 @@ NEWX3270SESSIONTINT2
 	# add entries to openbox starter
 	for X3270SESSION in $(echo "$X3270SERVERS" | tr '|' ' '); do
 		NEWENTRY="  <item label=\"3270 Terminal $X3270SESSION\">\n    <action name=\"Execute\"><execute>x3270 $X3270SESSION</execute></action>\n  </item>\n"
-		sed -e "s/<menu id=\"root-menu\" label=\"Openbox 3\">/<menu id=\"root-menu\" label=\"Openbox 3\">\n$NEWENTRY/" -i /etc/xdg/openbox/menu.xml
+		sed -e "s#<menu id=\"root-menu\" label=\"Openbox 3\">#<menu id=\"root-menu\" label=\"Openbox 3\">\n$NEWENTRY#" -i /etc/xdg/openbox/menu.xml
 	done
 	
 	# reload config for both openbox and tint2
