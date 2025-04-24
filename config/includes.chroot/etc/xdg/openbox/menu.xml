@@ -19,7 +19,7 @@
   <item label="Abmelden">
 	  <action name="Execute"><execute>/usr/bin/bash -c 'killall -9 x2goclient ; openbox --exit'</execute></action>
   </item>
-  <item label="Neu Starten">
+  <item label="Neustart">
 	  <action name="Execute"><execute>sudo /sbin/reboot</execute></action>
   </item>
   <item label="Herunterfahren">
