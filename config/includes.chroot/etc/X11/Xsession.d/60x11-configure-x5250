@@ -52,13 +52,7 @@ NEWX5250SESSIONTINT2
 
 	# add entries to openbox starter
 	for X5250SESSION in $(echo "$X5250SERVERS" | tr '|' ' '); do
-		NEWENTRY=$(
-		cat <<NEWX5250SESSIONOPENBOX
-	  <item label="5250 Terminal $X5250SESSION">
-	    <action name="Execute"><execute>$X5250COMMAND $X5250SESSION</execute></action>
-	  </item>
-NEWX5250SESSIONOPENBOX
-	)
+		NEWENTRY="  <item label=\"5250 Terminal $X5250SESSION\">\n    <action name=\"Execute\"><execute>$X5250COMMAND $X5250SESSION</execute></action>\n  </item>\n"
 		sed -e "s/<menu id=\"root-menu\" label=\"Openbox 3\">/<menu id=\"root-menu\" label=\"Openbox 3\">\n$NEWENTRY/" -i /etc/xdg/openbox/menu.xml
 	done
 	

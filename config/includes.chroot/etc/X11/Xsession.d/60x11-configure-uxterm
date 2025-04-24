@@ -30,13 +30,7 @@ NEWUXTERMTINT2
 	done
 
 	# add entries to openbox starter
-	NEWENTRY=$(
-	cat <<NEWUXTERMSESSIONOPENBOX
-	  <item label="UX Terminal">
-	    <action name="Execute"><execute>uxterm</execute></action>
-	  </item>
-NEWUXTERMSESSIONOPENBOX
-	)
+	NEWENTRY="  <item label=\"UX Terminal\">\n    <action name=\"Execute\"><execute>uxterm</execute></action>\n  </item>"
 	sed -e "s/<menu id=\"root-menu\" label=\"Openbox 3\">/<menu id=\"root-menu\" label=\"Openbox 3\">\n$NEWENTRY/" -i /etc/xdg/openbox/menu.xml
 	
 	# reload config for both openbox and tint2
