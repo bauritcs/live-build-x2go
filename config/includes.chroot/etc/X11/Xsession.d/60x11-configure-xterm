@@ -39,8 +39,8 @@ NEWXTERMSESSIONOPENBOX
 	sed -e "s/<menu id=\"root-menu\" label=\"Openbox 3\">/<menu id=\"root-menu\" label=\"Openbox 3\">\n$NEWENTRY/" -i /etc/xdg/openbox/menu.xml
 	
 	# reload config for both openbox and tint2
-	openbox --reconfigure
-	killall -s SIGUSR1 tint2
+	ps -C openbox >/dev/null && openbox --reconfigure
+	ps -C tint2 >/dev/null && killall -s SIGUSR1 tint2
 
 fi
 

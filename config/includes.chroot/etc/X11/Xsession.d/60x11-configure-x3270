@@ -44,8 +44,8 @@ NEWX3270SESSIONOPENBOX
 	done
 	
 	# reload config for both openbox and tint2
-	openbox --reconfigure
-	killall -s SIGUSR1 tint2
+	ps -C openbox >/dev/null && openbox --reconfigure
+	ps -C tint2 >/dev/null && killall -s SIGUSR1 tint2
 
 fi
 
