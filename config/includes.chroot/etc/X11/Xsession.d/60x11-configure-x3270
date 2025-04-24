@@ -1,0 +1,52 @@
+# set screen background to X2Go default blue on all detected screens, unless color or image is specified
+X3270SERVERS=$(sed -e 's/ \([^ ]*\)=/\n\1=/g' -e 's/\([^=]["'"'"']\) /\1\n/g' -e 's/ \([^ "'"'"']\)/\n\1/g' /proc/cmdline | awk -F '=' '$1 == "x3270servers" { print $2 }' | tr -dc '0-9a-zA-Z,$-_.+!*'"'"'();/?:@=&|')
+
+if [ -n "$X3270SERVERS" ] && [ -x /usr/bin/x3270 ] ; then
+	# add entries to tint2 taskbar: a two-step process
+	
+	# step 1: append config at end of file
+	for X3270SESSION in $(echo "$X3270SERVERS" | tr '|' ' '); do
+		echo >>/etc/xdg/tint2/tint2rc <<NEWX3270SESSIONTINT2
+	#----------------
+	# Executor for $X3270SESSION
+		execp = new
+		execp_command = echo /usr/share/icons/hicolor/48x48/apps/x3270.png
+		execp_has_icon = 1
+		execp_interval = 0
+		execp_centered = 1
+		execp_font = sans 9
+		execp_markup = 1
+		execp_font_color = #aaffaa 100
+		execp_padding = 2 0
+		execp_tooltip = 3270 Terminal $X3270SESSION
+		execp_lclick_command = x3270 $X3270SESSION
+		execp_background_id = 2
+NEWX3270SESSIONTINT2
+	# step 2: add entry for executor button in panel item sequence
+	sed -e 's/^panel_items = L/panel_items = LE/' -i /etc/xdg/tint2/tint2rc
+	done
+
+	# copy tint2 master config to user directories
+	for USERCONFIG in $(ls -1 /home/*/.config/tint2/tint2rc); do
+		cat /etc/xdg/tint2/tint2rc > $USERCONFIG
+	done
+
+	# add entries to openbox starter
+	for X3270SESSION in $(echo "$X3270SERVERS" | tr '|' ' '); do
+		NEWENTRY=$(
+		echo <<NEWX3270SESSIONOPENBOX
+	  <item label="3270 Terminal $X3270SESSION">
+	    <action name="Execute"><execute>x3270 $X3270SESSION</execute></action>
+	  </item>
+NEWX3270SESSIONOPENBOX
+	)
+		sed -e "s/<menu id=\"root-menu\" label=\"Openbox 3\">/<menu id=\"root-menu\" label=\"Openbox 3\">\n$NEWENTRY/" -i /etc/xdg/openbox/menu.xml
+	done
+	
+	# reload config for both openbox and tint2
+	openbox --reconfigure
+	killall -s SIGUSR1 tint2
+
+fi
+
+echo -en "\n$(date +'%F | %T | ')'$0' Done." | tee -a /dev/tty8
