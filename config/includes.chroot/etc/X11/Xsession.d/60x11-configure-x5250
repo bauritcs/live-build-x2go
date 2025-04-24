@@ -25,21 +25,21 @@ if [ -n "$X5250SERVERS" ] && [ -n "$X5250COMMAND" ] ; then
 	
 	# step 1: append config at end of file
 	for X5250SESSION in $(echo "$X5250SERVERS" | tr '|,' ' '); do
-		echo >>/etc/xdg/tint2/tint2rc <<NEWX5250SESSIONTINT2
-	#----------------
-	# Executor for $X5250SESSION
-		execp = new
-		execp_command = echo $X5250ICON
-		execp_has_icon = 1
-		execp_interval = 0
-		execp_centered = 1
-		execp_font = sans 9
-		execp_markup = 1
-		execp_font_color = #aaffaa 100
-		execp_padding = 2 0
-		execp_tooltip = 5250 Terminal $X5250SESSION
-		execp_lclick_command = $X5250COMMAND $X5250SESSION
-		execp_background_id = 2
+		cat >>/etc/xdg/tint2/tint2rc <<NEWX5250SESSIONTINT2
+#----------------
+# Executor for $X5250SESSION
+execp = new
+execp_command = echo $X5250ICON
+execp_has_icon = 1
+execp_interval = 0
+execp_centered = 1
+execp_font = sans 9
+execp_markup = 1
+execp_font_color = #aaffaa 100
+execp_padding = 2 0
+execp_tooltip = 5250 Terminal $X5250SESSION
+execp_lclick_command = $X5250COMMAND $X5250SESSION
+execp_background_id = 2
 NEWX5250SESSIONTINT2
 	# step 2: add entry for executor button in panel item sequence
 	sed -e 's/^panel_items = L/panel_items = LE/' -i /etc/xdg/tint2/tint2rc
