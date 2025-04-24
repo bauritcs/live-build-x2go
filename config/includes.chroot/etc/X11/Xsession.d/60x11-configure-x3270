@@ -34,7 +34,7 @@ NEWX3270SESSIONTINT2
 	# add entries to openbox starter
 	for X3270SESSION in $(echo "$X3270SERVERS" | tr '|' ' '); do
 		NEWENTRY=$(
-		echo <<NEWX3270SESSIONOPENBOX
+		cat <<NEWX3270SESSIONOPENBOX
 	  <item label="3270 Terminal $X3270SESSION">
 	    <action name="Execute"><execute>x3270 $X3270SESSION</execute></action>
 	  </item>

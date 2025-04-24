@@ -30,7 +30,7 @@ NEWXTERMTINT2
 
 	# add entries to openbox starter
 	NEWENTRY=$(
-	echo <<NEWXTERMSESSIONOPENBOX
+	cat <<NEWXTERMSESSIONOPENBOX
 	  <item label="X Terminal">
 	    <action name="Execute"><execute>xterm</execute></action>
 	  </item>

@@ -31,7 +31,7 @@ NEWUXTERMTINT2
 
 	# add entries to openbox starter
 	NEWENTRY=$(
-	echo <<NEWUXTERMSESSIONOPENBOX
+	cat <<NEWUXTERMSESSIONOPENBOX
 	  <item label="UX Terminal">
 	    <action name="Execute"><execute>uxterm</execute></action>
 	  </item>

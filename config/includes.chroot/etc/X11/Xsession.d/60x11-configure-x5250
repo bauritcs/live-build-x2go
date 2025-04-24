@@ -53,7 +53,7 @@ NEWX5250SESSIONTINT2
 	# add entries to openbox starter
 	for X5250SESSION in $(echo "$X5250SERVERS" | tr '|' ' '); do
 		NEWENTRY=$(
-		echo <<NEWX5250SESSIONOPENBOX
+		cat <<NEWX5250SESSIONOPENBOX
 	  <item label="5250 Terminal $X5250SESSION">
 	    <action name="Execute"><execute>$X5250COMMAND $X5250SESSION</execute></action>
 	  </item>
