@@ -1,14 +1,20 @@
 # configure openbox
-OPENBOXBUTTONS=$(sed -e 's/ \([^ ]*\)=/\n\1=/g' -e 's/\([^=]["'"'"']\) /\1\n/g' -e 's/ \([^ "'"'"']\)/\n\1/g' /proc/cmdline | awk -F '=' '$1 == "openboxbuttons" { print $2 }' | tr -dc '0-9a-zA-Z,$-_.+!*'"'"'();/?:@=&|')
+OPENBOXBUTTONS=$(sed -e 's/ \([^ ]*\)=/\n\1=/g' -e 's/\([^=]["'"'"']\) /\1\n/g' -e 's/ \([^ "'"'"']\)/\n\1/g' /proc/cmdline | awk -F '=' '$1 == "openboxbuttons" { print $2 }' | tr -dc '0-9a-zA-Z,$-_.+!*'"'"'();/?:@=&|' | tr ',' '|')
 
-BUTTONARRAY=(${OPENBOXBUTTONS//[,|]/ })
+oldIFS=$IFS
+IFS="|"
+set -- $OPENBOXBUTTONS
+BUTTON1="$1"
+BUTTON2="$2"
+BUTTON3="$3"
+IFS=$oldIFS
 
 mkdir -p ~/.config/openbox/
 cp /etc/xdg/openbox/*.xml  ~/.config/openbox/
 
-sed	-e "s/Logout/${BUTTONARRAY[0]}/" \
-	-e "s/Reboot/${BUTTONARRAY[1]}/" \
-	-e "s/Shutdown/${BUTTONARRAY[2]}/" \
+sed	-e "s/Logout/$BUTTON1/" \
+	-e "s/Reboot/$BUTTON2/" \
+	-e "s/Shutdown/$BUTTON3/" \
 	-i  ~/.config/openbox/menu.xml
 
 # reload config if openbox is already running
