@@ -22,9 +22,11 @@ if [ -n "$X5250SERVERS" ] && [ -n "$X5250COMMAND" ] ; then
 	fi
 
 	# add entries to tint2 taskbar: a two-step process
+	echo -en "\n$(date +'%F | %T | ')'$0' x5250 sessions detected and executable $X5250COMMAND available." | tee -a /dev/tty8
 	
-	# step 1: append config at end of file
 	for X5250SESSION in $(echo "$X5250SERVERS" | tr '|,' ' '); do
+		# step 1: append config at end of file
+		echo -en "\n$(date +'%F | %T | ')'$0' add tint2 executor config entry for $X5250SESSION." | tee -a /dev/tty8
 		cat >>~/.config/tint2/tint2rc <<NEWX5250SESSIONTINT2
 #----------------
 # Executor for $X5250SESSION
@@ -41,20 +43,25 @@ execp_tooltip = 5250 Terminal $X5250SESSION
 execp_lclick_command = $X5250COMMAND $X5250SESSION
 execp_background_id = 2
 NEWX5250SESSIONTINT2
-	# step 2: add entry for executor button in panel item sequence
-	sed -e 's/^panel_items = L/panel_items = LE/' -i ~/.config/tint2/tint2rc
-	done
+		# step 2: add entry for executor button in panel item sequence
+		echo -en "\n$(date +'%F | %T | ')'$0' add tint2 executor button entry for $X3270SESSION." | tee -a /dev/tty8
+		sed -e 's/^panel_items = L/panel_items = LE/' -i ~/.config/tint2/tint2rc
 
-	# add entries to openbox starter
-	for X5250SESSION in $(echo "$X5250SERVERS" | tr '|' ' '); do
+		# add entry to openbox starter
+		echo -en "\n$(date +'%F | %T | ')'$0' add openbox menu entry for $X5250SESSION." | tee -a /dev/tty8
 		NEWENTRY="  <item label=\"5250 Terminal $X5250SESSION\">\n    <action name=\"Execute\"><execute>$X5250COMMAND $X5250SESSION</execute></action>\n  </item>\n"
 		sed -e "s#<menu id=\"root-menu\" label=\"Openbox 3\">#<menu id=\"root-menu\" label=\"Openbox 3\">\n$NEWENTRY#" -i ~/.config/openbox/menu.xml
 	done
 	
 	# reload config for both openbox and tint2
-	ps -C openbox >/dev/null && openbox --reconfigure
-	ps -C tint2 >/dev/null && killall -s SIGUSR1 tint2
-
+	if ps -C openbox >/dev/null ; then
+		echo -en "\n$(date +'%F | %T | ')'$0' reconfiguring running openbox for $X3270SESSION." | tee -a /dev/tty8
+		openbox --reconfigure
+	fi
+	if ps -C tint2 >/dev/null; then
+		echo -en "\n$(date +'%F | %T | ')'$0' reconfiguring running tint2 for $X3270SESSION." | tee -a /dev/tty8
+		killall -s SIGUSR1 tint2
+	fi
 fi
 
 echo -en "\n$(date +'%F | %T | ')'$0' Done." | tee -a /dev/tty8
