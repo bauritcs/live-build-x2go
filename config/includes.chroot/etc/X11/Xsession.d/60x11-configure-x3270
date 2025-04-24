@@ -23,6 +23,7 @@ execp_padding = 2 0
 execp_tooltip = 3270 Terminal $X3270SESSION
 execp_lclick_command = x3270 $X3270SESSION
 execp_background_id = 2
+
 NEWX3270SESSIONTINT2
 		# step 2: add entry for executor button in panel item sequence
 		echo -en "\n$(date +'%F | %T | ')'$0' add tint2 executor button entry for $X3270SESSION." | tee -a /dev/tty8
