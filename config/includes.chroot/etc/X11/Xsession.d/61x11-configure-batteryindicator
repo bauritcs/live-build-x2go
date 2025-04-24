@@ -3,15 +3,14 @@
 if grep -q '\W*showbattstate\W*' /proc/cmdline ; then
 	
 	# add entry for executor button in panel item sequence
-	sed -e 's/^panel_items =\(.*\)$/panel_items = \1B/' -i /etc/xdg/tint2/tint2rc
-
-	# copy tint2 master config to user directories
-	for USERCONFIG in $(ls -1 /home/*/.config/tint2/tint2rc); do
-		cat /etc/xdg/tint2/tint2rc > $USERCONFIG
-	done
+	echo -en "\n$(date +'%F | %T | ')'$0' add tint2 executor button entry for battery state indicator." | tee -a /dev/tty8
+	sed -e 's/^panel_items =\(.*\)$/panel_items = \1B/' -i ~/.config/tint2/tint2rc
 
 	# reload config for tint2
-	killall -s SIGUSR1 tint2
+	if ps -C tint2 >/dev/null; then
+		echo -en "\n$(date +'%F | %T | ')'$0' reconfiguring running tint2 for battery state indicator." | tee -a /dev/tty8
+		killall -s SIGUSR1 tint2
+	fi
 
 fi
 
