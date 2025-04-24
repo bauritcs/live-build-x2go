@@ -1,0 +1,18 @@
+# allow xterm if requested
+
+if grep -q '\W*showbattstate\W*' /proc/cmdline ; then
+	
+	# add entry for executor button in panel item sequence
+	sed -e 's/^panel_items =\(.*\)$/panel_items = \1B/' -i /etc/xdg/tint2/tint2rc
+
+	# copy tint2 master config to user directories
+	for USERCONFIG in $(ls -1 /home/*/.config/tint2/tint2rc); do
+		cat /etc/xdg/tint2/tint2rc > $USERCONFIG
+	done
+
+	# reload config for tint2
+	killall -s SIGUSR1 tint2
+
+fi
+
+echo -en "\n$(date +'%F | %T | ')'$0' Done." | tee -a /dev/tty8

@@ -63,7 +63,7 @@ border_color_pressed = #000000 100
 #-------------------------------------
 # Panel
 #panel_items = LTSC
-panel_items = LTSCB
+panel_items = LTSC
 #panel_size = 100% 30
 panel_size = 100% 50
 panel_margin = 0 0
