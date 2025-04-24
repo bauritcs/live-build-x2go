@@ -1,4 +1,4 @@
-# set screen background to X2Go default blue on all detected screens, unless color or image is specified
+# create x5250 session entries
 X5250SERVERS=$(sed -e 's/ \([^ ]*\)=/\n\1=/g' -e 's/\([^=]["'"'"']\) /\1\n/g' -e 's/ \([^ "'"'"']\)/\n\1/g' /proc/cmdline | awk -F '=' '$1 == "x5250servers" { print $2 }' | tr -dc '0-9a-zA-Z,$-_.+!*'"'"'();/?:@=&|')
 
 # check if we have an x5250 command or if we need to emulate it with x3270

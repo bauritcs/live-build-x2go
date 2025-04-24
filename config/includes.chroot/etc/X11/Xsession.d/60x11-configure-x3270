@@ -1,4 +1,4 @@
-# set screen background to X2Go default blue on all detected screens, unless color or image is specified
+# create x3270 session entries
 X3270SERVERS=$(sed -e 's/ \([^ ]*\)=/\n\1=/g' -e 's/\([^=]["'"'"']\) /\1\n/g' -e 's/ \([^ "'"'"']\)/\n\1/g' /proc/cmdline | awk -F '=' '$1 == "x3270servers" { print $2 }' | tr -dc '0-9a-zA-Z,$-_.+!*'"'"'();/?:@=&|')
 
 if [ -n "$X3270SERVERS" ] && [ -x /usr/bin/x3270 ] ; then
