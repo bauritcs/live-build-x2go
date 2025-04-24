@@ -1,0 +1,47 @@
+# allow xterm if requested
+
+if grep -q '\W*allowxterm\W*' /proc/cmdline && [ -x /usr/bin/xterm ] ; then
+	# add entries to tint2 taskbar: a two-step process
+	
+	# step 1: append config at end of file
+	echo >>/etc/xdg/tint2/tint2rc <<NEWXTERMTINT2
+	#----------------
+	# Executor for xterm
+		execp = new
+		execp_command = echo /usr/share/icons/hicolor/48x48/apps/xterm-color.png
+		execp_has_icon = 1
+		execp_interval = 0
+		execp_centered = 1
+		execp_font = sans 9
+		execp_markup = 1
+		execp_font_color = #aaffaa 100
+		execp_padding = 2 0
+		execp_tooltip = XTerm
+		execp_lclick_command = xterm
+		execp_background_id = 2
+NEWXTERMTINT2
+	# step 2: add entry for executor button in panel item sequence
+	sed -e 's/^panel_items = L/panel_items = LE/' -i /etc/xdg/tint2/tint2rc
+
+	# copy tint2 master config to user directories
+	for USERCONFIG in $(ls -1 /home/*/.config/tint2/tint2rc); do
+		cat /etc/xdg/tint2/tint2rc > $USERCONFIG
+	done
+
+	# add entries to openbox starter
+	NEWENTRY=$(
+	echo <<NEWXTERMSESSIONOPENBOX
+	  <item label="X Terminal">
+	    <action name="Execute"><execute>xterm</execute></action>
+	  </item>
+NEWXTERMSESSIONOPENBOX
+	)
+	sed -e "s/<menu id=\"root-menu\" label=\"Openbox 3\">/<menu id=\"root-menu\" label=\"Openbox 3\">\n$NEWENTRY/" -i /etc/xdg/openbox/menu.xml
+	
+	# reload config for both openbox and tint2
+	openbox --reconfigure
+	killall -s SIGUSR1 tint2
+
+fi
+
+echo -en "\n$(date +'%F | %T | ')'$0' Done." | tee -a /dev/tty8
