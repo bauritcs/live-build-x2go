@@ -5,7 +5,7 @@ if [ -n "$X3270SERVERS" ] && [ -x /usr/bin/x3270 ] ; then
 	# add entries to tint2 taskbar: a two-step process
 	
 	# step 1: append config at end of file
-	for X3270SESSION in $(echo "$X3270SERVERS" | tr '|' ' '); do
+	for X3270SESSION in $(echo "$X3270SERVERS" | tr '|,' ' '); do
 		echo >>/etc/xdg/tint2/tint2rc <<NEWX3270SESSIONTINT2
 	#----------------
 	# Executor for $X3270SESSION

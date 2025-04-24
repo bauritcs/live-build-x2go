@@ -24,7 +24,7 @@ if [ -n "$X5250SERVERS" ] && [ -n "$X5250COMMAND" ] ; then
 	# add entries to tint2 taskbar: a two-step process
 	
 	# step 1: append config at end of file
-	for X5250SESSION in $(echo "$X5250SERVERS" | tr '|' ' '); do
+	for X5250SESSION in $(echo "$X5250SERVERS" | tr '|,' ' '); do
 		echo >>/etc/xdg/tint2/tint2rc <<NEWX5250SESSIONTINT2
 	#----------------
 	# Executor for $X5250SESSION
