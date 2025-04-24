@@ -33,11 +33,11 @@ NEWXTERMTINT2
 	
 	# reload config for both openbox and tint2
 	if ps -C openbox >/dev/null ; then
-		echo -en "\n$(date +'%F | %T | ')'$0' reconfiguring running openbox for $X3270SESSION." | tee -a /dev/tty8
+		echo -en "\n$(date +'%F | %T | ')'$0' reconfiguring running openbox for /usr/bin/xterm." | tee -a /dev/tty8
 		openbox --reconfigure
 	fi
 	if ps -C tint2 >/dev/null; then
-		echo -en "\n$(date +'%F | %T | ')'$0' reconfiguring running tint2 for $X3270SESSION." | tee -a /dev/tty8
+		echo -en "\n$(date +'%F | %T | ')'$0' reconfiguring running tint2 for /usr/bin/xterm." | tee -a /dev/tty8
 		killall -s SIGUSR1 tint2
 	fi
 
