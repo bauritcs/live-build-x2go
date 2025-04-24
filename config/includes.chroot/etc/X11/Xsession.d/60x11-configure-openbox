@@ -1,7 +1,15 @@
 # configure openbox
+OPENBOXBUTTONS=$(sed -e 's/ \([^ ]*\)=/\n\1=/g' -e 's/\([^=]["'"'"']\) /\1\n/g' -e 's/ \([^ "'"'"']\)/\n\1/g' /proc/cmdline | awk -F '=' '$1 == "openboxbuttons" { print $2 }' | tr -dc '0-9a-zA-Z,$-_.+!*'"'"'();/?:@=&|')
+
+BUTTONARRAY=(${OPENBOXBUTTONS//[,|]/ })
 
 mkdir -p ~/.config/openbox/
 cp /etc/xdg/openbox/*.xml  ~/.config/openbox/
+
+sed	-e "s/Logout/${BUTTONARRAY[0]}/" \
+	-e "s/Reboot/${BUTTONARRAY[1]}/" \
+	-e "s/Shutdown/${BUTTONARRAY[2]}/" \
+	-i  ~/.config/openbox/menu.xml
 
 # reload config if openbox is already running
 ps -C openbox >/dev/null && openbox --reconfigure
