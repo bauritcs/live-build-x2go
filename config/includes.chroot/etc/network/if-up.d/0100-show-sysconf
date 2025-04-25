@@ -41,7 +41,7 @@ fi
 	IPRAW=$(LANG=C /sbin/ip a)
 	IPMSG=$(echo -e "$IPRAW" | \
 		/bin/grep -P --color=always "inet.*? [\. 0-9a-f:/]*? |$" | \
-		GREP_COLOR="mt=1;32" \
+		GREP_COLORS="mt=1;32" \
 		/bin/grep -P --color=always "link/ether .*? |$" )
 
 	IPMSG=$( sed 's/^/- /' <<< "$IPMSG" )
