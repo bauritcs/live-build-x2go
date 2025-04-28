@@ -6,7 +6,7 @@ iputils-ping
 kbd 
 less 
 net-tools 
-ntpdate
+ntpsec-ntpdate
 openssh-client
 openssh-server
 openssh-sftp-server
