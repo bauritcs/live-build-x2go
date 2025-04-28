@@ -17,7 +17,7 @@ mate-polkit
 mate-settings-daemon
 mate-screensaver
 mate-screensaver-common 
-policykit-1
+polkitd
 systemd-sysv
 udisks2
 x2gothinclient-minidesktop
