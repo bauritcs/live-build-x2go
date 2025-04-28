@@ -1,7 +1,7 @@
 cryptsetup
 cryptsetup-bin
 cryptsetup-initramfs
-cryptsetup-run
+#cryptsetup-run
 freerdp3-x11
 iso-codes
 libfile-path-expand-perl
