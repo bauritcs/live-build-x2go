@@ -5,7 +5,7 @@ gvfs-backends
 gvfs-daemons
 libcanberra-gtk3-module
 liblightdm-gobject-1-0
-libpam-systemd
+#libpam-systemd
 lightdm
 lightdm-gtk-greeter
 mate-control-center
