@@ -1,10 +1,12 @@
 caja
+elogind
 firefox-esr
 gvfs
 gvfs-backends
 gvfs-daemons
 libcanberra-gtk3-module
 liblightdm-gobject-1-0
+libpam-elogind
 #libpam-systemd
 lightdm
 lightdm-gtk-greeter
