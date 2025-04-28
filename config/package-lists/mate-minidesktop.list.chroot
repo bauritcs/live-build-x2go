@@ -17,7 +17,7 @@ mate-settings-daemon
 mate-screensaver
 mate-screensaver-common 
 polkitd
-systemd-sysv
+#systemd-sysv
 udisks2
 x2gothinclient-minidesktop
 x2gothinclient-usbmount
