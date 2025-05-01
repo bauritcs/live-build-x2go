@@ -1,0 +1,16 @@
+# configure autostartapps
+AUTOSTARTAPPS=$(sed -e 's/ \([^ ]*\)=/\n\1=/g' -e 's/\([^=]["'"'"']\) /\1\n/g' -e 's/ \([^ "'"'"']\)/\n\1/g' /proc/cmdline | awk -F '=' '$1 == "autostartapps" { print $2 }' | tr -dc '0-9a-zA-Z,$-_.+!*'"'"'();/?:@=&|' | tr ',' ' ')
+
+for APP in $AUTOSTARTAPPS; do
+	APPFULLPATH=$(which "$APP")
+	# some *.desktop files have "debian-" prefixed to the name of the actual executable
+	# catch this here in case someone specifies the .*desktop file name instead of the app name
+	APPFULLPATHSTRIPPED=$(which "${APP#debian-}")
+	if [ -n "$APPFULLPATH" ]; then
+		$APPFULLPATH &
+	elif [ -n "$APPFULLPATHSTRIPPED" ]; then
+		$APPFULLPATHSTRIPPED &
+	fi
+done
+
+echo -en "\n$(date +'%F | %T | ')'$0' Done." | tee -a /dev/tty8
