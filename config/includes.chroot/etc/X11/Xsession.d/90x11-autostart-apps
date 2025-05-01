@@ -2,14 +2,32 @@
 AUTOSTARTAPPS=$(sed -e 's/ \([^ ]*\)=/\n\1=/g' -e 's/\([^=]["'"'"']\) /\1\n/g' -e 's/ \([^ "'"'"']\)/\n\1/g' /proc/cmdline | awk -F '=' '$1 == "autostartapps" { print $2 }' | tr -dc '0-9a-zA-Z,$-_.+!*'"'"'();/?:@=&|' | tr ',' ' ')
 
 for APP in $AUTOSTARTAPPS; do
-	APPFULLPATH=$(which "$APP")
-	# some *.desktop files have "debian-" prefixed to the name of the actual executable
-	# catch this here in case someone specifies the .*desktop file name instead of the app name
-	APPFULLPATHSTRIPPED=$(which "${APP#debian-}")
-	if [ -n "$APPFULLPATH" ]; then
-		$APPFULLPATH &
-	elif [ -n "$APPFULLPATHSTRIPPED" ]; then
-		$APPFULLPATHSTRIPPED &
+	if [ "$APP" = "x5250" ] ; then
+		X5250SESSIONLIST=$(grep -A1 "^execp_tooltip = 5250" ~/.config/tint2/tint2rc | awk -F'=' '$1=="execp_lclick_command" {print $2 ","}')
+		oldIFS=$IFS
+		IFS=","
+		for X5250SESSION in $X5250SESSIONLIST; do
+			$X5250SESSION &
+		done	
+		IFS=$oldIFS
+	elif [ "$APP" = "x3270" ] ; then
+		X5250SESSIONLIST=$(grep -A1 "^execp_tooltip = 3270" ~/.config/tint2/tint2rc | awk -F'=' '$1=="execp_lclick_command" {print $2 ","}')
+		oldIFS=$IFS
+		IFS=","
+		for X3270SESSION in $X3270SESSIONLIST; do
+			$X3270SESSION &
+		done	
+		IFS=$oldIFS
+	else
+		APPFULLPATH=$(which "$APP")
+		# some *.desktop files have "debian-" prefixed to the name of the actual executable
+		# catch this here in case someone specifies the .*desktop file name instead of the app name
+		APPFULLPATHSTRIPPED=$(which "${APP#debian-}")
+		if [ -n "$APPFULLPATH" ]; then
+			$APPFULLPATH &
+		elif [ -n "$APPFULLPATHSTRIPPED" ]; then
+			$APPFULLPATHSTRIPPED &
+		fi
 	fi
 done
 
