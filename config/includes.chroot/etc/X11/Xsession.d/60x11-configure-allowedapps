@@ -40,7 +40,7 @@ for APP in $ALLOWEDAPPS; do
 		sed -e "s#launcher_item_app = /usr/share/applications/tint2-button.desktop#launcher_item_app = /usr/share/applications/tint2-button.desktop\n$NEWENTRYT#" -i ~/.config/tint2/tint2rc
 		# add entries to openbox starter
 		# strip "debian-" from name
-		ENTRYNAME=${ENTRYNAME#debian-}
+		ENTRYNAME=${APP#debian-}
 		# convert to all lowercase
 		ENTRYNAME=${ENTRYNAME@L}
 		#special treatment for (U)Xterm
