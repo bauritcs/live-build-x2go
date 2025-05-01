@@ -42,7 +42,7 @@ for APP in $ALLOWEDAPPS; do
 		# strip "debian-" from name
 		ENTRYNAME=${ENTRYNAME#debian-}
 		# convert to all lowercase
-		ENTRYNAME=${APP@L}
+		ENTRYNAME=${ENTRYNAME@L}
 		#special treatment for (U)Xterm
 		if [ "$ENTRYNAME" = "uxterm" ] ; then
 			ENTRYNAME="UXTerm"
