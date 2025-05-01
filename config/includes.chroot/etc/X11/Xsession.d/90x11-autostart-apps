@@ -38,7 +38,8 @@ for APP in $AUTOSTARTAPPS; do
 		echo -en "\n$(date +'%F | %T | ')'$0' Found these x3270 sessions: '$X3270SESSIONLIST'" | tee -a /dev/tty8
 		if [ -n "$3270SESSIONLIST" ]; then
 			oldIFS=$IFS
-			IFS=","
+			newIFS=","
+			IFS=$newIFS
 			for X3270SESSION in $X3270SESSIONLIST; do
 				echo -en "\n$(date +'%F | %T | ')'$0' Spawning '$X3270SESSION'." | tee -a /dev/tty8
 				IFS=$oldIFS
