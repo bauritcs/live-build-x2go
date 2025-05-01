@@ -60,12 +60,12 @@ for APP in $REVERSEALLOWEDAPPS; do
 		elif [ "$ENTRYNAME" = "x2goclient" ] ; then
 			ENTRYNAME="X2GoClient"
 		else
-			# capitalize first letter (of each word, but we only have one)
+			# capitalize first letter (of each word)
 			ENTRYNAME=$(echo $ENTRYNAME | sed -e "s/\b\(.\)/\u\1/g") # a bunch of stable geniuses in Debian decided they need to enforce dash, so the sleek bashism ${ENTRYNAME@u} won't work here
 		fi
 		echo -en "\n$(date +'%F | %T | ')'$0' add openbox menu entry for ${APP}." | tee -a /dev/tty8
-		NEWENTRYO="  <item label=\"$ENTRYNAME\">\n    <action name=\"Execute\"><execute>${APP}</execute></action>\n  </item>"
-		sed -e "s#<menu id=\"root-menu\" label=\"Openbox 3\">#<menu id=\"root-menu\" label=\"Openbox 3\">\n$NEWENTRYO#" -i ~/.config/openbox/menu.xml
+		NEWENTRY="  <item label=\"$ENTRYNAME\">\n    <action name=\"Execute\"><execute>${APP}</execute></action>\n  </item>"
+		sed -e "s#<menu id=\"root-menu\" label=\"Openbox 3\">#<menu id=\"root-menu\" label=\"Openbox 3\">\n$NEWENTRY#" -i ~/.config/openbox/menu.xml
 	fi
 ######################################################################
 	if [ "$APP" = "x5250" ] && [ -n "$X5250SERVERS" ] && [ -n "$X5250COMMAND" ] && [ -x "$X5250COMMAND" ] ; then
@@ -217,15 +217,17 @@ NEWXTERMTINT2
 
 	fi
 #######################################################################
-	# reload config for both openbox and tint2
-	if ps -C openbox >/dev/null ; then
-		echo -en "\n$(date +'%F | %T | ')'$0' reconfiguring running openbox." | tee -a /dev/tty8
-		openbox --reconfigure
-	fi
-	if ps -C tint2 >/dev/null; then
-		echo -en "\n$(date +'%F | %T | ')'$0' reconfiguring running tint2." | tee -a /dev/tty8
-		killall -s SIGUSR1 tint2
-	fi
+
 done
+
+# reload config for both openbox and tint2
+if ps -C openbox >/dev/null ; then
+	echo -en "\n$(date +'%F | %T | ')'$0' reconfiguring running openbox." | tee -a /dev/tty8
+	openbox --reconfigure
+fi
+if ps -C tint2 >/dev/null; then
+	echo -en "\n$(date +'%F | %T | ')'$0' reconfiguring running tint2." | tee -a /dev/tty8
+	killall -s SIGUSR1 tint2
+fi
 
 echo -en "\n$(date +'%F | %T | ')'$0' Done." | tee -a /dev/tty8
