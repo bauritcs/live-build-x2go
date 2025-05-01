@@ -42,15 +42,15 @@ for APP in $ALLOWEDAPPS; do
 		# strip "debian-" from name
 		ENTRYNAME=${APP#debian-}
 		# convert to all lowercase
-		ENTRYNAME=${ENTRYNAME@L}
+		ENTRYNAME=$(echo $ENTRYNAME | tr '[:upper:]' '[:lower:]') # a bunch of stable geniuses in Debian decided they need to enforce dash, so the sleek bashism ${ENTRYNAME@L} won't work here
 		#special treatment for (U)Xterm
 		if [ "$ENTRYNAME" = "uxterm" ] ; then
 			ENTRYNAME="UXTerm"
 		elif [ "$ENTRYNAME" = "xterm" ] ; then
 			ENTRYNAME="XTerm"
 		else
-			# capitalize first letter
-			ENTRYNAME=${ENTRYNAME@u}
+			# capitalize first letter (of each word, but we only have one)
+			ENTRYNAME=$(echo $ENTRYNAME | sed -e "s/\b\(.\)/\u\1/g") # a bunch of stable geniuses in Debian decided they need to enforce dash, so the sleek bashism ${ENTRYNAME@u} won't work here
 		fi
 		echo -en "\n$(date +'%F | %T | ')'$0' add openbox menu entry for ${APP}." | tee -a /dev/tty8
 		NEWENTRYO="  <item label=\"$ENTRYNAME\">\n    <action name=\"Execute\"><execute>${APP}</execute></action>\n  </item>"
