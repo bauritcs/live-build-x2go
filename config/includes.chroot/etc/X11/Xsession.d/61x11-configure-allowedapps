@@ -4,9 +4,9 @@ ALLOWEDAPPS=$(sed -e 's/ \([^ ]*\)=/\n\1=/g' -e 's/\([^=]["'"'"']\) /\1\n/g' -e 
 X3270SERVERS=$(sed -e 's/ \([^ ]*\)=/\n\1=/g' -e 's/\([^=]["'"'"']\) /\1\n/g' -e 's/ \([^ "'"'"']\)/\n\1/g' /proc/cmdline | awk -F '=' '$1 == "x3270servers" { print $2 }' | tr -dc '0-9a-zA-Z,$-_.+!*'"'"'();/?:@=&|')
 X5250SERVERS=$(sed -e 's/ \([^ ]*\)=/\n\1=/g' -e 's/\([^=]["'"'"']\) /\1\n/g' -e 's/ \([^ "'"'"']\)/\n\1/g' /proc/cmdline | awk -F '=' '$1 == "x5250servers" { print $2 }' | tr -dc '0-9a-zA-Z,$-_.+!*'"'"'();/?:@=&|')
 
-# make sure to allow x2goclient, firefox, and debian-uxterm for easier debugging if nothing is allowed
+# make sure to allow x2goclient, firefox, firefox-esr, and debian-uxterm for easier debugging if nothing is allowed
 if [ -z "$ALLOWEDAPPS" ] ; then
-	ALLOWEDAPPS="x2goclient firefox debian-uxterm"
+	ALLOWEDAPPS="x2goclient firefox firefox-esr debian-uxterm"
 fi
 
 # check if we have an x5250 command or if we need to emulate it with x3270
