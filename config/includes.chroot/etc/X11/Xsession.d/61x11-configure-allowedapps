@@ -48,6 +48,7 @@ for APP in $REVERSEALLOWEDAPPS; do
 		# add entries to openbox starter
 		# strip "debian-" from name
 		ENTRYNAME=${APP#debian-}
+		APP=${APP#debian-}
 		# convert to all lowercase
 		ENTRYNAME=$(echo $ENTRYNAME | tr '[:upper:]' '[:lower:]') # a bunch of stable geniuses in Debian decided they need to enforce dash, so the sleek bashism ${ENTRYNAME@L} won't work here
 		#special treatment for (U)Xterm, Firefox-ESR and X2GoClient
