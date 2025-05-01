@@ -1,74 +1,78 @@
 # configure autostartapps
 AUTOSTARTAPPS=$(sed -e 's/ \([^ ]*\)=/\n\1=/g' -e 's/\([^=]["'"'"']\) /\1\n/g' -e 's/ \([^ "'"'"']\)/\n\1/g' /proc/cmdline | awk -F '=' '$1 == "autostartapps" { print $2 }' | tr -dc '0-9a-zA-Z,$-_.+!*'"'"'();/?:@=&|' | tr ',' ' ')
 
-for APP in $AUTOSTARTAPPS; do
-	if [ "$APP" = "x5250" ] ; then
-		echo -en "\n$(date +'%F | %T | ')'$0' Spawning one or more x5250 sessions." | tee -a /dev/tty8
-		X5250SESSIONLIST=$(grep -A1 "^execp_tooltip = 5250" ~/.config/tint2/tint2rc | awk -F'=' '$1=="execp_lclick_command " {print $2 ","}')
-		echo -en "\n$(date +'%F | %T | ')'$0' Found these x5250 sessions: '$X5250SESSIONLIST'" | tee -a /dev/tty8
-		if [ -n "$X5250SESSIONLIST" ]; then
-			oldIFS=$IFS
-			newIFS=","
-			IFS=$newIFS
-			for X5250SESSION in $X5250SESSIONLIST; do
-				echo -en "\n$(date +'%F | %T | ')'$0' Spawning '$X5250SESSION'." | tee -a /dev/tty8
-				IFS=$oldIFS
-				$X5250SESSION &
-				IFS=$newIFS
-			done
-			IFS=$oldIFS
-		else
-			# check if we have an x5250 command or if we need to emulate it with x3270
-			if [ -x /usr/local/bin/x5250 ] ; then
-				echo -en "\n$(date +'%F | %T | ')'$0' Spawning '/usr/local/bin/x5250'." | tee -a /dev/tty8
-				/usr/local/bin/x5250 &
-			elif [ -x /usr/bin/x5250 ] ; then
-				echo -en "\n$(date +'%F | %T | ')'$0' Spawning '/usr/bin/x5250'." | tee -a /dev/tty8
-				/usr/bin/x5250 &
-			elif [ -x /usr/bin/x3270 ] ; then
-				echo -en "\n$(date +'%F | %T | ')'$0' Spawning '/usr/bin/x3270 -model 2'." | tee -a /dev/tty8
-				/usr/bin/x3270 -model 2 &
-			else
-				echo -en "\n$(date +'%F | %T | ')'$0' Not spawning any x5250 emulation - no suitable executable found." | tee -a /dev/tty8
-			fi
-		fi
-	elif [ "$APP" = "x3270" ] ; then
-		echo -en "\n$(date +'%F | %T | ')'$0' Spawning one or more x3270 sessions." | tee -a /dev/tty8
-		X3270SESSIONLIST=$(grep -A1 "^execp_tooltip = 3270" ~/.config/tint2/tint2rc | awk -F'=' '$1=="execp_lclick_command " {print $2 ","}')
-		echo -en "\n$(date +'%F | %T | ')'$0' Found these x3270 sessions: '$X3270SESSIONLIST'" | tee -a /dev/tty8
-		if [ -n "$3270SESSIONLIST" ]; then
-			oldIFS=$IFS
-			newIFS=","
-			IFS=$newIFS
-			for X3270SESSION in $X3270SESSIONLIST; do
-				echo -en "\n$(date +'%F | %T | ')'$0' Spawning '$X3270SESSION'." | tee -a /dev/tty8
-				IFS=$oldIFS
-				$X3270SESSION &
-				IFS=$newIFS
-			done
-			IFS=$oldIFS
-		else
-			# check if we have an x3270 command
-			if [ -x /usr/bin/x3270 ] ; then
-				echo -en "\n$(date +'%F | %T | ')'$0' Spawning '/usr/bin/x3270'." | tee -a /dev/tty8
-				/usr/bin/x3270 &
-			else
-				echo -en "\n$(date +'%F | %T | ')'$0' Not spawning any x3270 emulation - no suitable executable found." | tee -a /dev/tty8
-			fi
-		fi
-	else
-		APPFULLPATH=$(which "$APP")
-		# some *.desktop files have "debian-" prefixed to the name of the actual executable
-		# catch this here in case someone specifies the .*desktop file name instead of the app name
-		APPFULLPATHSTRIPPED=$(which "${APP#debian-}")
-		if [ -n "$APPFULLPATH" ]; then
-			echo -en "\n$(date +'%F | %T | ')'$0' Spawning '$APPFULLPATH'." | tee -a /dev/tty8
-			$APPFULLPATH &
-		elif [ -n "$APPFULLPATHSTRIPPED" ]; then
-			echo -en "\n$(date +'%F | %T | ')'$0' Spawning '$APPFULLPATHSTRIPPED'." | tee -a /dev/tty8
-			$APPFULLPATHSTRIPPED &
-		fi
-	fi
-done
+# background this and wait for tint2 to appear
+(
+	while ! xdotool search tint2 >/dev/null; do sleep 1; done
 
+	for APP in $AUTOSTARTAPPS; do
+		if [ "$APP" = "x5250" ] ; then
+			echo -en "\n$(date +'%F | %T | ')'$0' Spawning one or more x5250 sessions." | tee -a /dev/tty8
+			X5250SESSIONLIST=$(grep -A1 "^execp_tooltip = 5250" ~/.config/tint2/tint2rc | awk -F'=' '$1=="execp_lclick_command " {print $2 ","}')
+			echo -en "\n$(date +'%F | %T | ')'$0' Found these x5250 sessions: '$X5250SESSIONLIST'" | tee -a /dev/tty8
+			if [ -n "$X5250SESSIONLIST" ]; then
+				oldIFS=$IFS
+				newIFS=","
+				IFS=$newIFS
+				for X5250SESSION in $X5250SESSIONLIST; do
+					echo -en "\n$(date +'%F | %T | ')'$0' Spawning '$X5250SESSION'." | tee -a /dev/tty8
+					IFS=$oldIFS
+					$X5250SESSION &
+					IFS=$newIFS
+				done
+				IFS=$oldIFS
+			else
+				# check if we have an x5250 command or if we need to emulate it with x3270
+				if [ -x /usr/local/bin/x5250 ] ; then
+					echo -en "\n$(date +'%F | %T | ')'$0' Spawning '/usr/local/bin/x5250'." | tee -a /dev/tty8
+					/usr/local/bin/x5250 &
+				elif [ -x /usr/bin/x5250 ] ; then
+					echo -en "\n$(date +'%F | %T | ')'$0' Spawning '/usr/bin/x5250'." | tee -a /dev/tty8
+					/usr/bin/x5250 &
+				elif [ -x /usr/bin/x3270 ] ; then
+					echo -en "\n$(date +'%F | %T | ')'$0' Spawning '/usr/bin/x3270 -model 2'." | tee -a /dev/tty8
+					/usr/bin/x3270 -model 2 &
+				else
+					echo -en "\n$(date +'%F | %T | ')'$0' Not spawning any x5250 emulation - no suitable executable found." | tee -a /dev/tty8
+				fi
+			fi
+		elif [ "$APP" = "x3270" ] ; then
+			echo -en "\n$(date +'%F | %T | ')'$0' Spawning one or more x3270 sessions." | tee -a /dev/tty8
+			X3270SESSIONLIST=$(grep -A1 "^execp_tooltip = 3270" ~/.config/tint2/tint2rc | awk -F'=' '$1=="execp_lclick_command " {print $2 ","}')
+			echo -en "\n$(date +'%F | %T | ')'$0' Found these x3270 sessions: '$X3270SESSIONLIST'" | tee -a /dev/tty8
+			if [ -n "$3270SESSIONLIST" ]; then
+				oldIFS=$IFS
+				newIFS=","
+				IFS=$newIFS
+				for X3270SESSION in $X3270SESSIONLIST; do
+					echo -en "\n$(date +'%F | %T | ')'$0' Spawning '$X3270SESSION'." | tee -a /dev/tty8
+					IFS=$oldIFS
+					$X3270SESSION &
+					IFS=$newIFS
+				done
+				IFS=$oldIFS
+			else
+				# check if we have an x3270 command
+				if [ -x /usr/bin/x3270 ] ; then
+					echo -en "\n$(date +'%F | %T | ')'$0' Spawning '/usr/bin/x3270'." | tee -a /dev/tty8
+					/usr/bin/x3270 &
+				else
+					echo -en "\n$(date +'%F | %T | ')'$0' Not spawning any x3270 emulation - no suitable executable found." | tee -a /dev/tty8
+				fi
+			fi
+		else
+			APPFULLPATH=$(which "$APP")
+			# some *.desktop files have "debian-" prefixed to the name of the actual executable
+			# catch this here in case someone specifies the .*desktop file name instead of the app name
+			APPFULLPATHSTRIPPED=$(which "${APP#debian-}")
+			if [ -n "$APPFULLPATH" ]; then
+				echo -en "\n$(date +'%F | %T | ')'$0' Spawning '$APPFULLPATH'." | tee -a /dev/tty8
+				$APPFULLPATH &
+			elif [ -n "$APPFULLPATHSTRIPPED" ]; then
+				echo -en "\n$(date +'%F | %T | ')'$0' Spawning '$APPFULLPATHSTRIPPED'." | tee -a /dev/tty8
+				$APPFULLPATHSTRIPPED &
+			fi
+		fi
+	done
+) &
 echo -en "\n$(date +'%F | %T | ')'$0' Done." | tee -a /dev/tty8
