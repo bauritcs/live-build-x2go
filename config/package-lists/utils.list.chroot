@@ -17,6 +17,7 @@ screen
 traceroute
 trickle
 util-linux
+util-linux-extra
 vim 
 wget
 xinetd
