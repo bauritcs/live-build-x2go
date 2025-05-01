@@ -50,11 +50,15 @@ for APP in $REVERSEALLOWEDAPPS; do
 		ENTRYNAME=${APP#debian-}
 		# convert to all lowercase
 		ENTRYNAME=$(echo $ENTRYNAME | tr '[:upper:]' '[:lower:]') # a bunch of stable geniuses in Debian decided they need to enforce dash, so the sleek bashism ${ENTRYNAME@L} won't work here
-		#special treatment for (U)Xterm
+		#special treatment for (U)Xterm, Firefox-ESR and X2GoClient
 		if [ "$ENTRYNAME" = "uxterm" ] ; then
 			ENTRYNAME="UXTerm"
 		elif [ "$ENTRYNAME" = "xterm" ] ; then
 			ENTRYNAME="XTerm"
+		elif [ "$ENTRYNAME" = "firefox-esr" ] ; then
+			ENTRYNAME="Firefox-ESR"
+		elif [ "$ENTRYNAME" = "x2goclient" ] ; then
+			ENTRYNAME="X2GoClient"
 		else
 			# capitalize first letter (of each word, but we only have one)
 			ENTRYNAME=$(echo $ENTRYNAME | sed -e "s/\b\(.\)/\u\1/g") # a bunch of stable geniuses in Debian decided they need to enforce dash, so the sleek bashism ${ENTRYNAME@u} won't work here
