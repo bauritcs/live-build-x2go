@@ -1,0 +1,28 @@
+#!/bin/bash
+LPRDEST=$(sed -e 's/ \([^ ]*\)=/\n\1=/g' -e 's/\([^=]["'"'"']\) /\1\n/g' -e 's/ \([^ "'"'"']\)/\n\1/g' /proc/cmdline | \
+                           awk -F'=' ' /^lprdest=/ { print $2 }' | \
+		           tr -dc 'a-zA-Z0-9.:[]-')
+if [ -z "$LPRDEST" ] ; then
+	echo -en "\n"
+	echo "This ($0) is a stub and not a real lpr."
+	echo -en "\n"
+	echo "You need to set boot parameter lprdest= to an IP address"
+	echo "or resolveable DNS name (and :port, if not 9100) where a"
+	echo "network printer or some remote printer daemon is"
+	echo "listening. Whatever you specify here should be capable of"
+	echo "processing raw ASCII, possibly EBCDIC as well. No"
+	echo "processing/conversion of any kind will happen on this"
+	echo "machine, so if the remote end is expecting PCL,"
+	echo "PostScript, PDF, or something weirder like ESC/P2, it's"
+	echo "YOUR responsibility to come up with a suitable filter."
+	echo -en "\n"
+	echo "However, you CAN point this script at a locally attached"
+	echo "printer by specifying the following boot parameters:"
+	echo "tcpprint tcpprintonlyfrom='127.0.0.1' lprdest='127.0.0.1'"
+	echo -en "\n"
+else
+	LPRPORT=${LPRDEST##*:}
+	[ -z "$PORT" ] && PORT=9100
+	LPRIP=$(echo ${LPRDEST%:*} | tr -d '[]') 
+	nc -q 1 ${LPRDEST%:*} $LPRPORT
+fi
