@@ -6,15 +6,6 @@
                 file:///usr/share/openbox/menu.xsd">
 
 <menu id="root-menu" label="Openbox 3">
-  <item label="X2GoClient">
-    <action name="Execute"><execute>x2goclient</execute></action>
-  </item>
-  <item label="Firefox">
-    <action name="Execute"><execute>firefox-esr</execute></action>
-  </item>
-  <item label="Chromium">
-    <action name="Execute"><execute>chromium</execute></action>
-  </item>
   <separator/>
   <item label="Logout">
 	  <action name="Execute"><execute>/usr/bin/bash -c 'killall -9 x2goclient chromium firefox-esr ; rm -rf ~/.config/chromium ~/.mozilla ~/.cache/* ; openbox --exit'</execute></action>
