@@ -28,7 +28,6 @@ done
 
 # loop through allowed-app-list
 for APP in $REVERSEALLOWEDAPPS; do
-######################################################################
 	if	   [ "$APP" = "x2goclient" ] \
 		|| [ "$APP" = "firefox" ] \
 		|| [ "$APP" = "firefox-esr" ] \
@@ -67,10 +66,7 @@ for APP in $REVERSEALLOWEDAPPS; do
 		echo -en "\n$(date +'%F | %T | ')'$0' add openbox menu entry for ${APP}." | tee -a /dev/tty8
 		NEWENTRY="  <item label=\"$ENTRYNAME\">\n    <action name=\"Execute\"><execute>${APP}</execute></action>\n  </item>"
 		sed -e "s#<menu id=\"root-menu\" label=\"Openbox 3\">#<menu id=\"root-menu\" label=\"Openbox 3\">\n$NEWENTRY#" -i ~/.config/openbox/menu.xml
-	fi
-######################################################################
-	if [ "$APP" = "x5250" ] && [ -n "$X5250SERVERS" ] && [ -n "$X5250COMMAND" ] && [ -x "${X5250COMMAND%% *}" ] ; then
-
+	elif [ "$APP" = "x5250" ] && [ -n "$X5250SERVERS" ] && [ -n "$X5250COMMAND" ] && [ -x "${X5250COMMAND%% *}" ] ; then
 		# determine icon path
 		if [ -s /usr/share/icons/hicolor/48x48/apps/x5250.png ]; then
 			X5250ICON="/usr/share/icons/hicolor/48x48/apps/x5250.png"
@@ -110,11 +106,7 @@ NEWX5250SESSIONTINT2
 			NEWENTRY="  <item label=\"5250 Terminal $X5250SESSION\">\n    <action name=\"Execute\"><execute>$X5250COMMAND $X5250SESSION</execute></action>\n  </item>\n"
 			sed -e "s#<menu id=\"root-menu\" label=\"Openbox 3\">#<menu id=\"root-menu\" label=\"Openbox 3\">\n$NEWENTRY#" -i ~/.config/openbox/menu.xml
 		done
-	fi
-#######################################################################
-
-#######################################################################
-	if [ "$APP" = "x3270" ] && [ -n "$X3270SERVERS" ] && [ -x /usr/bin/x3270 ] ; then
+	elif [ "$APP" = "x3270" ] && [ -n "$X3270SERVERS" ] && [ -x /usr/bin/x3270 ] ; then
 		# add entries to tint2 taskbar: a two-step process
 		echo -en "\n$(date +'%F | %T | ')'$0' x3270 sessions detected and /usr/bin/x3270 executable available." | tee -a /dev/tty8
 		
@@ -148,8 +140,6 @@ NEWX3270SESSIONTINT2
 			sed -e "s#<menu id=\"root-menu\" label=\"Openbox 3\">#<menu id=\"root-menu\" label=\"Openbox 3\">\n$NEWENTRY#" -i ~/.config/openbox/menu.xml
 		done
 	fi
-#######################################################################
-
 done
 
 # reload config for both openbox and tint2
