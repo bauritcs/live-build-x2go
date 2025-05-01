@@ -68,7 +68,7 @@ for APP in $REVERSEALLOWEDAPPS; do
 		sed -e "s#<menu id=\"root-menu\" label=\"Openbox 3\">#<menu id=\"root-menu\" label=\"Openbox 3\">\n$NEWENTRY#" -i ~/.config/openbox/menu.xml
 	fi
 ######################################################################
-	if [ "$APP" = "x5250" ] && [ -n "$X5250SERVERS" ] && [ -n "$X5250COMMAND" ] && [ -x "$X5250COMMAND" ] ; then
+	if [ "$APP" = "x5250" ] && [ -n "$X5250SERVERS" ] && [ -n "$X5250COMMAND" ] && [ -x "${X5250COMMAND%% *}" ] ; then
 
 		# determine icon path
 		if [ -s /usr/share/icons/hicolor/48x48/apps/x5250.png ]; then
