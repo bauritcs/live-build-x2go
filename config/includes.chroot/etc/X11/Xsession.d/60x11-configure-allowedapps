@@ -1,0 +1,219 @@
+# allow requested apps in gui
+
+ALLOWEDAPPS=$(sed -e 's/ \([^ ]*\)=/\n\1=/g' -e 's/\([^=]["'"'"']\) /\1\n/g' -e 's/ \([^ "'"'"']\)/\n\1/g' /proc/cmdline | awk -F '=' '$1 == "allowedapps" { print $2 }' | tr -dc '0-9a-zA-Z,$-_.+!*'"'"'();/?:@=&|' | tr ',' ' ')
+X3270SERVERS=$(sed -e 's/ \([^ ]*\)=/\n\1=/g' -e 's/\([^=]["'"'"']\) /\1\n/g' -e 's/ \([^ "'"'"']\)/\n\1/g' /proc/cmdline | awk -F '=' '$1 == "x3270servers" { print $2 }' | tr -dc '0-9a-zA-Z,$-_.+!*'"'"'();/?:@=&|')
+X5250SERVERS=$(sed -e 's/ \([^ ]*\)=/\n\1=/g' -e 's/\([^=]["'"'"']\) /\1\n/g' -e 's/ \([^ "'"'"']\)/\n\1/g' /proc/cmdline | awk -F '=' '$1 == "x5250servers" { print $2 }' | tr -dc '0-9a-zA-Z,$-_.+!*'"'"'();/?:@=&|')
+
+# make sure to allow x2goclient, firefox, and debian-uxterm for easier debugging if nothing is allowed
+if [ -z "$ALLOWEDAPPS" ] ; then
+	ALLOWEDAPPS="x2goclient firefox debian-uxterm"
+fi
+
+# check if we have an x5250 command or if we need to emulate it with x3270
+if [ -x /usr/local/bin/x5250 ] ; then
+	X5250COMMAND="/usr/local/bin/x5250"
+elif [ -x /usr/bin/x5250 ] ; then
+	X5250COMMAND="/usr/bin/x5250"
+elif [ -x /usr/bin/x3270 ] ; then
+	X5250COMMAND="/usr/bin/x3270 -model 2"
+else
+	X5250COMMAND=""
+fi
+
+# loop through allowed-app-list
+for APP in $ALLOWEDAPPS; do
+######################################################################
+	if	[ "$APP" = "x2goclient" ] || \
+		[ "$APP" = "firefox" ] || \
+		[ "$APP" = "firefox-esr" ] || \
+		[ "$APP" = "chromium-browser" ] || \
+		[ "$APP" = "chromium" ] || \
+		[ "$APP" = "chrome" ] || \
+		[ "$APP" = "debian-xterm" ] || \
+		[ "$APP" = "xterm" ] || \
+		[ "$APP" = "debian-uxterm" ] || \
+		[ "$APP" = "uxterm" ] || \
+		&& [ -f /usr/share/applications/${APP}.desktop ] ; then
+		# add entry to tint2 launcher
+		echo -en "\n$(date +'%F | %T | ')'$0' add tint2 launcher entry entry for ${APP}." | tee -a /dev/tty8
+		NEWENTRYT="launcher_item_app = ${APP}.desktop"
+		sed -e "s#launcher_item_app = /usr/share/applications/tint2-button.desktop#launcher_item_app = /usr/share/applications/tint2-button.desktop\n$NEWENTRYT#" -i ~/.config/tint2/tint2rc
+		# add entries to openbox starter
+		# strip "debian-" from name
+		ENTRYNAME=${ENTRYNAME#debian-}
+		# convert to all lowercase
+		ENTRYNAME=${APP@L}
+		#special treatment for (U)Xterm
+		if [ "$ENTRYNAME" = "uxterm" ] ; then
+			ENTRYNAME="UXTerm"
+		elif [ "$ENTRYNAME" = "xterm" ] ; then
+			ENTRYNAME="XTerm"
+		else
+			# capitalize first letter
+			ENTRYNAME=${ENTRYNAME@u}
+		fi
+		echo -en "\n$(date +'%F | %T | ')'$0' add openbox menu entry for ${APP}." | tee -a /dev/tty8
+		NEWENTRYO="  <item label=\"$ENTRYNAME\">\n    <action name=\"Execute\"><execute>${APP}</execute></action>\n  </item>"
+		sed -e "s#<menu id=\"root-menu\" label=\"Openbox 3\">#<menu id=\"root-menu\" label=\"Openbox 3\">\n$NEWENTRYO#" -i ~/.config/openbox/menu.xml
+	fi
+######################################################################
+	if [ "$APP" = "x5250" ] && [ -n "$X5250SERVERS" ] && [ -n "$X5250COMMAND" ] && [ -x "$X5250COMMAND" ] ; then
+
+		# determine icon path
+		if [ -s /usr/share/icons/hicolor/48x48/apps/x5250.png ]; then
+			X5250ICON="/usr/share/icons/hicolor/48x48/apps/x5250.png"
+		else
+			X5250ICON="/usr/share/icons/hicolor/48x48/apps/x3270.png"
+		fi
+
+		# add entries to tint2 taskbar: a two-step process
+		echo -en "\n$(date +'%F | %T | ')'$0' x5250 sessions detected and executable $X5250COMMAND available." | tee -a /dev/tty8
+
+		for X5250SESSION in $(echo "$X5250SERVERS" | tr '|,' ' '); do
+			# step 1: append config at end of file
+			echo -en "\n$(date +'%F | %T | ')'$0' add tint2 executor config entry for $X5250SESSION." | tee -a /dev/tty8
+			cat >>~/.config/tint2/tint2rc <<NEWX5250SESSIONTINT2
+#----------------
+# Executor for $X5250SESSION
+execp = new
+execp_command = echo $X5250ICON
+execp_has_icon = 1
+execp_interval = 0
+execp_centered = 1
+execp_font = sans 9
+execp_markup = 1
+execp_font_color = #aaffaa 100
+execp_padding = 2 0
+execp_tooltip = 5250 Terminal $X5250SESSION
+execp_lclick_command = $X5250COMMAND $X5250SESSION
+execp_background_id = 2
+
+NEWX5250SESSIONTINT2
+			# step 2: add entry for executor button in panel item sequence
+			echo -en "\n$(date +'%F | %T | ')'$0' add tint2 executor button entry for $X3270SESSION." | tee -a /dev/tty8
+			sed -e 's/^panel_items = L/panel_items = LE/' -i ~/.config/tint2/tint2rc
+
+			# add entry to openbox starter
+			echo -en "\n$(date +'%F | %T | ')'$0' add openbox menu entry for $X5250SESSION." | tee -a /dev/tty8
+			NEWENTRY="  <item label=\"5250 Terminal $X5250SESSION\">\n    <action name=\"Execute\"><execute>$X5250COMMAND $X5250SESSION</execute></action>\n  </item>\n"
+			sed -e "s#<menu id=\"root-menu\" label=\"Openbox 3\">#<menu id=\"root-menu\" label=\"Openbox 3\">\n$NEWENTRY#" -i ~/.config/openbox/menu.xml
+		done
+	fi
+#######################################################################
+
+#######################################################################
+	if [ "$APP" = "x3270" ] && [ -n "$X3270SERVERS" ] && [ -x /usr/bin/x3270 ] ; then
+	# add entries to tint2 taskbar: a two-step process
+	echo -en "\n$(date +'%F | %T | ')'$0' x3270 sessions detected and /usr/bin/x3270 executable available." | tee -a /dev/tty8
+	
+	for X3270SESSION in $(echo "$X3270SERVERS" | tr '|,' ' '); do
+		# step 1: append config at end of file
+		echo -en "\n$(date +'%F | %T | ')'$0' add tint2 executor config entry for $X3270SESSION." | tee -a /dev/tty8
+		cat >>~/.config/tint2/tint2rc <<NEWX3270SESSIONTINT2
+#----------------
+# Executor for $X3270SESSION
+execp = new
+execp_command = echo /usr/share/icons/hicolor/48x48/apps/x3270.png
+execp_has_icon = 1
+execp_interval = 0
+execp_centered = 1
+execp_font = sans 9
+execp_markup = 1
+execp_font_color = #aaffaa 100
+execp_padding = 2 0
+execp_tooltip = 3270 Terminal $X3270SESSION
+execp_lclick_command = x3270 $X3270SESSION
+execp_background_id = 2
+
+NEWX3270SESSIONTINT2
+		# step 2: add entry for executor button in panel item sequence
+		echo -en "\n$(date +'%F | %T | ')'$0' add tint2 executor button entry for $X3270SESSION." | tee -a /dev/tty8
+		sed -e 's/^panel_items = L/panel_items = LE/' -i ~/.config/tint2/tint2rc
+
+		# add entry to openbox starter
+		echo -en "\n$(date +'%F | %T | ')'$0' add openbox menu entry for $X3270SESSION." | tee -a /dev/tty8
+		NEWENTRY="  <item label=\"3270 Terminal $X3270SESSION\">\n    <action name=\"Execute\"><execute>x3270 $X3270SESSION</execute></action>\n  </item>\n"
+		sed -e "s#<menu id=\"root-menu\" label=\"Openbox 3\">#<menu id=\"root-menu\" label=\"Openbox 3\">\n$NEWENTRY#" -i ~/.config/openbox/menu.xml
+	done
+#######################################################################
+
+#######################################################################
+	if [ "$APP" = "uxterm" ] && [ -n "$(which $APP)" ] ; then
+		# add entries to tint2 taskbar: a two-step process
+
+		# step 1: append config at end of file
+		echo -en "\n$(date +'%F | %T | ')'$0' add tint2 executor config entry for /usr/bin/uxterm." | tee -a /dev/tty8
+		cat >>~/.config/tint2/tint2rc <<NEWUXTERMTINT2
+#----------------
+# Executor for uxterm
+execp = new
+execp_command = echo /usr/share/icons/hicolor/48x48/apps/filled-xterm.png
+execp_has_icon = 1
+execp_interval = 0
+execp_centered = 1
+execp_font = sans 9
+execp_markup = 1
+execp_font_color = #aaffaa 100
+execp_padding = 2 0
+execp_tooltip = UXTerm
+execp_lclick_command = uxterm
+execp_background_id = 2
+
+NEWUXTERMTINT2
+		# step 2: add entry for executor button in panel item sequence
+		echo -en "\n$(date +'%F | %T | ')'$0' add tint2 executor button entry for /usr/bin/uxterm." | tee -a /dev/tty8
+		sed -e 's/^panel_items = L/panel_items = LE/' -i ~/.config/tint2/tint2rc
+
+		# add entries to openbox starter
+		echo -en "\n$(date +'%F | %T | ')'$0' add openbox menu entry for /usr/bin/uxterm." | tee -a /dev/tty8
+		NEWENTRY="  <item label=\"UX Terminal\">\n    <action name=\"Execute\"><execute>uxterm</execute></action>\n  </item>"
+		sed -e "s#<menu id=\"root-menu\" label=\"Openbox 3\">#<menu id=\"root-menu\" label=\"Openbox 3\">\n$NEWENTRY#" -i ~/.config/openbox/menu.xml
+	fi
+#######################################################################
+
+#######################################################################
+	if [ "$APP" = "xterm" ] && [ -n "$(which $APP)" ] ; then
+		# add entries to tint2 taskbar: a two-step process
+
+		# step 1: append config at end of file
+		echo -en "\n$(date +'%F | %T | ')'$0' add tint2 executor config entry for /usr/bin/xterm." | tee -a /dev/tty8
+		cat >>~/.config/tint2/tint2rc <<NEWXTERMTINT2
+#----------------
+# Executor for xterm
+execp = new
+execp_command = echo /usr/share/icons/hicolor/48x48/apps/xterm-color.png
+execp_has_icon = 1
+execp_interval = 0
+execp_centered = 1
+execp_font = sans 9
+execp_markup = 1
+execp_font_color = #aaffaa 100
+execp_padding = 2 0
+execp_tooltip = XTerm
+execp_lclick_command = xterm
+execp_background_id = 2
+
+NEWXTERMTINT2
+		# step 2: add entry for executor button in panel item sequence
+		echo -en "\n$(date +'%F | %T | ')'$0' add tint2 executor button entry for /usr/bin/xterm." | tee -a /dev/tty8
+		sed -e 's/^panel_items = L/panel_items = LE/' -i ~/.config/tint2/tint2rc
+
+		# add entries to openbox starter
+		echo -en "\n$(date +'%F | %T | ')'$0' add openbox menu entry for /usr/bin/xterm." | tee -a /dev/tty8
+		NEWENTRY="  <item label=\"X Terminal\">\n    <action name=\"Execute\"><execute>xterm</execute></action>\n  </item>"
+		sed -e "s#<menu id=\"root-menu\" label=\"Openbox 3\">#<menu id=\"root-menu\" label=\"Openbox 3\">\n$NEWENTRY#" -i ~/.config/openbox/menu.xml
+
+	fi
+#######################################################################
+	# reload config for both openbox and tint2
+	if ps -C openbox >/dev/null ; then
+		echo -en "\n$(date +'%F | %T | ')'$0' reconfiguring running openbox." | tee -a /dev/tty8
+		openbox --reconfigure
+	fi
+	if ps -C tint2 >/dev/null; then
+		echo -en "\n$(date +'%F | %T | ')'$0' reconfiguring running tint2." | tee -a /dev/tty8
+		killall -s SIGUSR1 tint2
+	fi
+fi
+
+echo -en "\n$(date +'%F | %T | ')'$0' Done." | tee -a /dev/tty8
