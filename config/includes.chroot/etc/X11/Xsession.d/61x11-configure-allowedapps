@@ -35,6 +35,7 @@ for APP in $REVERSEALLOWEDAPPS; do
 		|| [ "$APP" = "chromium-browser" ] \
 		|| [ "$APP" = "chromium" ] \
 		|| [ "$APP" = "chrome" ] \
+		|| [ "$APP" = "google-chrome" ] \
 		|| [ "$APP" = "debian-xterm" ] \
 		|| [ "$APP" = "xterm" ] \
 		|| [ "$APP" = "debian-uxterm" ] \
