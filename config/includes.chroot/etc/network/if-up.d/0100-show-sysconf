@@ -18,7 +18,7 @@ fi
 			TIMESTAMPPARTIALPATH=$LIVEMOUNTPOINT
 		fi
 	done
-	for TIMESTAMPFILE in ${TIMESTAMPPARTIALPATH}/rootfs/*/lib; do
+	for TIMESTAMPFILE in ${TIMESTAMPPARTIALPATH}/rootfs/*/lib/; do # this needs a trailing slash to work (at least in trixie)
 		TIMESTAMP=$(stat -c %Y $TIMESTAMPFILE)
 		LOCALESETTING=$(cat /proc/cmdline | tr ' ' '\n' | awk -F'[=|,]' '$1=="locales" { print $2 }')
 		[ -z "$LOCALESETTING" ] && LOCALESETTING="C"
