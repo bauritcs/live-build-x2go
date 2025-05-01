@@ -23,16 +23,16 @@ fi
 # loop through allowed-app-list
 for APP in $ALLOWEDAPPS; do
 ######################################################################
-	if	[ "$APP" = "x2goclient" ] || \
-		[ "$APP" = "firefox" ] || \
-		[ "$APP" = "firefox-esr" ] || \
-		[ "$APP" = "chromium-browser" ] || \
-		[ "$APP" = "chromium" ] || \
-		[ "$APP" = "chrome" ] || \
-		[ "$APP" = "debian-xterm" ] || \
-		[ "$APP" = "xterm" ] || \
-		[ "$APP" = "debian-uxterm" ] || \
-		[ "$APP" = "uxterm" ] || \
+	if	   [ "$APP" = "x2goclient" ] \
+		|| [ "$APP" = "firefox" ] \
+		|| [ "$APP" = "firefox-esr" ] \
+		|| [ "$APP" = "chromium-browser" ] \
+		|| [ "$APP" = "chromium" ] \
+		|| [ "$APP" = "chrome" ] \
+		|| [ "$APP" = "debian-xterm" ] \
+		|| [ "$APP" = "xterm" ] \
+		|| [ "$APP" = "debian-uxterm" ] \
+		|| [ "$APP" = "uxterm" ] \
 		&& [ -f /usr/share/applications/${APP}.desktop ] ; then
 		# add entry to tint2 launcher
 		echo -en "\n$(date +'%F | %T | ')'$0' add tint2 launcher entry entry for ${APP}." | tee -a /dev/tty8
@@ -103,13 +103,13 @@ NEWX5250SESSIONTINT2
 
 #######################################################################
 	if [ "$APP" = "x3270" ] && [ -n "$X3270SERVERS" ] && [ -x /usr/bin/x3270 ] ; then
-	# add entries to tint2 taskbar: a two-step process
-	echo -en "\n$(date +'%F | %T | ')'$0' x3270 sessions detected and /usr/bin/x3270 executable available." | tee -a /dev/tty8
-	
-	for X3270SESSION in $(echo "$X3270SERVERS" | tr '|,' ' '); do
-		# step 1: append config at end of file
-		echo -en "\n$(date +'%F | %T | ')'$0' add tint2 executor config entry for $X3270SESSION." | tee -a /dev/tty8
-		cat >>~/.config/tint2/tint2rc <<NEWX3270SESSIONTINT2
+		# add entries to tint2 taskbar: a two-step process
+		echo -en "\n$(date +'%F | %T | ')'$0' x3270 sessions detected and /usr/bin/x3270 executable available." | tee -a /dev/tty8
+		
+		for X3270SESSION in $(echo "$X3270SERVERS" | tr '|,' ' '); do
+			# step 1: append config at end of file
+			echo -en "\n$(date +'%F | %T | ')'$0' add tint2 executor config entry for $X3270SESSION." | tee -a /dev/tty8
+			cat >>~/.config/tint2/tint2rc <<NEWX3270SESSIONTINT2
 #----------------
 # Executor for $X3270SESSION
 execp = new
@@ -126,15 +126,16 @@ execp_lclick_command = x3270 $X3270SESSION
 execp_background_id = 2
 
 NEWX3270SESSIONTINT2
-		# step 2: add entry for executor button in panel item sequence
-		echo -en "\n$(date +'%F | %T | ')'$0' add tint2 executor button entry for $X3270SESSION." | tee -a /dev/tty8
-		sed -e 's/^panel_items = L/panel_items = LE/' -i ~/.config/tint2/tint2rc
+			# step 2: add entry for executor button in panel item sequence
+			echo -en "\n$(date +'%F | %T | ')'$0' add tint2 executor button entry for $X3270SESSION." | tee -a /dev/tty8
+			sed -e 's/^panel_items = L/panel_items = LE/' -i ~/.config/tint2/tint2rc
 
-		# add entry to openbox starter
-		echo -en "\n$(date +'%F | %T | ')'$0' add openbox menu entry for $X3270SESSION." | tee -a /dev/tty8
-		NEWENTRY="  <item label=\"3270 Terminal $X3270SESSION\">\n    <action name=\"Execute\"><execute>x3270 $X3270SESSION</execute></action>\n  </item>\n"
-		sed -e "s#<menu id=\"root-menu\" label=\"Openbox 3\">#<menu id=\"root-menu\" label=\"Openbox 3\">\n$NEWENTRY#" -i ~/.config/openbox/menu.xml
-	done
+			# add entry to openbox starter
+			echo -en "\n$(date +'%F | %T | ')'$0' add openbox menu entry for $X3270SESSION." | tee -a /dev/tty8
+			NEWENTRY="  <item label=\"3270 Terminal $X3270SESSION\">\n    <action name=\"Execute\"><execute>x3270 $X3270SESSION</execute></action>\n  </item>\n"
+			sed -e "s#<menu id=\"root-menu\" label=\"Openbox 3\">#<menu id=\"root-menu\" label=\"Openbox 3\">\n$NEWENTRY#" -i ~/.config/openbox/menu.xml
+		done
+	fi
 #######################################################################
 
 #######################################################################
@@ -214,6 +215,6 @@ NEWXTERMTINT2
 		echo -en "\n$(date +'%F | %T | ')'$0' reconfiguring running tint2." | tee -a /dev/tty8
 		killall -s SIGUSR1 tint2
 	fi
-fi
+done
 
 echo -en "\n$(date +'%F | %T | ')'$0' Done." | tee -a /dev/tty8
