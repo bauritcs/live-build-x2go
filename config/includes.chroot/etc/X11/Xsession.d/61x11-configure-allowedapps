@@ -20,8 +20,14 @@ else
 	X5250COMMAND=""
 fi
 
-# loop through allowed-app-list
+# we're building the menu from right to left, so we need to reverse the order
+REVERSEALLOWEDAPPS=""
 for APP in $ALLOWEDAPPS; do
+	REVERSEALLOWEDAPPS="$APP $REVERSEALLOWEDAPPS"
+done
+
+# loop through allowed-app-list
+for APP in $REVERSEALLOWEDAPPS; do
 ######################################################################
 	if	   [ "$APP" = "x2goclient" ] \
 		|| [ "$APP" = "firefox" ] \
