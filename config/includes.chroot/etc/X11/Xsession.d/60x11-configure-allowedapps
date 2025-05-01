@@ -35,7 +35,7 @@ for APP in $ALLOWEDAPPS; do
 		|| [ "$APP" = "uxterm" ] \
 		&& [ -f /usr/share/applications/${APP}.desktop ] ; then
 		# add entry to tint2 launcher
-		echo -en "\n$(date +'%F | %T | ')'$0' add tint2 launcher entry entry for ${APP}." | tee -a /dev/tty8
+		echo -en "\n$(date +'%F | %T | ')'$0' add tint2 launcher entry for ${APP}." | tee -a /dev/tty8
 		NEWENTRYT="launcher_item_app = ${APP}.desktop"
 		sed -e "s#launcher_item_app = /usr/share/applications/tint2-button.desktop#launcher_item_app = /usr/share/applications/tint2-button.desktop\n$NEWENTRYT#" -i ~/.config/tint2/tint2rc
 		# add entries to openbox starter
