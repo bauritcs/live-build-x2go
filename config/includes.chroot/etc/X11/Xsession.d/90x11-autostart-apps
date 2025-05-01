@@ -8,10 +8,13 @@ for APP in $AUTOSTARTAPPS; do
 		echo -en "\n$(date +'%F | %T | ')'$0' Found these x5250 sessions: '$X5250SESSIONLIST'" | tee -a /dev/tty8
 		if [ -n "$X5250SESSIONLIST" ]; then
 			oldIFS=$IFS
-			IFS=","
+			newIFS=","
+			IFS=$newIFS
 			for X5250SESSION in $X5250SESSIONLIST; do
 				echo -en "\n$(date +'%F | %T | ')'$0' Spawning '$X5250SESSION'." | tee -a /dev/tty8
+				IFS=$oldIFS
 				$X5250SESSION &
+				IFS=$newIFS
 			done
 			IFS=$oldIFS
 		else
@@ -38,7 +41,9 @@ for APP in $AUTOSTARTAPPS; do
 			IFS=","
 			for X3270SESSION in $X3270SESSIONLIST; do
 				echo -en "\n$(date +'%F | %T | ')'$0' Spawning '$X3270SESSION'." | tee -a /dev/tty8
+				IFS=$oldIFS
 				$X3270SESSION &
+				IFS=$newIFS
 			done
 			IFS=$oldIFS
 		else
