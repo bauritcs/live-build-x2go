@@ -4,7 +4,7 @@ AUTOSTARTAPPS=$(sed -e 's/ \([^ ]*\)=/\n\1=/g' -e 's/\([^=]["'"'"']\) /\1\n/g' -
 for APP in $AUTOSTARTAPPS; do
 	if [ "$APP" = "x5250" ] ; then
 		echo -en "\n$(date +'%F | %T | ')'$0' Spawning one or more x5250 sessions." | tee -a /dev/tty8
-		X5250SESSIONLIST=$(grep -A1 "^execp_tooltip = 5250" ~/.config/tint2/tint2rc | awk -F'=' '$1=="execp_lclick_command" {print $2 ","}')
+		X5250SESSIONLIST=$(grep -A1 "^execp_tooltip = 5250" ~/.config/tint2/tint2rc | awk -F'=' '$1=="execp_lclick_command " {print $2 ","}')
 		echo -en "\n$(date +'%F | %T | ')'$0' Found these x5250 sessions: '$X5250SESSIONLIST'" | tee -a /dev/tty8
 		if [ -n "$X5250SESSIONLIST" ]; then
 			oldIFS=$IFS
@@ -31,7 +31,7 @@ for APP in $AUTOSTARTAPPS; do
 		fi
 	elif [ "$APP" = "x3270" ] ; then
 		echo -en "\n$(date +'%F | %T | ')'$0' Spawning one or more x3270 sessions." | tee -a /dev/tty8
-		X5250SESSIONLIST=$(grep -A1 "^execp_tooltip = 3270" ~/.config/tint2/tint2rc | awk -F'=' '$1=="execp_lclick_command" {print $2 ","}')
+		X5250SESSIONLIST=$(grep -A1 "^execp_tooltip = 3270" ~/.config/tint2/tint2rc | awk -F'=' '$1=="execp_lclick_command " {print $2 ","}')
 		echo -en "\n$(date +'%F | %T | ')'$0' Found these x3270 sessions: '$X3270SESSIONLIST'" | tee -a /dev/tty8
 		if [ -n "$3270SESSIONLIST" ]; then
 			oldIFS=$IFS
