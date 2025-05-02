@@ -33,16 +33,16 @@ if [ -n "$LAUNCHICONURL" ] ; then
 				done
 			fi
 		else
-			while ! wget -q -O ${LAUNCHERICONDESTINATION}.tmp "$LAUNCHICONURL" ; do
+			while ! wget -q -O ${LAUNCHICONDESTINATION}.tmp "$LAUNCHICONURL" ; do
 				echo -en "\n$(date +'%F | %T | ')still waiting for launcher icon download (wget) ..." | tee -a /dev/tty8
 				sleep 5 
 			done
 		fi
 
 		echo -en "\n$(date +'%F | %T | ')'$0': launcher icon download complete." | tee -a /dev/tty8
-		if [ -s ${LAUNCHERICONDESTINATION}.tmp ] ; then
-			mv ${LAUNCHERICONDESTINATION}.tmp $LAUNCHERICONDESTINATION
-			ln -f $LAUNCHERICONDESTINATION /etc/x2go/x2golauncher.png
+		if [ -s ${LAUNCHICONDESTINATION}.tmp ] ; then
+			mv ${LAUNCHICONDESTINATION}.tmp $LAUNCHICONDESTINATION
+			ln -f $LAUNCHICONDESTINATION /etc/x2go/x2golauncher.png
 		fi
 	) &
 fi
