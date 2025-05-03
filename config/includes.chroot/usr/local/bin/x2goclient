@@ -151,7 +151,7 @@ else
 			while [ -z "$X2GOCLIENTWINDOWIDS" ] ; do
 				# if this var is of nonzero length, we have at least one matching window id:
 				# the actual client window and possibly the taskbar icon
-				X2GOCLIENTWINDOWIDS=$(xdotool search --onlyvisible --name X2GoClient)
+				X2GOCLIENTWINDOWIDS=$(xdotool search --onlyvisible --classname X2GoClient)
 				# make sure we terminate if X11 terminates
 				ps -C Xorg 2>&1 >/dev/null || exit 0
 			done
@@ -159,7 +159,7 @@ else
 			while [ $(echo -n "$X2GOCLIENTWINDOWIDS" | wc -l) -gt 2 ] ; do
 				# now wait until there is only one window id left that's visible and
 				# which matches our expected window name
-				X2GOCLIENTWINDOWIDS=$(xdotool search --onlyvisible --name X2GoClient)
+				X2GOCLIENTWINDOWIDS=$(xdotool search --onlyvisible --classname X2GoClient)
 				# make sure we terminate if X11 terminates
 				ps -C Xorg 2>&1 >/dev/null || exit 0
 			done
