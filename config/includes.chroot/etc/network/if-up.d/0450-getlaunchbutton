@@ -23,7 +23,7 @@ if [ -n "$LAUNCHICONURL" ] ; then
 		done
 
 		echo -en "\n$(date +'%F | %T | ')'$0': Attempting launcher icon download ..." | tee -a /dev/tty8
-		if echo "$BGURL" | grep -q "^tftp://" ; then
+		if echo "$LAUNCHICONURL" | grep -q "^tftp://" ; then
 			LAUNCHICONSERVER=$(echo "$LAUNCHICONURL" | sed 's#^tftp://\([^/;]*\)/.*$#\1#' )
 			LAUNCHICONPATH=$(echo "$LAUNCHICONURL" | sed 's#^tftp://[^/;]*/\([^;]*\)$#\1#' )
 			if [ -n "$LAUNCHICONSERVER" ] && [ -n "$LAUNCHICONPATH" ] ; then
