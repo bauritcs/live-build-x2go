@@ -59,7 +59,7 @@ for APP in $ALLOWEDAPPS; do
 		fi
 		echo -en "\n$(date +'%F | %T | ')'$0' add openbox menu entry for ${APP}." | tee -a /dev/tty8
 		NEWENTRY="  <item label=\"$ENTRYNAME\">\n    <action name=\"Execute\"><execute>${APP}</execute></action>\n  </item>"
-		sed -e "s#<separator />>#$NEWENTRY\n<separator/>#" -i ~/.config/openbox/menu.xml
+		sed -e "s#<separator/>#$NEWENTRY\n<separator/>#" -i ~/.config/openbox/menu.xml
 	elif [ "$APP" = "x5250" ] && [ -n "$X5250SERVERS" ] && [ -n "$X5250COMMAND" ] && [ -x "${X5250COMMAND%% *}" ] ; then
 		# determine icon path
 		if [ -s /usr/share/icons/hicolor/48x48/apps/x5250.png ]; then
@@ -98,7 +98,7 @@ NEWX5250SESSIONTINT2
 			# add entry to openbox starter
 			echo -en "\n$(date +'%F | %T | ')'$0' add openbox menu entry for $X5250SESSION." | tee -a /dev/tty8
 			NEWENTRY="  <item label=\"5250 Terminal $X5250SESSION\">\n    <action name=\"Execute\"><execute>$X5250COMMAND $X5250SESSION</execute></action>\n  </item>\n"
-			sed -e "s#<separator />>#$NEWENTRY\n<separator/>#" -i ~/.config/openbox/menu.xml
+			sed -e "s#<separator/>#$NEWENTRY\n<separator/>#" -i ~/.config/openbox/menu.xml
 		done
 	elif [ "$APP" = "x3270" ] && [ -n "$X3270SERVERS" ] && [ -x /usr/bin/x3270 ] ; then
 		# add entries to tint2 taskbar: a two-step process
@@ -131,7 +131,7 @@ NEWX3270SESSIONTINT2
 			# add entry to openbox starter
 			echo -en "\n$(date +'%F | %T | ')'$0' add openbox menu entry for $X3270SESSION." | tee -a /dev/tty8
 			NEWENTRY="  <item label=\"3270 Terminal $X3270SESSION\">\n    <action name=\"Execute\"><execute>x3270 $X3270SESSION</execute></action>\n  </item>\n"
-			sed -e "s#<separator />>#$NEWENTRY\n<separator/>#" -i ~/.config/openbox/menu.xml
+			sed -e "s#<separator/>#$NEWENTRY\n<separator/>#" -i ~/.config/openbox/menu.xml
 		done
 	fi
 done
