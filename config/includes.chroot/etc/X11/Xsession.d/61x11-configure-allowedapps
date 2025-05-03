@@ -71,7 +71,7 @@ for APP in $REVERSEALLOWEDAPPS; do
 		if [ -s /usr/share/icons/hicolor/48x48/apps/x5250.png ]; then
 			X5250ICON="/usr/share/icons/hicolor/48x48/apps/x5250.png"
 		else
-			X5250ICON="/usr/share/icons/hicolor/48x48/apps/x3270.png"
+			X5250ICON="/usr/share/icons/hicolor/48x48/apps/x5250-lookalike.png"
 		fi
 
 		# add entries to tint2 taskbar: a two-step process
