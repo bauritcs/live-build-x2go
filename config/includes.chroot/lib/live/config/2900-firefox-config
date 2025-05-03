@@ -23,6 +23,7 @@ FirefoxConfig ()
 		-e '/"browser.shell.checkDefaultBrowser"/d' \
 		-e '/"browser.startup.homepage_override.mstone"/d' \
 		-e '/"browser.startup.homepage"/d' \
+		-e '/"browser.uiCustomization.state/d' \
 		-e '/"browser.usedOnWindows10/d' \
 		-e '/"datareporting.policy.dataSubmissionPolicyBypassNotification"/d' \
 		-e '/"datareporting.policy.firstRunURL"/d' \
@@ -39,6 +40,7 @@ lockPref("browser.rights.override", true);
 lockPref("browser.shell.checkDefaultBrowser", false);
 lockPref("browser.startup.homepage_override.mstone","ignore");
 lockPref("browser.startup.homepage", "$HOMEPAGEURL");
+lockPref("browser.uiCustomization.state", '{"placements":{"widget-overflow-fixed-list":[],"unified-extensions-area":[],"nav-bar":["back-button","forward-button","stop-reload-button","customizableui-special-spring1","urlbar-container","customizableui-special-spring2","save-to-pocket-button","downloads-button","fxa-toolbar-menu-button","unified-extensions-button","ublock0_raymondhill_net-browser-action"],"toolbar-menubar":["menubar-items"],"TabsToolbar":["firefox-view-button","tabbrowser-tabs","new-tab-button","alltabs-button"],"PersonalToolbar":["import-button","personal-bookmarks"]},"seen":["save-to-pocket-button","developer-button","ublock0_raymondhill_net-browser-action"],"dirtyAreaCache":["nav-bar","unified-extensions-area","PersonalToolbar","toolbar-menubar","TabsToolbar"],"currentVersion":20,"newElementCount":2}');
 lockPref("browser.usedOnWindows10", true);
 lockPref("datareporting.policy.dataSubmissionPolicyBypassNotification", true);
 lockPref("datareporting.policy.firstRunURL", ""); 
