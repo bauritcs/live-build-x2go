@@ -1,0 +1,19 @@
+#!/bin/bash
+# When your boot parameter string has gotten too long for your bootloader, you can place the X2Go-TCE-related parameters in a file instead
+# This file may contain name=value pairs either separated by blanks, as in a regular boot parameter string, or one name=value pair on each line
+
+if [ -s /boot/liveboot_params ] ; then
+	echo -en "\n$(date +'%F | %T | ')'$0': liveboot_params file found on local media." | tee -a /dev/tty8
+	if grep -q "/proc/cmdline" /proc/mounts ; then
+		echo -en "\n$(date +'%F | %T | ')'$0': liveboot_params file already bind-mounted on /proc/cmdline, nothing to do." | tee -a /dev/tty8
+	else
+		echo -en "\n$(date +'%F | %T | ')'$0': Assembling new cmdline from current cmdline and liveboot_params in '/boot/proc_cmdline'." | tee -a /dev/tty8
+		cat /proc/cmdline /boot/liveboot_params | tr ' ' '\n' | grep -v "^liveboot_params" | tr '\n' ' ' >/boot/proc_cmdline
+		echo -en "\n$(date +'%F | %T | ')'$0': Attempting bind-mount of '/boot/proc_cmdline' on top of '/proc/cmdline'." | tee -a /dev/tty8
+		if mount --bind -o ro /boot/proc_cmdline /proc/cmdline; then
+			echo -en "\n$(date +'%F | %T | ')'$0': Bind-mount successful." | tee -a /dev/tty8
+		else
+			echo -en "\n$(date +'%F | %T | ')'$0': WARNING: nothing bind-mounted on /proc/cmdline, please check why." | tee -a /dev/tty8
+		fi
+	fi
+fi

@@ -1,0 +1,49 @@
+#!/bin/bash
+
+# When your boot parameter string has gotten too long for your bootloader, you can place the X2Go-TCE-related parameters in a file instead
+# This file may contain name=value pairs either separated by blanks, as in a regular boot parameter string, or one name=value pair on each line
+# if you didn't place the file on the media, you can also download it via boot parameter - that's what this script is meant for.
+# Note that a local file will always take precedence, though!
+
+LIVEBOOT_PARAMS=$(sed -e 's/ \([^ ]*\)=/\n\1=/g' -e 's/\([^=]["'"'"']\) /\1\n/g' -e 's/ \([^ "'"'"']\)/\n\1/g' /proc/cmdline | \
+            awk -F'=' ' /^liveboot_params=/ { print $2 }' |\
+            tr -dc 'a-zA-Z0-9.:/?%_\-')
+
+LIVEBOOT_PARAMS_DESTINATION=/boot/liveboot_params
+
+if [ -s /boot/liveboot_params ] ; then
+	echo -en "\n$(date +'%F | %T | ')'$0': liveboot_params file already present on media, not attempting download." | tee -a /dev/tty8
+elif [ -n "$LIVEBOOT_PARAMS" ]; then
+	if echo "$LIVEBOOT_PARAMS" | grep -q "^tftp://" ; then
+		$LIVEBOOT_PARAMS_SERVER=$(echo "$LIVEBOOT_PARAMS" | sed 's#^tftp://\([^/;]*\)/.*$#\1#' )
+		$LIVEBOOT_PARAMS_PATH=$(echo "$LIVEBOOT_PARAMS" | sed 's#^tftp://[^/;]*/\([^;]*\)$#\1#' )
+		if [ -n "$LIVEBOOT_PARAMS_SERVER" ] && [ -n "$LIVEBOOT_PARAMS_PATH" ] ; then
+			while ! atftp "$LIVEBOOT_PARAMS_SERVER" -g -r "$LIVEBOOT_PARAMS_PATH" -l $LIVEBOOT_PARAMS_DESTINATION ; do
+				echo -en "\n$(date +'%F | %T | ')'$0': still waiting for liveboot_params download (tftp) ..." | tee -a /dev/tty8
+				sleep 5
+			done
+		fi
+	else
+        	while ! wget -q -O ${LIVEBOOT_PARAMS_DESTINATION}.tmp "$LIVEBOOT_PARAMS_URL" ; do
+			echo -en "\n$(date +'%F | %T | ')'$0': still waiting for liveboot_params download (wget) ..." | tee -a /dev/tty8
+			sleep 5
+		done
+	fi
+	echo -en "\n$(date +'%F | %T | ')'$0': liveboot_params download complete, atomic move ahead." | tee -a /dev/tty8
+	mv ${LIVEBOOT_PARAMS_DESTINATION}.tmp ${LIVEBOOT_PARAMS_DESTINATION}
+else
+	: # NOP - Nothing to do, no local file and no URL
+fi
+if grep -q "/proc/cmdline" /proc/mounts ; then
+	echo -en "\n$(date +'%F | %T | ')'$0': liveboot_params file already bind-mounted on /proc/cmdline, nothing to do." | tee -a /dev/tty8
+else
+	echo -en "\n$(date +'%F | %T | ')'$0': Assembling new cmdline from current cmdline and liveboot_params in '/boot/proc_cmdline'." | tee -a /dev/tty8
+	cat /proc/cmdline /boot/liveboot_params | tr ' ' '\n' | grep -v "^liveboot_params" | tr '\n' ' ' >/boot/proc_cmdline
+	echo -en "\n$(date +'%F | %T | ')'$0': Attempting bind-mount of '/boot/proc_cmdline' on top of '/proc/cmdline'." | tee -a /dev/tty8
+	if mount --bind -o ro /boot/proc_cmdline /proc/cmdline; then
+		echo -en "\n$(date +'%F | %T | ')'$0': Bind-mount successful." | tee -a /dev/tty8
+	else
+		echo -en "\n$(date +'%F | %T | ')'$0': WARNING: nothing bind-mounted on /proc/cmdline, please check why." | tee -a /dev/tty8
+	fi
+fi
+
