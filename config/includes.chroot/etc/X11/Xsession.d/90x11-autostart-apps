@@ -1,8 +1,15 @@
 # configure autostartapps
 AUTOSTARTAPPS=$(sed -e 's/ \([^ ]*\)=/\n\1=/g' -e 's/\([^=]["'"'"']\) /\1\n/g' -e 's/ \([^ "'"'"']\)/\n\1/g' /proc/cmdline | awk -F '=' '$1 == "autostartapps" { print $2 }' | tr -dc '0-9a-zA-Z,$-_.+!*'"'"'();/?:@=&|' | tr ',' ' ')
+STARTUP_MESSAGE=$(sed -e 's/ \([^ ]*\)=/\n\1=/g' -e 's/\([^=]["'"'"']\) /\1\n/g' -e 's/ \([^ "'"'"']\)/\n\1/g' /proc/cmdline | awk -F '=' '$1 == "startupmsg" { print $2 }' | tr -d "'\"")
+if [ -z "$STARTUP_MESSAGE" ]; then
+	STARTUP_MESSAGE="Startup in progress, please wait ..."
+fi
 
 # background this and wait for tint2 to appear
 (
+	xmessage -buttons "" -center "$STARTUP_MESSAGE" &
+	XMSG_PID=$!
+
 	while ! xdotool search tint2 >/dev/null; do sleep 1; done
 
 	for APP in $AUTOSTARTAPPS; do
@@ -18,6 +25,7 @@ AUTOSTARTAPPS=$(sed -e 's/ \([^ ]*\)=/\n\1=/g' -e 's/\([^=]["'"'"']\) /\1\n/g' -
 					echo -en "\n$(date +'%F | %T | ')'$0' Spawning '$X5250SESSION'." | tee -a /dev/tty8
 					IFS=$oldIFS
 					$X5250SESSION &
+					xdotool search --sync --onlyvisible --pid $!
 					IFS=$newIFS
 				done
 				IFS=$oldIFS
@@ -26,12 +34,15 @@ AUTOSTARTAPPS=$(sed -e 's/ \([^ ]*\)=/\n\1=/g' -e 's/\([^=]["'"'"']\) /\1\n/g' -
 				if [ -x /usr/local/bin/x5250 ] ; then
 					echo -en "\n$(date +'%F | %T | ')'$0' Spawning '/usr/local/bin/x5250'." | tee -a /dev/tty8
 					/usr/local/bin/x5250 &
+					xdotool search --sync --onlyvisible --pid $!
 				elif [ -x /usr/bin/x5250 ] ; then
 					echo -en "\n$(date +'%F | %T | ')'$0' Spawning '/usr/bin/x5250'." | tee -a /dev/tty8
 					/usr/bin/x5250 &
+					xdotool search --sync --onlyvisible --pid $!
 				elif [ -x /usr/bin/x3270 ] ; then
 					echo -en "\n$(date +'%F | %T | ')'$0' Spawning '/usr/bin/x3270 -model 2'." | tee -a /dev/tty8
 					/usr/bin/x3270 -model 2 &
+					xdotool search --sync --onlyvisible --pid $!
 				else
 					echo -en "\n$(date +'%F | %T | ')'$0' Not spawning any x5250 emulation - no suitable executable found." | tee -a /dev/tty8
 				fi
@@ -48,6 +59,7 @@ AUTOSTARTAPPS=$(sed -e 's/ \([^ ]*\)=/\n\1=/g' -e 's/\([^=]["'"'"']\) /\1\n/g' -
 					echo -en "\n$(date +'%F | %T | ')'$0' Spawning '$X3270SESSION'." | tee -a /dev/tty8
 					IFS=$oldIFS
 					$X3270SESSION &
+					xdotool search --sync --onlyvisible --pid $!
 					IFS=$newIFS
 				done
 				IFS=$oldIFS
@@ -56,6 +68,7 @@ AUTOSTARTAPPS=$(sed -e 's/ \([^ ]*\)=/\n\1=/g' -e 's/\([^=]["'"'"']\) /\1\n/g' -
 				if [ -x /usr/bin/x3270 ] ; then
 					echo -en "\n$(date +'%F | %T | ')'$0' Spawning '/usr/bin/x3270'." | tee -a /dev/tty8
 					/usr/bin/x3270 &
+					xdotool search --sync --onlyvisible --pid $!
 				else
 					echo -en "\n$(date +'%F | %T | ')'$0' Not spawning any x3270 emulation - no suitable executable found." | tee -a /dev/tty8
 				fi
@@ -68,11 +81,14 @@ AUTOSTARTAPPS=$(sed -e 's/ \([^ ]*\)=/\n\1=/g' -e 's/\([^=]["'"'"']\) /\1\n/g' -
 			if [ -n "$APPFULLPATH" ]; then
 				echo -en "\n$(date +'%F | %T | ')'$0' Spawning '$APPFULLPATH'." | tee -a /dev/tty8
 				$APPFULLPATH &
+				xdotool search --sync --onlyvisible --pid $!
 			elif [ -n "$APPFULLPATHSTRIPPED" ]; then
 				echo -en "\n$(date +'%F | %T | ')'$0' Spawning '$APPFULLPATHSTRIPPED'." | tee -a /dev/tty8
 				$APPFULLPATHSTRIPPED &
+				xdotool search --sync --onlyvisible --pid $!
 			fi
 		fi
 	done
+	ps -C xmessage >/dev/null && kill -9 $XMSG_PID
 ) &
 echo -en "\n$(date +'%F | %T | ')'$0' Done." | tee -a /dev/tty8
