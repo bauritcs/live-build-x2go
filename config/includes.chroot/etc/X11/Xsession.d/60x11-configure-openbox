@@ -1,5 +1,5 @@
 # configure openbox
-OPENBOXBUTTONS=$(sed -e 's/ \([^ ]*\)=/\n\1=/g' -e 's/\([^=]["'"'"']\) /\1\n/g' -e 's/ \([^ "'"'"']\)/\n\1/g' /proc/cmdline | awk -F '=' '$1 == "openboxbuttons" { print $2 }' | tr -dc '0-9a-zA-Z,$-_.+!*'"'"'();/?:@=&|' | tr ',' '|')
+OPENBOXBUTTONS=$(sed -e 's/ \([^ ]*\)=/\n\1=/g' -e 's/\([^=]["'"'"']\) /\1\n/g' -e 's/ \([^ "'"'"']\)/\n\1/g' /proc/cmdline | awk -F '=' '$1 == "openboxbuttons" { print $2 }' | tr -d "'\"|&$"| tr ',' '|')
 
 mkdir -p ~/.config/openbox/
 cp /etc/xdg/openbox/*.xml  ~/.config/openbox/
