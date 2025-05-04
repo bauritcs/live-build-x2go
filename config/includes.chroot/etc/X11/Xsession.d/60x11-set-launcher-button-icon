@@ -10,7 +10,7 @@ if [ -n "$LAUNCHICON" ] ; then
 			echo -en "\n$(date +'%F | %T | ')'$0' Waiting for launcher icon download to finish ..." | tee -a /dev/tty8
 			sleep 1
 		done
-		while ! [ $(ls -i $LAUNCHICONDESTIONATION | awk '{ print $1 }' ) -eq $(ls -i /etc/x2go/x2golauncher.png | awk '{ print $1 }' ) ]; do
+		while ! [ $(ls -i $LAUNCHICONDESTINATION | awk '{ print $1 }' ) -eq $(ls -i /etc/x2go/x2golauncher.png | awk '{ print $1 }' ) ]; do
 			echo -en "\n$(date +'%F | %T | ')'$0' New launcher icon is not in place yet ..." | tee -a /dev/tty8
 			sleep 1
 		done
