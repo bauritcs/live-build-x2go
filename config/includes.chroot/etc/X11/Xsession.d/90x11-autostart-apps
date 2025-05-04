@@ -26,7 +26,7 @@ fi
 					echo -en "\n$(date +'%F | %T | ')'$0' Spawning '$X5250SESSION'." | tee -a /dev/tty8
 					IFS=$oldIFS
 					$X5250SESSION &
-					xdotool search --sync --onlyvisible --pid $!
+					xdotool search --sync --onlyvisible --name $(echo $X5250SESSION | awk '{print $1, $NF}') # x3270/x5250 doesn't support --pid
 					IFS=$newIFS
 				done
 				IFS=$oldIFS
@@ -35,15 +35,15 @@ fi
 				if [ -x /usr/local/bin/x5250 ] ; then
 					echo -en "\n$(date +'%F | %T | ')'$0' Spawning '/usr/local/bin/x5250'." | tee -a /dev/tty8
 					/usr/local/bin/x5250 &
-					xdotool search --sync --onlyvisible --pid $!
+					xdotool search --sync --onlyvisible --name x5250 # x3270/x5250 doesn't support --pid
 				elif [ -x /usr/bin/x5250 ] ; then
 					echo -en "\n$(date +'%F | %T | ')'$0' Spawning '/usr/bin/x5250'." | tee -a /dev/tty8
 					/usr/bin/x5250 &
-					xdotool search --sync --onlyvisible --pid $!
+					xdotool search --sync --onlyvisible --name x5250 # x3270/x5250 doesn't support --pid
 				elif [ -x /usr/bin/x3270 ] ; then
 					echo -en "\n$(date +'%F | %T | ')'$0' Spawning '/usr/bin/x3270 -model 2'." | tee -a /dev/tty8
 					/usr/bin/x3270 -model 2 &
-					xdotool search --sync --onlyvisible --pid $!
+					xdotool search --sync --onlyvisible --name x3270 # x3270/x5250 doesn't support --pid
 				else
 					echo -en "\n$(date +'%F | %T | ')'$0' Not spawning any x5250 emulation - no suitable executable found." | tee -a /dev/tty8
 				fi
@@ -60,7 +60,7 @@ fi
 					echo -en "\n$(date +'%F | %T | ')'$0' Spawning '$X3270SESSION'." | tee -a /dev/tty8
 					IFS=$oldIFS
 					$X3270SESSION &
-					xdotool search --sync --onlyvisible --pid $!
+					xdotool search --sync --onlyvisible --name $(echo $X3270SESSION | awk '{print $1, $NF}') # x3270/x5250 doesn't support --pid
 					IFS=$newIFS
 				done
 				IFS=$oldIFS
@@ -69,7 +69,7 @@ fi
 				if [ -x /usr/bin/x3270 ] ; then
 					echo -en "\n$(date +'%F | %T | ')'$0' Spawning '/usr/bin/x3270'." | tee -a /dev/tty8
 					/usr/bin/x3270 &
-					xdotool search --sync --onlyvisible --pid $!
+					xdotool search --sync --onlyvisible --name x3270 # x3270/x5250 doesn't support --pid
 				else
 					echo -en "\n$(date +'%F | %T | ')'$0' Not spawning any x3270 emulation - no suitable executable found." | tee -a /dev/tty8
 				fi
