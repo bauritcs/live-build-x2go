@@ -9,6 +9,7 @@ fi
 (
 	xmessage -buttons "" -center "$STARTUP_MESSAGE" &
 	XMSG_PID=$!
+	echo -en "\n$(date +'%F | %T | ')'$0' Backgrounding xmessage, PID '$XMSG_PID'" | tee -a /dev/tty8
 
 	while ! xdotool search tint2 >/dev/null; do sleep 1; done
 
@@ -89,6 +90,15 @@ fi
 			fi
 		fi
 	done
-	ps -C xmessage >/dev/null && kill -9 $XMSG_PID
+	if ps -p $XMSG_PID >/dev/null ; then
+		echo -en "\n$(date +'%F | %T | ')'$0' Killing xmessage, PID '$XMSG_PID' ..." | tee -a /dev/tty8
+		if kill -9 $XMSG_PID ; then
+			echo -en "\n$(date +'%F | %T | ')'$0' Killed xmessage, PID '$XMSG_PID'." | tee -a /dev/tty8
+		else
+			echo -en "\n$(date +'%F | %T | ')'$0' Could not kill xmessage, PID '$XMSG_PID'." | tee -a /dev/tty8
+		fi
+	else
+		echo -en "\n$(date +'%F | %T | ')'$0' Could not find a running xmessage instance at PID '$XMSG_PID'." | tee -a /dev/tty8
+	fi
 ) &
 echo -en "\n$(date +'%F | %T | ')'$0' Done." | tee -a /dev/tty8
