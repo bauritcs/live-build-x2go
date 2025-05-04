@@ -26,7 +26,7 @@ fi
 					echo -en "\n$(date +'%F | %T | ')'$0' Spawning '$X5250SESSION'." | tee -a /dev/tty8
 					IFS=$oldIFS
 					$X5250SESSION &
-					xdotool search --sync --onlyvisible --name $(echo $X5250SESSION | awk '{print $1, $NF}') # x3270/x5250 doesn't support --pid
+					xdotool search --sync --onlyvisible --name $(echo $X5250SESSION | awk '{gsub(/^.*\//,""); print $1, $NF}') # x3270/x5250 doesn't support --pid
 					IFS=$newIFS
 				done
 				IFS=$oldIFS
@@ -60,7 +60,7 @@ fi
 					echo -en "\n$(date +'%F | %T | ')'$0' Spawning '$X3270SESSION'." | tee -a /dev/tty8
 					IFS=$oldIFS
 					$X3270SESSION &
-					xdotool search --sync --onlyvisible --name $(echo $X3270SESSION | awk '{print $1, $NF}') # x3270/x5250 doesn't support --pid
+					xdotool search --sync --onlyvisible --name $(echo $X3270SESSION | awk '{gsub(/^.*\//,""); print $1, $NF}') # x3270/x5250 doesn't support --pid
 					IFS=$newIFS
 				done
 				IFS=$oldIFS
