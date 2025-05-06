@@ -1,3 +1,4 @@
+ca-certificates
 #chrome
 #chromium
 #chromium-l10n
@@ -9,7 +10,7 @@ pavucontrol
 pnmixer
 pr3287
 tint2
-webext-ublock-origin-firefox
+#webext-ublock-origin-firefox
 x3270
 xcape
 xdotool
