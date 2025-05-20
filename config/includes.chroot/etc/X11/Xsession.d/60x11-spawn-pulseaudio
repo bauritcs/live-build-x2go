@@ -1,3 +1,5 @@
+# shellcheck shell=dash
+
 # Spawn PulseAudio
 if ! ps -C pulseaudio >/dev/null && [ -x /usr/bin/pulseaudio ] ; then
 	pulseaudio -D -n -L 'module-native-protocol-tcp port=4713' -L 'module-udev-detect' -L 'module-native-protocol-unix' --exit-idle-time=65535 &

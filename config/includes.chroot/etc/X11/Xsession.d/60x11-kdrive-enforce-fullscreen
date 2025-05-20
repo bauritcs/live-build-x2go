@@ -1,3 +1,5 @@
+# shellcheck shell=dash
+
 # In Minidesktops, Users might actually want to run an X2Go-KDrive session that doesn't span the entire screen
 if ! [ -f "/etc/x2go/x2gothinclient-minidesktop_start" ] ; then
 	(
