@@ -20,7 +20,7 @@ if [ -n "${AUDIOOUT}" ] ; then
                         for AUDIOOUTPUT in ${AUDIOOUTPUTS}; do
                                 echo -en "\n$(date '+%F | %T | ')'${0}': ${AUDIOOUTPUT}" | tee -a '/dev/tty8' | tee -a '/tmp/audiolog'
                         done
-                        echo -en "\n$(date '+%F | %T | ')'${0}': $(pacmd list | 'grep active profile')" | tee -a '/dev/tty8' | tee -a '/tmp/audiolog'
+                        echo -en "\n$(date '+%F | %T | ')'${0}': $(pacmd list | grep 'active profile')" | tee -a '/dev/tty8' | tee -a '/tmp/audiolog'
                 elif (echo "${AUDIOOUT}" | grep -q '^[^|]*|[^|]*$') ; then
                         $(echo "${AUDIOOUT}" | sed -e 's/^/pacmd set-card-profile /' -e 's/|/ /')
                 else
