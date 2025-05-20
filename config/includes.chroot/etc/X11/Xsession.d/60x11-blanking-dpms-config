@@ -26,7 +26,7 @@ if [ -n "${BLANKINGTIME}" ]; then
 fi
 
 if grep -q '\W*blankdpmsfix\W*' '/proc/cmdline'; then
-	SLEEPTIME="$(cat '/proc/cmdline' | tr ' ' '\n' | awk -F'=' '"blankdpmsfix"==$1 {print $2}' | tr -dc '0-9')"
+	SLEEPTIME="$(tr ' ' '\n' < '/proc/cmdline' | awk -F'=' '"blankdpmsfix"==$1 {print $2}' | tr -dc '0-9')"
 	# SLEEPTIME is a value set in milliseconds -- not microseconds and not seconds either
 	[ -z "${SLEEPTIME}" ] && SLEEPTIME='1000' # so we default to 1000 milliseconds = 1 second
 	SLEEPTIME="$(echo "${SLEEPTIME}" | awk '{ printf "%s", $1/1000 }')" # awk works for fractions so we don't need bc
