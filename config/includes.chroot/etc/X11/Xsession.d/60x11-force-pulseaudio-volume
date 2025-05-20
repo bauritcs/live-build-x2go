@@ -1,4 +1,5 @@
 # shellcheck shell=dash
+# vim: syntax=sh:
 
 # Force pulseaudio volume
 
