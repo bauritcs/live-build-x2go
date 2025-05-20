@@ -1,3 +1,5 @@
+# shellcheck shell=dash
+
 # Spawn openbox
 if [ -x /usr/bin/openbox ] ; then
         if [ -x /usr/bin/tint2 ] ; then
