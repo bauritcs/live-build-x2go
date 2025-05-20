@@ -1,3 +1,5 @@
+# shellcheck shell=dash
+
 # workaround for NX "magic pixel" being active in --thinclient mode
 if [ -x /usr/bin/tint2 ] ; then
 	echo -en "\n$(date +'%F | %T | ')'$0' Not spawning magic pixel workaround - tint2 executable found. (MicroDesktop active?)" | tee -a /dev/tty8
