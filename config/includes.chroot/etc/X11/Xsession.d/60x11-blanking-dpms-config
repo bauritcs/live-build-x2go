@@ -1,3 +1,5 @@
+# shellcheck shell=dash
+
 # code to fix blank screen happening with DisplayPort and some buggy TFTs (xset q reports "Monitor is on" even though it is pitch black)
 
 BLANKINGTIME=$(sed -e 's/ \([^ ]*\)=/\n\1=/g' -e 's/\([^=]["'"'"']\) /\1\n/g' -e 's/ \([^ "'"'"']\)/\n\1/g' /proc/cmdline | awk -F '=' '$1 == "blank" { print $2 }' | tr -dc '0-9:')
