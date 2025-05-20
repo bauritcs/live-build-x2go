@@ -22,7 +22,7 @@ if [ -n "${AUDIOOUT}" ] ; then
 			done
 			logttycolon "$(printf '%s' "$(pacmd list | grep 'active profile')")" | tee -a '/tmp/audiolog'
 		elif (echo "${AUDIOOUT}" | grep -q '^[^|]*|[^|]*$') ; then
-			$(printf '%s\n' "${AUDIOOUT}" | sed -e 's/^/pacmd set-card-profile /' -e 's/|/ /')
+			eval "$(printf '%s\n' "${AUDIOOUT}" | sed -e 's/^/pacmd set-card-profile /' -e 's/|/ /')"
 		else
 			: # NOP
 		fi
