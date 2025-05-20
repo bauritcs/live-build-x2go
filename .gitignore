@@ -1,0 +1,5 @@
+# VIM temporary files.
+.*.sw*
+
+# This file.
+.gitignore
