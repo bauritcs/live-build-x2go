@@ -11,10 +11,10 @@ if [ -n "$PAVOL" ] ; then
                         logttycolon 'Waiting for pulseaudio to start ...'
                         sleep 1
                 done
-                for DEVVOLPAIR in $(echo -e "$PAVOL" | tr '|,' '\n'); do
-			if echo -e "$DEVVOLPAIR" | grep -q ':' ; then
-				PADEV=$(echo -e "$DEVVOLPAIR" | awk -F ':' '{ print $1 }')
-				VOLUME=$(echo -e "$DEVVOLPAIR" | awk -F ':' '{ print $2 }')
+                for DEVVOLPAIR in $(printf "${PAVOL}" | tr '|,' '\n'); do
+			if printf "${DEVVOLPAIR}" | grep -q ':' ; then
+				PADEV=$(printf "${DEVVOLPAIR}" | awk -F ':' '{ print $1 }')
+				VOLUME=$(printf "${DEVVOLPAIR}" | awk -F ':' '{ print $2 }')
 			else
 				PADEV="0"
 				VOLUME=$DEVVOLPAIR
