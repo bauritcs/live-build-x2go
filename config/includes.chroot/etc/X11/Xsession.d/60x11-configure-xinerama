@@ -37,7 +37,7 @@ MICECOUNT=$(find /dev/input -maxdepth 1 -name "mouse*" | wc -l)
 for NEXT_DISPLAY in $(LANG=C xrandr 2>/dev/null | grep ' connected ' | cut -d ' ' -f1); do
 
 	#remove trailing newline from NEXT_DISPLAY
-	NEXT_DISPLAY=${NEXT_DISPLAY%$'\n'}
+	NEXT_DISPLAY="$(printf '%s' "${NEXT_DISPLAY}")"
 
 	# THIS_DISPLAY won't be defined until the second time the loop is executed, which is a
 	# neat way of running xrandr only if there are at least two connected display devices
