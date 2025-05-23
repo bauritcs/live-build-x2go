@@ -5,7 +5,7 @@ LockUser ()
 
 # Output startup message
 #
-echo -n " lockuser"
+printf ' %s' 'lockuser'
 
 
 # Set password
