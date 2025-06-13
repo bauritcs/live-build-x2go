@@ -6,7 +6,7 @@ GetSSHHostKeysFromMedia ()
 {
         # Output startup message
         #
-        echo -n " getsshhostkeysfrommedia"
+	printf ' %s' 'getsshhostkeysfrommedia'
 	(
 		check_for_config (){
 			if [ -d $1/config/sshdkeys ] ; then
