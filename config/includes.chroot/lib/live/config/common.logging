@@ -21,3 +21,11 @@ logtty() {
 logttycolon() {
 	logtty_internal ':' "${*}"
 }
+
+logcon() {
+	log_internal '' "${*}"
+}
+
+logconcolon() {
+	log_internal ':' "${*}"
+}
