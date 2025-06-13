@@ -3,11 +3,15 @@
 # shellcheck shell=dash
 # vim: syntax=sh:
 
-logtty_internal() {
+log_internal() {
 	colon="${1}"
 	shift
 
-	printf '\n%s | %s | '"'"'%s'"'"'%s %s' "$(date '+%F')" "$(date '+%T')" "${0}" "${colon}" "${*}" | tee -a '/dev/tty8'
+	printf '\n%s | %s | '"'"'%s'"'"'%s %s' "$(date '+%F')" "$(date '+%T')" "${0}" "${colon}" "${*}"
+}
+
+logtty_internal() {
+	log_internal "${@}" | tee -a '/dev/tty8'
 }
 
 logtty() {
