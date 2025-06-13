@@ -30,7 +30,7 @@ GetSSHHostKeysFromMedia ()
 					logtty "$(printf 'Attempting to copy current keyfiles to keyfile directory '"'"'%s/config/sshdkeys'"'"'.' "${1}")"
 					if awk '$2=="'$1'" {print $4 }' /proc/mounts | tr ',' '\n' | grep -q '^ro$' ; then
 						logtty "$(printf 'Attempting to remount '"'"'%s'"'"' with flags rw and sync.' "${1}")"
-						if mount -oremount,rw,sync $1 ; then
+						if mount -o 'remount,rw,sync' "${1}" ; then
 							logtty "$(printf 'Successfully remounted '"'"'%s'"'"'.' "${1}")"
 							REMOUNT="rws"
 						else
@@ -42,7 +42,7 @@ GetSSHHostKeysFromMedia ()
 					else
 						logtty 'Error copying keyfiles.'
 					fi
-					if [ -n "$REMOUNT" ] && mount -oremount,ro $1 ; then
+					if [ -n "${REMOUNT}" ] && mount -o 'remount,ro' $1 ; then
 						logtty "$(printf 'Remounted '"'"'%s'"'"' read-only.' "${1}")"
 					else
 						logtty "$(printf 'Error remounting '"'"'%s'"'"' read-only.' "${1}")"
