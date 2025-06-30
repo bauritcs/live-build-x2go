@@ -6,7 +6,7 @@ GetSSHClientKeysFromMedia ()
 {
 	# Output startup message
 	#
-	echo -n " getsshclientkeysfrommedia"
+	printf ' %s' 'getsshclientkeysfrommedia'
 	if grep -q "\W*copysecring\W*" /proc/cmdline ; then
 		(
 
@@ -93,13 +93,13 @@ GetSSHClientKeysFromMedia ()
 			PORTABLEAPPLABELS=$(echo "$LABELMPLIST" | awk '$1 == "PORTABLEAPP" { print $2 " " $3 " " $4}')
 
 			# block device list, removable first (we want USB media to be able to override keys on fixed disks)
-			BLOCKDEVS="$(echo "$PORTABLEAPPLABELS\n$X2GOTCELIVELABELS" | awk '$1 == "1" {print $2}') $(echo "$PORTABLEAPPLABELS\n$X2GOTCELIVELABELS" | awk '$1 == "0" {print $2}')"
+			BLOCKDEVS="$(printf '%s\n%s\n' "${PORTABLEAPPLABELS}" "${X2GOTCELIVELABELS}" | awk '$1 == "1" {print $2}') $(printf '%s\n%s\n' "${PORTABLEAPPLABELS}" "${X2GOTCELIVELABELS}" | awk '$1 == "0" {print $2}')"
 
 			# for every block device in our list, do ...
 			for BLOCKDEV in $BLOCKDEVS; do 
 				# check if it also appears in the list of devices carrying our magic label
 				# this should always be the case since we changed how BLOCKDEVS is assembled
-				NEXTDEVICE=$(echo "$X2GOTCELIVELABELS\n$PORTABLEAPPLABELS" | grep "$BLOCKDEV")
+				NEXTDEVICE=$(printf '%s\n%s\n' "${X2GOTCELIVELABELS}" "${PORTABLEAPPLABELS}" | grep "$BLOCKDEV")
 				if [ -n "$NEXTDEVICE" ] ; then
 					# now figure out the mountpoint
 					MNTPT=$(echo $NEXTDEVICE | awk '{print $3}')
