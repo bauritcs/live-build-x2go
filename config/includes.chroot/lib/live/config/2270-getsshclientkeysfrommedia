@@ -1,5 +1,6 @@
 #!/bin/dash
 
+. '/lib/live/config/common.logging'
 
 GetSSHClientKeysFromMedia ()
 {
@@ -17,10 +18,10 @@ GetSSHClientKeysFromMedia ()
 
 			check_for_config (){
 				if [ -d $1/config/ssh ] || [ -d $1/ssh ] || [ -d $1/x2goclient/.ssh ] || [ -d $1/x2goclient/sshkeys ] || [ -d $1/.ssh ]; then
-					echo -n "\n$(date +'%F | %T | ')'$0' Keyfile directory found at '$1/config/ssh', '$1/ssh', '$1/x2goclient/.ssh', or '$1/.ssh'." | tee -a /dev/tty8
+					logtty "$(printf 'Keyfile directory found at '"'"'%s/config/ssh'"'"', '"'"'%s/ssh'"'"', '"'"'%s/x2goclient/.ssh'"'"', or '"'"'%s/.ssh'"'"'.' "${1}" "${1}" "${1}" "${1}")"
 					if [ "$TARGETUSERNAME" = "x2gothinclient" ] ; then
 						while ! [ -f $USERHOME/.x2goclient/settings ] ; do
-							echo -n "\n$(date +'%F | %T | ')'$0' Waiting until minidesktop-init script has finished before we populate '~/.ssh' ." | tee -a /dev/tty8
+							logtty 'Waiting until minidesktop-init script has finished before we populate '"'"'~/.ssh'"'"' .'
 							sleep 1
 						done
 					fi
@@ -38,7 +39,7 @@ GetSSHClientKeysFromMedia ()
 					for KEYFILE in $1/config/ssh/* $1/ssh/* $1/x2goclient/.ssh/* $1/x2goclient/sshkeys/* $1/.ssh/* ; do
 						([ -f "$KEYFILE" ] && [ -s "$KEYFILE" ]) || continue
 						egrep -q "BEGIN .*(PRIVATE|PUBLIC) KEY" "$KEYFILE" || continue
-						echo -n "\n$(date +'%F | %T | ')'$0' Keyfile '$KEYFILE' found, copying and adjusting ownership and permissions on destination." | tee -a /dev/tty8
+						logtty "$(printf 'Keyfile '"'"'%s'"'"' found, copying and adjusting ownership and permissions on destination.' "${KEYFILE}")"
 						KEYDESTPATH="$USERHOME/.ssh/$(basename "$KEYFILE")"
 						touch "$KEYDESTPATH"
 						chown   $TARGETUSERNAME: \
@@ -61,12 +62,12 @@ GetSSHClientKeysFromMedia ()
 			}
 
 			while ! [ -c /dev/tty8 ] ; do
-				echo -n "\n$(date +'%F | %T | ')'$0' is waiting for tty8 to become available."
+				logcon 'is waiting for tty8 to become available.'
 				sleep 2
 			done
 
 			while ! [ -e /var/lib/live/config/opensshkeys ] ; do
-				echo -n "\n$(date +'%F | %T | ')'$0' is waiting for getsshhostkeysfrommedia to finish."
+				logcon 'is waiting for getsshhostkeysfrommedia to finish.'
 				sleep 2
 			done
 
@@ -104,10 +105,10 @@ GetSSHClientKeysFromMedia ()
 					MNTPT=$(echo $NEXTDEVICE | awk '{print $3}')
 					# and the device name
 					NEXTDEVICE=$(echo $NEXTDEVICE | awk '{print $2}')
-					echo -n "\n$(date +'%F | %T | ')'$0' Checking status of Device '$NEXTDEVICE' for BLOCKDEV '$BLOCKDEV'." | tee -a /dev/tty8
+					logtty "$(printf 'Checking status of Device '"'"'%s'"'"' for BLOCKDEV '"'"'%s'"'"'.' "${NEXTDEVICE}" "${BLOCKDEV}")"
 					if [ -n "$MNTPT" ] ; then
 						# If the mountpoint variable isn't empty, it means the device is already mounted.
-						echo -n "\n$(date +'%F | %T | ')'$0' Device '$NEXTDEVICE' is mounted at: '$MNTPT'" | tee -a /dev/tty8
+						logtty "$(printf 'Device '"'"'%s'"'"' is mounted at: '"'"'%s'"'" "${NEXTDEVICE}" "${MNTPT}")"
 						# so let's check if we have a config directory at that mountpoint.
 						if check_for_config $MNTPT ; then
 							# if we managed to pull a config off of it (or save one on it), we make a note of this ...
@@ -117,11 +118,11 @@ GetSSHClientKeysFromMedia ()
 						fi
 					else
 						# So there's no active mount for the device with our magic label ...
-						echo -n "\n$(date +'%F | %T | ')'$0' Device '$NEXTDEVICE' is not mounted." | tee -a /dev/tty8
+						logtty "$(printf 'Device '"'"'%s'"'"' is not mounted.' "${NEXTDEVICE}")"
 						# let's see if this is a fixed disk.
 						if [ $(lsblk -oRM -nl /dev/$BLOCKDEV) -eq 0 ] ; then
 							# yes, it is, so let's go ahead and try to mount it ...
-							echo -n "\n$(date +'%F | %T | ')'$0' Device '$NEXTDEVICE' is a fixed disk, mounting ..." | tee -a /dev/tty8
+							logtty "$(printf 'Device '"'"'%s'"'"' is a fixed disk, mounting ...' "${NEXTDEVICE}")"
 							# obviously, we need a mountpoint for it ...
 							mkdir -p /media/fixeddisks/$NEXTDEVICE
 							# and now we can try to mount it. Let's do it in readonly mode, just to play it safe.
@@ -138,7 +139,7 @@ GetSSHClientKeysFromMedia ()
 						else
 							# If a removable disk hasn't been mounted by the automounter, something's amiss and we shouldn't try to meddle with it.
 							# So let's make a note of this and move on.
-							echo -n "\n$(date +'%F | %T | ')'$0' Device '$NEXTDEVICE' is a removable disk, not mounted by automounter, skipping." | tee -a /dev/tty8
+							logtty "$(printf 'Device '"'"'%s'"'"' is a removable disk, not mounted by automounter, skipping.' "${NEXTDEVICE}")"
 						fi
 					fi
 				fi
