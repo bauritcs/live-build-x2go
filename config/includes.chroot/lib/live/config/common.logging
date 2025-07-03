@@ -7,7 +7,14 @@ log_internal() {
 	colon="${1}"
 	shift
 
+	newline="${2}"
+	shift
+
 	printf '\n%s | %s | '"'"'%s'"'"'%s %s' "$(date '+%F')" "$(date '+%T')" "${0}" "${colon}" "${*}"
+
+	if [ '1' = "${newline}" ]; then
+		printf '\n'
+	fi
 }
 
 logtty_internal() {
@@ -15,17 +22,33 @@ logtty_internal() {
 }
 
 logtty() {
-	logtty_internal '' "${*}"
+	logtty_internal '' '0' "${*}"
+}
+
+logttynl() {
+	logtty_internal '' '1' "${*}"
 }
 
 logttycolon() {
-	logtty_internal ':' "${*}"
+	logtty_internal ':' '0' "${*}"
+}
+
+logttynlcolon() {
+	logtty_internal ':' '1' "${*}"
 }
 
 logcon() {
-	log_internal '' "${*}"
+	log_internal '' '0' "${*}"
+}
+
+logconnl() {
+	log_internal '' '1' "${*}"
 }
 
 logconcolon() {
-	log_internal ':' "${*}"
+	log_internal ':' '0' "${*}"
+}
+
+logconnlcolon() {
+	log_internal ':' '1' "${*}"
 }
