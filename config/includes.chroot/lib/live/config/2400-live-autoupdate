@@ -374,8 +374,8 @@ printf ' %s' 'live-autoupdater (backgrounding update task)'
 			$TEMPDIR/x2go-tce-initrd.img.new
 		mv $TEMPDIR/x2go-tce-initrd.img.new $TEMPDIR/x2go-tce-initrd.img
 		SIZEFACTORSTRING=$(	sed -e's_\(. bytes/sec\)_ \1_' /tmp/dl.log | \
-					awk '$4 == "sent" && $12 == "bytes/sec" \
-					{ print $11 }' \
+					awk '$4 == "sent" && $12 == "bytes/sec"' \
+					'{ print $11 }' \
 				   )
 		case $SIZEFACTORSTRING in
 			"" | \
@@ -389,8 +389,8 @@ printf ' %s' 'live-autoupdater (backgrounding update task)'
 			*)     	SIZEFACTOR=$((1024*1024*1024));;
 		esac
 		DLRATE=$(	sed -e's_\(. bytes/sec\)_ \1_' /tmp/dl.log | \
-				awk '$4 == "sent" && $12 == "bytes/sec" \
-				{ print $10 }')
+				awk '$4 == "sent" && $12 == "bytes/sec"' \
+				'{ print $10 }')
 		BWLIMIT=$(	echo "$DLRATE $SIZEFACTOR $BWLIMITPERCENT" | \
 				awk ' { print $1*$2*$3/100 }' | \
 				awk -F'.' '{ print $1 }' \
