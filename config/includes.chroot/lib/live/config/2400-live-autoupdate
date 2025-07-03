@@ -59,7 +59,7 @@ umount_or_remount_ro ()
 			logconcolon "$(printf 'Unable to unmount '"'"'%s'"'"'.' "${MOUNTPOINT}")"
 		fi
 	else	
-		if mount -oremount,ro,sync $MOUNTPOINT; then
+		if mount -o 'remount,ro,sync' "${MOUNTPOINT}"; then
 			logconcolon "$(printf 'Remounted '"'"'%s'"'"' ro and sync.' "${MOUNTPOINT}")"
 		else
 			logconcolon "$(printf 'Unable to remount '"'"'%s'"'"' ro and sync.' "${MOUNTPOINT}")"
@@ -134,7 +134,7 @@ echo -n " live-autoupdater (backgrounding update task)"
 			fi
 		fi
 
-		if mount -t ntfs-3g -rw /dev/disk/by-uuid/$NTFSROOT /lib/live/mount/ntfsroot ; then
+		if mount -t 'ntfs-3g' -o 'rw' "/dev/disk/by-uuid/${NTFSROOT}" '/lib/live/mount/ntfsroot' ; then
 			logconcolon "$(printf 'Mounted '"'"'/dev/disk/by-uuid/%s'"'"'.' "${NTFSROOT}")"
 		else
 			logconcolon "$(printf 'Unable to mount '"'"'/dev/disk/by-uuid/%s'"'"'.' "${NTFSROOT}")"
@@ -159,7 +159,7 @@ echo -n " live-autoupdater (backgrounding update task)"
 			IMGSIZE=$(df /lib/live/mount/medium | awk ' /medium/ { print $2}')
 		fi
 		# multiply current size by 1.5 as safety margin
-		mount -t tmpfs -osize=$((IMGSIZE*15/10))k tmpfs $TEMPDIR
+		mount -t 'tmpfs' -o "size=$((IMGSIZE*15/10))k" 'tmpfs' "${TEMPDIR}"
 
 	fi
 
@@ -188,14 +188,14 @@ echo -n " live-autoupdater (backgrounding update task)"
 		FINDFILE=$(sed -e 's/ \([^ ]*\)=/\n\1=/g' -e 's/\([^=]["'"'"']\) /\1\n/g' -e 's/ \([^ "'"'"']\)/\n\1/g' -e 's/ \([^ "'"'"']\)/\n\1/g' /proc/cmdline | awk -F '=' '$1 == "findiso" { print $2 }' | tr -dc 'a-zA-Z0-9./ _\-')
 		[ -z "$FINDFILE" ] && exit 0
 		for PARTITION in $LISTOFPARTITIONS ; do
-			mount -oro $PARTITION $TEMPMOUNT
+			mount -o 'ro' "${PARTITION}" "${TEMPMOUNT}"
 			if ! [ -f "$TEMPMOUNT/$FINDFILE" ] ; then
 				umount $TEMPMOUNT
 			else
 				umount $TEMPMOUNT
 				rmdir $TEMPMOUNT
 				mkdir /lib/live/mount/findiso
-				if mount -oro $PARTITION /lib/live/mount/findiso ; then
+				if mount -o 'ro' "${PARTITION}" '/lib/live/mount/findiso' ; then
 					logconcolon "$(printf 'mounted %s as '"'"'/lib/live/mount/findiso'"'"'.' "${PARTITION}")"
 					RAMDISKMODE="yes"
 				else
@@ -437,7 +437,7 @@ echo -n " live-autoupdater (backgrounding update task)"
 	# If we made it past that point, it's time to update the boot medium, so let's
 	# remount it rw and async for speed
 	#
-	if mount -oremount,rw,async $MOUNTPOINT; then
+	if mount -o 'remount,rw,async' "${MOUNTPOINT}"; then
 		logconcolon "$(printf 'Remounted '"'"'%s'"'"' as rw and async.' "${MOUNTPOINT}")"
 	else
 		logconcolon "$(printf 'Could not remount '"'"'%s'"'"' as rw and async.' "${MOUNTPOINT}")"
@@ -457,7 +457,7 @@ echo -n " live-autoupdater (backgrounding update task)"
 	rm -rf $TEMPDIR/*
 	if [ -n "$NTFSROOT" ]; then
 		logconcolon "$(printf 'NTFSROOT detected. Attempting to mount '"'"'/dev/disk/by-uuid/%s'"'"'.' "${NTFSROOT}")"
-		if mount -t ntfs-3g -rw /dev/disk/by-uuid/$NTFSROOT /lib/live/mount/ntfsroot; then
+		if mount -t 'ntfs-3g' -o 'rw' "/dev/disk/by-uuid/${NTFSROOT}" '/lib/live/mount/ntfsroot'; then
 			logconcolon 'Mount successful.'
 		else
 			logconcolon 'Failed to mount NTFSROOT.'
