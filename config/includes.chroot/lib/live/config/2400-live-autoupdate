@@ -45,7 +45,7 @@ show_versions ()
 			echo "$(cat $TIMESTAMPFILE);$(basename $(dirname $TIMESTAMPFILE));" >>/var/run/x2go-tce-timestamps
 			logconcolon "$(printf '%s - %s - %s' "$(basename "$(dirname "${TIMESTAMPFILE}")")" "$(cat "${TIMESTAMPFILE}")" "$(date --date="@$(cat "${TIMESTAMPFILE}")")")"
 		done
-		sed -i "s/"$RUNNINGSYSTEMNAME";$/"$RUNNINGSYSTEMNAME";X/i" /var/run/x2go-tce-timestamps
+		sed -i "s/${RUNNINGSYSTEMNAME};$/${RUNNINGSYSTEMNAME};X/i" /var/run/x2go-tce-timestamps
 		echo "---- END TIMESTAMPS ----" >>/var/run/x2go-tce-timestamps
 	fi
 }
@@ -293,7 +293,7 @@ printf ' %s' 'live-autoupdater (backgrounding update task)'
 	if echo "$DOWNLOADURL" | grep -q "^http" || \
 	   echo "$DOWNLOADURL" | grep -q "^ftp"
 	   then
-		DOWNLOADCOMMANDFORTIMESTAMP="wget -Nr -l 1 -nd -P "$TEMPDIR" \
+		DOWNLOADCOMMANDFORTIMESTAMP="wget -Nr -l 1 -nd -P $TEMPDIR \
 				  --progress=bar:force \
 				  $DOWNLOADURL/x2go-tce-timestamp"
 
@@ -343,7 +343,7 @@ printf ' %s' 'live-autoupdater (backgrounding update task)'
 				awk -F'.' '{ print $1 }' \
 			  ) # outputs integer kilobytes, not rounded
 		logconcolon "$(printf 'Determined bandwidth limit: '"'"'%s KB/s'"'" "${BWLIMIT}")"
-		DOWNLOADCOMMAND="wget -Nr -l 1 -nd -P "$TEMPDIR" \
+		DOWNLOADCOMMAND="wget -Nr -l 1 -nd -P ${TEMPDIR} \
 				  --progress=bar:force \
 				  --limit-rate=${BWLIMIT}k $DOWNLOADURL"
 
