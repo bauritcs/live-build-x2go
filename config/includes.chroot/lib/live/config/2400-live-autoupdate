@@ -98,7 +98,7 @@ LiveAutoUpdateMain ()
 {
 # Output startup message
 #
-echo -n " live-autoupdater (backgrounding update task)"
+printf ' %s' 'live-autoupdater (backgrounding update task)'
 
 
 # Background everything
