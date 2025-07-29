@@ -32,7 +32,7 @@ if grep -q '\W*earlyblankdpmsfix[=\W]*' /proc/cmdline; then
 			printf 'Attempting to blank '"'"'%s'"'"'.\n' "${FBDEVICE}"
 			while ! [ -d $FBDEVICE ] ; do
 				printf 'Device '"'"'%s'"'"' does not (yet) exist!\n' "${FBDEVICE}"
-			       	: # NOP
+				: # NOP
 			done
 			printf '1\n' > "${FBDEVICE}/blank" && printf 'Blanked '"'"'%s'"'"'.\n' "${FBDEVICE}"
 			printf 'Sleeping using command '"'"'%s'"'"'.\n' "${SLEEPCOMMAND}"
@@ -40,7 +40,7 @@ if grep -q '\W*earlyblankdpmsfix[=\W]*' /proc/cmdline; then
 			printf 'Attempting to unblank '"'"'%s'"'"'.\n' "${FBDEVICE}"
 			while ! [ -d $FBDEVICE ] ; do
 				printf 'Device '"'"'%s'"'"' does not (yet) exist!\n' "${FBDEVICE}"
-			       	: # NOP
+				: # NOP
 			done
 			printf '0\n' > "${FBDEVICE}/blank" && printf 'Unblanked '"'"'%s'"'"'.\n' "${FBDEVICE}"
 		done
