@@ -3,6 +3,7 @@
 # shellcheck shell=dash
 # vim: syntax=sh:
 
+# Base logging function. Do not use it directly.
 log_internal() {
 	colon="${1}"
 	shift
@@ -30,38 +31,87 @@ log_internal() {
 	fi
 }
 
+# Wrapper for base logging function. Do not use it directly.
 logtty_internal() {
 	log_internal "${@}" | tee -a '/dev/tty8'
 }
 
+# Logs to stdout and the hardcoded logging destination.
+#
+# Behavior:
+#   - uses preamble
+#   - no colon added between message text and script name
+#   - no newline added at the end of the message text.
 logtty() {
 	logtty_internal '' '0' '1' "${*}"
 }
 
+# Logs to stdout and the hardcoded logging destination.
+#
+# Behavior:
+#   - uses preamble
+#   - no colon added between message text and script name
+#   - newline added at the end of the message text.
 logttynl() {
 	logtty_internal '' '1' '1' "${*}"
 }
 
+# Logs to stdout and the hardcoded logging destination.
+#
+# Behavior:
+#   - uses preamble
+#   - colon added between message text and script name
+#   - no newline added at the end of the message text.
 logttycolon() {
 	logtty_internal ':' '0' '1' "${*}"
 }
 
+# Logs to stdout and the hardcoded logging destination.
+#
+# Behavior:
+#   - uses preamble
+#   - colon added between message text and script name
+#   - newline added at the end of the message text.
 logttynlcolon() {
 	logtty_internal ':' '1' '1' "${*}"
 }
 
+# Logs to stdout only.
+#
+# Behavior:
+#   - uses preamble
+#   - no colon added between message text and script name
+#   - no newline added at the end of the message text.
 logcon() {
 	log_internal '' '0' '1' "${*}"
 }
 
+# Logs to stdout only.
+#
+# Behavior:
+#   - uses preamble
+#   - no colon added between message text and script name
+#   - newline added at the end of the message text.
 logconnl() {
 	log_internal '' '1' '1' "${*}"
 }
 
+# Logs to stdout only.
+#
+# Behavior:
+#   - uses preamble
+#   - colon added between message text and script name
+#   - no newline added at the end of the message text.
 logconcolon() {
 	log_internal ':' '0' '1' "${*}"
 }
 
+# Logs to stdout only.
+#
+# Behavior:
+#   - uses preamble
+#   - colon added between message text and script name
+#   - newline added at the end of the message text.
 logconnlcolon() {
 	log_internal ':' '1' '1' "${*}"
 }
