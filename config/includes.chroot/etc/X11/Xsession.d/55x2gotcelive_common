@@ -1,17 +1,4 @@
 # shellcheck shell=dash
 # vim: syntax=sh:
 
-logtty_internal() {
-	colon="${1}"
-	shift
-
-	printf '\n%s | %s | '"'"'%s'"'"'%s %s' "$(date '+%F')" "$(date '+%T')" "${0}" "${colon}" "${*}" | tee -a '/dev/tty8'
-}
-
-logtty() {
-	logtty_internal '' "${*}"
-}
-
-logttycolon() {
-	logtty_internal ':' "${*}"
-}
+# Use this file for common functionality.
