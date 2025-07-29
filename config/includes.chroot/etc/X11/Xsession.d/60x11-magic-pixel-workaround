@@ -1,6 +1,8 @@
 # shellcheck shell=dash
 # vim: syntax=sh:
 
+. '/lib/live/config/common.logging'
+
 # workaround for NX "magic pixel" being active in --thinclient mode
 if [ -x /usr/bin/tint2 ] ; then
 	logtty 'Not spawning magic pixel workaround - tint2 executable found. (MicroDesktop active?)'
