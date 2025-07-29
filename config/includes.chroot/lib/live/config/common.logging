@@ -10,9 +10,22 @@ log_internal() {
 	newline="${2}"
 	shift
 
-	printf '\n%s | %s | '"'"'%s'"'"'%s %s' "$(date '+%F')" "$(date '+%T')" "${0}" "${colon}" "${*}"
+	preamble="${3}"
+	shift
 
-	if [ '1' = "${newline}" ]; then
+	if [ -n "${preamble}" ] && [ '0' != "${preamble}" ]; then
+		printf '\n%s | %s | '"'"'%s'"'" "$(date '+%F')" "$(date '+%T')" "${0}"
+	fi
+
+	if [ -n "${colon}" ]; then
+		printf ' %s ' "${colon}"
+	else
+		printf ' '
+	fi
+
+	printf '%s' "${*}"
+
+	if [ -n "${newline}" ] && [ '0' != "${newline}" ]; then
 		printf '\n'
 	fi
 }
@@ -22,33 +35,33 @@ logtty_internal() {
 }
 
 logtty() {
-	logtty_internal '' '0' "${*}"
+	logtty_internal '' '0' '1' "${*}"
 }
 
 logttynl() {
-	logtty_internal '' '1' "${*}"
+	logtty_internal '' '1' '1' "${*}"
 }
 
 logttycolon() {
-	logtty_internal ':' '0' "${*}"
+	logtty_internal ':' '0' '1' "${*}"
 }
 
 logttynlcolon() {
-	logtty_internal ':' '1' "${*}"
+	logtty_internal ':' '1' '1' "${*}"
 }
 
 logcon() {
-	log_internal '' '0' "${*}"
+	log_internal '' '0' '1' "${*}"
 }
 
 logconnl() {
-	log_internal '' '1' "${*}"
+	log_internal '' '1' '1' "${*}"
 }
 
 logconcolon() {
-	log_internal ':' '0' "${*}"
+	log_internal ':' '0' '1' "${*}"
 }
 
 logconnlcolon() {
-	log_internal ':' '1' "${*}"
+	log_internal ':' '1' '1' "${*}"
 }
