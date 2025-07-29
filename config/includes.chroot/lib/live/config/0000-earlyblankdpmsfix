@@ -5,7 +5,7 @@ EarlyBlankDPMSFix ()
 
 # Output startup message
 #
-echo -n " earlyblankdpmsfix"
+printf ' %s' 'earlyblankdpmsfix'
 
 # code to fix blank screen happening with DisplayPort and some buggy TFTs (even xset q reports "Monitor is on" even though it is pitch black)
 if grep -q '\W*earlyblankdpmsfix[=\W]*' /proc/cmdline; then
@@ -27,24 +27,24 @@ if grep -q '\W*earlyblankdpmsfix[=\W]*' /proc/cmdline; then
 			SLEEPCOMMAND="/bin/sleep $SLEEPTIME"
 		fi
 
-		echo "EarlyBlankDPMSFix: attempting to force-enable displays."
+		printf '%s\n' 'EarlyBlankDPMSFix: attempting to force-enable displays.'
 		for FBDEVICE in /sys/class/graphics/fb[0-9]*; do
-			echo "Attempting to blank '$FBDEVICE'."
+			printf 'Attempting to blank '"'"'%s'"'"'.\n' "${FBDEVICE}"
 			while ! [ -d $FBDEVICE ] ; do
-				echo "Device '$FBDEVICE' does not (yet) exist!"
+				printf 'Device '"'"'%s'"'"' does not (yet) exist!\n' "${FBDEVICE}"
 			       	: # NOP
 			done
-			echo 1 > $FBDEVICE/blank && echo "Blanked '$FBDEVICE'."
-			echo "Sleeping using command '$SLEEPCOMMAND'."
+			printf '1\n' > "${FBDEVICE}/blank" && printf 'Blanked '"'"'%s'"'"'.\n' "${FBDEVICE}"
+			printf 'Sleeping using command '"'"'%s'"'"'.\n' "${SLEEPCOMMAND}"
 			$SLEEPCOMMAND
-			echo "Attempting to unblank '$FBDEVICE'."
+			printf 'Attempting to unblank '"'"'%s'"'"'.\n' "${FBDEVICE}"
 			while ! [ -d $FBDEVICE ] ; do
-				echo "Device '$FBDEVICE' does not (yet) exist!"
+				printf 'Device '"'"'%s'"'"' does not (yet) exist!\n' "${FBDEVICE}"
 			       	: # NOP
 			done
-			echo 0 > $FBDEVICE/blank && echo "Unblanked '$FBDEVICE'."
+			printf '0\n' > "${FBDEVICE}/blank" && printf 'Unblanked '"'"'%s'"'"'.\n' "${FBDEVICE}"
 		done
-		echo "EarlyBlankDPMSFix: Done."
+		printf 'EarlyBlankDPMSFix: Done.\n'
 	) &
 fi
 }
