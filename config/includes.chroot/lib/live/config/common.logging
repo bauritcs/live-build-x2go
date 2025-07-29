@@ -20,7 +20,10 @@ log_internal() {
 
 	if [ -n "${colon}" ]; then
 		printf ' %s ' "${colon}"
-	else
+	elif [ -n "${preamble}" ] && [ '0' != "${preamble}" ]; then
+		# Make sure that we only output an additional whitespace
+		# character if we had to output the preamble - essentially
+		# skip it for raw logging output.
 		printf ' '
 	fi
 
