@@ -49,11 +49,29 @@ logtty() {
 # Logs to stdout and the hardcoded logging destination.
 #
 # Behavior:
+#   - does not use preamble
+#   - no newline added at the end of the message text.
+logttyraw() {
+	logtty_internal '' '0' '0' "${*}"
+}
+
+# Logs to stdout and the hardcoded logging destination.
+#
+# Behavior:
 #   - uses preamble
 #   - no colon added between message text and script name
 #   - newline added at the end of the message text.
 logttynl() {
 	logtty_internal '' '1' '1' "${*}"
+}
+
+# Logs to stdout and the hardcoded logging destination.
+#
+# Behavior:
+#   - does not use preamble
+#   - newline added at the end of the message text.
+logttynlraw() {
+	logtty_internal '' '1' '0' "${*}"
 }
 
 # Logs to stdout and the hardcoded logging destination.
@@ -89,11 +107,29 @@ logcon() {
 # Logs to stdout only.
 #
 # Behavior:
+#   - does not use preamble
+#   - no newline added at the end of the message text.
+logconraw() {
+	log_internal '' '0' '0' "${*}"
+}
+
+# Logs to stdout only.
+#
+# Behavior:
 #   - uses preamble
 #   - no colon added between message text and script name
 #   - newline added at the end of the message text.
 logconnl() {
 	log_internal '' '1' '1' "${*}"
+}
+
+# Logs to stdout only.
+#
+# Behavior:
+#   - does not use preamble
+#   - newline added at the end of the message text.
+logconnlraw() {
+	log_internal '' '1' '0' "${*}"
 }
 
 # Logs to stdout only.
