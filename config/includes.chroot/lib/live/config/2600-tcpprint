@@ -7,7 +7,7 @@ TcpPrint ()
 
 # Output startup message
 #
-echo -n " tcpprint"
+printf ' %s' 'tcpprint'
 
 if grep -q "\W*tcpprint\W*" /proc/cmdline ; then
 
@@ -64,7 +64,7 @@ JETDIRCONF
 		PRINTERCOUNT=$((PRINTERCOUNT+1))
 	done
 
-	echo "#Local printer config: Done." >/etc/xinetd.d/jetdirect
+	printf '%s\n' '#Local printer config: Done.' >/etc/xinetd.d/jetdirect
 
 	if ps -C xinetd --no-header >/dev/null ; then
 		logttycolon 'xinetd needs to be restarted, trying to do that ...'
