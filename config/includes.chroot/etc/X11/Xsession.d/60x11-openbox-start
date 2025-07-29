@@ -1,6 +1,8 @@
 # shellcheck shell=dash
 # vim: syntax=sh:
 
+. '/lib/live/config/common.logging'
+
 # Spawn openbox
 if [ -x /usr/bin/openbox ] ; then
         if [ -x /usr/bin/tint2 ] ; then
