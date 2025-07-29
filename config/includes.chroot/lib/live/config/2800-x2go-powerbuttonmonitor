@@ -4,7 +4,7 @@ X2GoPowerbuttonMonitor ()
 {
 # Output startup message
 #
-echo -n " x2go-powerbuttonmonitor"
+printf ' %s' 'x2go-powerbuttonmonitor'
 
 # determine poweroff-command
 if grep -q "\W*fastpo\W*" /proc/cmdline && ! [ -d ~x2gothinclient ] ; then 
