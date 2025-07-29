@@ -5,7 +5,7 @@ AddUser2TTY ()
 
 # Output startup message
 #
-echo -n " adduser2tty"
+printf ' %s' 'adduser2tty'
 
 # this is so that we can log to tty8 (status) and tty9 (debug)
 if [ -n "$(getent passwd user 2>/dev/null)" ] ; then
