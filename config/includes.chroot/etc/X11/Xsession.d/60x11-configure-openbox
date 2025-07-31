@@ -1,4 +1,5 @@
 # shellcheck shell=dash
+# vim: syntax=sh:
 
 # configure openbox
 OPENBOXBUTTONS=$(sed -e 's/ \([^ ]*\)=/\n\1=/g' -e 's/\([^=]["'"'"']\) /\1\n/g' -e 's/ \([^ "'"'"']\)/\n\1/g' /proc/cmdline | awk -F '=' '$1 == "openboxbuttons" { print $2 }' | tr -d "'\"|&$"| tr ',' '|')
