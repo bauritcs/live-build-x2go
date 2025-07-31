@@ -1,4 +1,5 @@
 # shellcheck shell=dash
+# vim: syntax=sh:
 
 # Spawn pnmixer
 if [ -x /usr/bin/pnmixer ] ; then
