@@ -1,3 +1,5 @@
+# shellcheck shell=dash
+
 # allow xterm if requested
 
 if grep -q '\W*showbattstate\W*' /proc/cmdline ; then

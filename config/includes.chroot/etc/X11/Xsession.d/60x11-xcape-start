@@ -1,3 +1,5 @@
+# shellcheck shell=dash
+
 # Spawn xcape - this maps Super_L (Windows Key) to Super_L + Escape, because openbox can't trigger on Super_L alone
 if [ -x /usr/bin/xcape ] ; then
         if ps -C xcape >/dev/null 2>&1 ; then

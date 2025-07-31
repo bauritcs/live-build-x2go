@@ -1,3 +1,5 @@
+# shellcheck shell=dash
+
 # configure tint2
 
 mkdir -p ~/.config/tint2/
