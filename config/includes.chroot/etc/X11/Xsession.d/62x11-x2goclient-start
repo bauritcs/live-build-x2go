@@ -1,3 +1,5 @@
+# shellcheck shell=dash
+
 # Spawn x2goclient wrapper
 if [ -x /usr/local/bin/x2goclient ] ; then
         if ps -C x2goclient -ouser --no-header | grep -q "$USER" ; then

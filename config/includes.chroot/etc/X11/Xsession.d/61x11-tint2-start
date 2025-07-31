@@ -1,3 +1,5 @@
+# shellcheck shell=dash
+
 # Spawn tint2
 if [ -x /usr/bin/tint2 ] ; then
 	tint2 &

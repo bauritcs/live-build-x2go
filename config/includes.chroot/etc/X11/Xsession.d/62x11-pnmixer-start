@@ -1,3 +1,5 @@
+# shellcheck shell=dash
+
 # Spawn pnmixer
 if [ -x /usr/bin/pnmixer ] ; then
 	pnmixer &
