@@ -1,14 +1,16 @@
 # shellcheck shell=dash
 # vim: syntax=sh:
 
+. '/lib/live/config/common.logging'
+
 # Spawn xcape - this maps Super_L (Windows Key) to Super_L + Escape, because openbox can't trigger on Super_L alone
 if [ -x /usr/bin/xcape ] ; then
         if ps -C xcape >/dev/null 2>&1 ; then
-		echo -en "\n$(date +'%F | %T | ')'$0' Not spawning xcape - already running." | tee -a /dev/tty8
+		logtty 'Not spawning xcape - already running.'
 	else
 		xcape -e "Super_L=Super_L|Escape"
-		echo -en "\n$(date +'%F | %T | ')'$0' spawned xcape." | tee -a /dev/tty8
+		logtty 'spawned xcape.'
 	fi
 else
-	echo -en "\n$(date +'%F | %T | ')'$0' Not spawning xcape - executable not found." | tee -a /dev/tty8
+	logtty 'Not spawning xcape - executable not found.'
 fi
