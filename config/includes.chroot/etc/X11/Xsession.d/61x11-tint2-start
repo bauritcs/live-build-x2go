@@ -1,10 +1,12 @@
 # shellcheck shell=dash
 # vim: syntax=sh:
 
+. '/lib/live/config/common.logging'
+
 # Spawn tint2
 if [ -x /usr/bin/tint2 ] ; then
 	tint2 &
-	echo -en "\n$(date +'%F | %T | ')'$0' spawned tint2." | tee -a /dev/tty8
+	logtty 'spawned tint2.'
 else
-	echo -en "\n$(date +'%F | %T | ')'$0' Not spawning tint2 - executable not found." | tee -a /dev/tty8
+	logtty 'Not spawning tint2 - executable not found.'
 fi
