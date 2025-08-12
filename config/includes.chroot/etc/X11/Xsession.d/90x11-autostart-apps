@@ -24,17 +24,17 @@ fi
 			X5250SESSIONLIST=$(grep -A1 "^execp_tooltip = 5250" ~/.config/tint2/tint2rc | awk -F'=' '$1=="execp_lclick_command " {print $2 ","}')
 			logtty "$(printf 'Found these x5250 sessions: '"'"'%s'"'" "${X5250SESSIONLIST}")"
 			if [ -n "$X5250SESSIONLIST" ]; then
-				oldIFS=$IFS
-				newIFS=","
-				IFS=$newIFS
+				oldIFS="${IFS}"
+				newIFS=','
+				IFS="${newIFS}"
 				for X5250SESSION in $X5250SESSIONLIST; do
 					logtty "$(printf 'Spawning '"'"'%s'"'"'.' "${X5250SESSION}")"
-					IFS=$oldIFS
+					IFS="${oldIFS}"
 					$X5250SESSION &
 					xdotool search --sync --onlyvisible --name $(printf '%s\n' "${X5250SESSION}" | awk '{gsub(/^.*\//,""); print $1, $NF}') # x3270/x5250 doesn't support --pid
-					IFS=$newIFS
+					IFS="${newIFS}"
 				done
-				IFS=$oldIFS
+				IFS="${oldIFS}"
 			else
 				# check if we have an x5250 command or if we need to emulate it with x3270
 				if [ -x /usr/local/bin/x5250 ] ; then
@@ -58,17 +58,17 @@ fi
 			X3270SESSIONLIST=$(grep -A1 "^execp_tooltip = 3270" ~/.config/tint2/tint2rc | awk -F'=' '$1=="execp_lclick_command " {print $2 ","}')
 			logtty "$(printf 'Found these x3270 sessions: '"'"'%s'"'" "${X3270SESSIONLIST}")"
 			if [ -n "${X3270SESSIONLIST}" ]; then
-				oldIFS=$IFS
-				newIFS=","
-				IFS=$newIFS
+				oldIFS="${IFS}"
+				newIFS=','
+				IFS="${newIFS}"
 				for X3270SESSION in $X3270SESSIONLIST; do
 					logtty "$(printf 'Spawning '"'"'%s'"'"'.' "${X3270SESSION}")"
-					IFS=$oldIFS
+					IFS="${oldIFS}"
 					$X3270SESSION &
 					xdotool search --sync --onlyvisible --name $(printf '%s\n' "${X3270SESSION}" | awk '{gsub(/^.*\//,""); print $1, $NF}') # x3270/x5250 doesn't support --pid
-					IFS=$newIFS
+					IFS="${newIFS}"
 				done
-				IFS=$oldIFS
+				IFS="${oldIFS}"
 			else
 				# check if we have an x3270 command
 				if [ -x /usr/bin/x3270 ] ; then
