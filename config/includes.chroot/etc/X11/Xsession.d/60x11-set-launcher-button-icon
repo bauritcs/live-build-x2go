@@ -15,7 +15,7 @@ if [ -n "$LAUNCHICON" ] ; then
 			logtty 'Waiting for launcher icon download to finish ...'
 			sleep 1
 		done
-		while ! [ "$(ls -i $LAUNCHICONDESTINATION | awk '{ print $1 }' )" -eq "$(ls -i /etc/x2go/x2golauncher.png | awk '{ print $1 }' )" ]; do
+		while ! [ "$(stat -c '%i' "${LAUNCHICONDESTINATION}")" -eq "$(stat -c '%i' '/etc/x2go/x2golauncher.png')" ]; do
 			logtty 'New launcher icon is not in place yet ...'
 			sleep 1
 		done
