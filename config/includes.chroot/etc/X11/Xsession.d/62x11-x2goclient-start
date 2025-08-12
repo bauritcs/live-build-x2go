@@ -1,14 +1,16 @@
 # shellcheck shell=dash
 # vim: syntax=sh:
 
+. '/lib/live/config/common.logging'
+
 # Spawn x2goclient wrapper
 if [ -x /usr/local/bin/x2goclient ] ; then
         if ps -C x2goclient -ouser --no-header | grep -q "$USER" ; then
-		echo -en "\n$(date +'%F | %T | ')'$0' Not spawning x2goclient wrapper - already running for user '$USER'." | tee -a /dev/tty8
+		logtty "$(printf 'Not spawning x2goclient wrapper - already running for user '"'"'%s'"'"'.' "${USER}")"
 	else
 		/usr/local/bin/x2goclient &
-		echo -en "\n$(date +'%F | %T | ')'$0' spawned x2goclient wrapper." | tee -a /dev/tty8
+		logtty 'spawned x2goclient wrapper.'
 	fi
 else
-	echo -en "\n$(date +'%F | %T | ')'$0' Not spawning x2goclient wrapper - wrapper script not found." | tee -a /dev/tty8
+	logtty 'Not spawning x2goclient wrapper - wrapper script not found.'
 fi
