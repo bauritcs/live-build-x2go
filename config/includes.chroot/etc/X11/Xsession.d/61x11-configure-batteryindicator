@@ -1,20 +1,22 @@
 # shellcheck shell=dash
 # vim: syntax=sh:
 
+. '/lib/live/config/common.logging'
+
 # allow xterm if requested
 
 if grep -q '\W*showbattstate\W*' /proc/cmdline ; then
 	
 	# add entry for executor button in panel item sequence
-	echo -en "\n$(date +'%F | %T | ')'$0' add tint2 executor button entry for battery state indicator." | tee -a /dev/tty8
+	logtty 'add tint2 executor button entry for battery state indicator.'
 	sed -e 's/^panel_items =\(.*\)$/panel_items = \1B/' -i ~/.config/tint2/tint2rc
 
 	# reload config for tint2
 	if ps -C tint2 >/dev/null; then
-		echo -en "\n$(date +'%F | %T | ')'$0' reconfiguring running tint2 for battery state indicator." | tee -a /dev/tty8
+		logtty 'reconfiguring running tint2 for battery state indicator.'
 		killall -s SIGUSR1 tint2
 	fi
 
 fi
 
-echo -en "\n$(date +'%F | %T | ')'$0' Done." | tee -a /dev/tty8
+logtty 'Done.'
