@@ -47,7 +47,7 @@ for APP in $ALLOWEDAPPS; do
 		ENTRYNAME=${APP#debian-}
 		APP=${APP#debian-}
 		# convert to all lowercase
-		ENTRYNAME=$(echo $ENTRYNAME | tr '[:upper:]' '[:lower:]') # a bunch of stable geniuses in Debian decided they need to enforce dash, so the sleek bashism ${ENTRYNAME@L} won't work here
+		ENTRYNAME=$(printf '%s\n' "${ENTRYNAME}" | tr '[:upper:]' '[:lower:]') # a bunch of stable geniuses in Debian decided they need to enforce dash, so the sleek bashism ${ENTRYNAME@L} won't work here
 		#special treatment for (U)Xterm, Firefox-ESR and X2GoClient
 		if [ "$ENTRYNAME" = "uxterm" ] ; then
 			ENTRYNAME="UXTerm"
@@ -59,7 +59,7 @@ for APP in $ALLOWEDAPPS; do
 			ENTRYNAME="X2GoClient"
 		else
 			# capitalize first letter (of each word)
-			ENTRYNAME=$(echo $ENTRYNAME | sed -e "s/\b\(.\)/\u\1/g") # a bunch of stable geniuses in Debian decided they need to enforce dash, so the sleek bashism ${ENTRYNAME@u} won't work here
+			ENTRYNAME=$(printf '%s\n' "${ENTRYNAME}" | sed -e "s/\b\(.\)/\u\1/g") # a bunch of stable geniuses in Debian decided they need to enforce dash, so the sleek bashism ${ENTRYNAME@u} won't work here
 		fi
 		logtty "$(printf 'add openbox menu entry for %s.' "${APP}")"
 		NEWENTRY="  <item label=\"$ENTRYNAME\">\n    <action name=\"Execute\"><execute>${APP}</execute></action>\n  </item>"
@@ -75,7 +75,7 @@ for APP in $ALLOWEDAPPS; do
 		# add entries to tint2 taskbar: a two-step process
 		logtty "$(printf 'x5250 sessions detected and executable %s available.' "${X5250COMMAND}")"
 
-		for X5250SESSION in $(echo "$X5250SERVERS" | tr '|,' ' '); do
+		for X5250SESSION in $(printf '%s\n' "${X5250SERVERS}" | tr '|,' ' '); do
 			# step 1: append config at end of file
 			logtty "$(printf 'add tint2 executor config entry for %s.' "${X5250SESSION}")"
 			cat >>~/.config/tint2/tint2rc <<NEWX5250SESSIONTINT2
@@ -108,7 +108,7 @@ NEWX5250SESSIONTINT2
 		# add entries to tint2 taskbar: a two-step process
 		logtty 'x3270 sessions detected and /usr/bin/x3270 executable available.'
 		
-		for X3270SESSION in $(echo "$X3270SERVERS" | tr '|,' ' '); do
+		for X3270SESSION in $(printf '%s\n' "${X3270SERVERS}" | tr '|,' ' '); do
 			# step 1: append config at end of file
 			logtty "$(printf 'add tint2 executor config entry for %s.' "${X3270SESSION}")"
 			cat >>~/.config/tint2/tint2rc <<NEWX3270SESSIONTINT2
