@@ -55,7 +55,7 @@ fi
 			echo -en "\n$(date +'%F | %T | ')'$0' Spawning one or more x3270 sessions." | tee -a /dev/tty8
 			X3270SESSIONLIST=$(grep -A1 "^execp_tooltip = 3270" ~/.config/tint2/tint2rc | awk -F'=' '$1=="execp_lclick_command " {print $2 ","}')
 			echo -en "\n$(date +'%F | %T | ')'$0' Found these x3270 sessions: '$X3270SESSIONLIST'" | tee -a /dev/tty8
-			if [ -n "$3270SESSIONLIST" ]; then
+			if [ -n "${X3270SESSIONLIST}" ]; then
 				oldIFS=$IFS
 				newIFS=","
 				IFS=$newIFS
