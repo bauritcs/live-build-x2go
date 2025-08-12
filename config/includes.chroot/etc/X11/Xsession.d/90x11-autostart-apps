@@ -1,6 +1,8 @@
 # shellcheck shell=dash
 # vim: syntax=sh:
 
+. '/lib/live/config/common.logging'
+
 # configure autostartapps
 AUTOSTARTAPPS=$(sed -e 's/ \([^ ]*\)=/\n\1=/g' -e 's/\([^=]["'"'"']\) /\1\n/g' -e 's/ \([^ "'"'"']\)/\n\1/g' /proc/cmdline | awk -F '=' '$1 == "autostartapps" { print $2 }' | tr -dc '0-9a-zA-Z,$-_.+!*'"'"'();/?:@=&|' | tr ',' ' ')
 STARTUP_MESSAGE=$(sed -e 's/ \([^ ]*\)=/\n\1=/g' -e 's/\([^=]["'"'"']\) /\1\n/g' /proc/cmdline | awk -F '=' '$1 == "startupmsg" { print $2 }' | tr -d "'\"")
@@ -12,21 +14,21 @@ fi
 (
 	xmessage -buttons "" -center "$STARTUP_MESSAGE" &
 	XMSG_PID=$!
-	echo -en "\n$(date +'%F | %T | ')'$0' Backgrounding xmessage, PID '$XMSG_PID'" | tee -a /dev/tty8
+	logtty "$(printf 'Backgrounding xmessage, PID '"'"'%s'"'" "${XMSG_PID}")"
 
 	while ! xdotool search tint2 >/dev/null; do sleep 1; done
 
 	for APP in $AUTOSTARTAPPS; do
 		if [ "$APP" = "x5250" ] ; then
-			echo -en "\n$(date +'%F | %T | ')'$0' Spawning one or more x5250 sessions." | tee -a /dev/tty8
+			logtty 'Spawning one or more x5250 sessions.'
 			X5250SESSIONLIST=$(grep -A1 "^execp_tooltip = 5250" ~/.config/tint2/tint2rc | awk -F'=' '$1=="execp_lclick_command " {print $2 ","}')
-			echo -en "\n$(date +'%F | %T | ')'$0' Found these x5250 sessions: '$X5250SESSIONLIST'" | tee -a /dev/tty8
+			logtty "$(printf 'Found these x5250 sessions: '"'"'%s'"'" "${X5250SESSIONLIST}")"
 			if [ -n "$X5250SESSIONLIST" ]; then
 				oldIFS=$IFS
 				newIFS=","
 				IFS=$newIFS
 				for X5250SESSION in $X5250SESSIONLIST; do
-					echo -en "\n$(date +'%F | %T | ')'$0' Spawning '$X5250SESSION'." | tee -a /dev/tty8
+					logtty "$(printf 'Spawning '"'"'%s'"'"'.' "${X5250SESSION}")"
 					IFS=$oldIFS
 					$X5250SESSION &
 					xdotool search --sync --onlyvisible --name $(echo $X5250SESSION | awk '{gsub(/^.*\//,""); print $1, $NF}') # x3270/x5250 doesn't support --pid
@@ -36,31 +38,31 @@ fi
 			else
 				# check if we have an x5250 command or if we need to emulate it with x3270
 				if [ -x /usr/local/bin/x5250 ] ; then
-					echo -en "\n$(date +'%F | %T | ')'$0' Spawning '/usr/local/bin/x5250'." | tee -a /dev/tty8
+					logtty 'Spawning '"'"'/usr/local/bin/x5250'"'"'.'
 					/usr/local/bin/x5250 &
 					xdotool search --sync --onlyvisible --name x5250 # x3270/x5250 doesn't support --pid
 				elif [ -x /usr/bin/x5250 ] ; then
-					echo -en "\n$(date +'%F | %T | ')'$0' Spawning '/usr/bin/x5250'." | tee -a /dev/tty8
+					logtty 'Spawning '"'"'/usr/bin/x5250'"'"'.'
 					/usr/bin/x5250 &
 					xdotool search --sync --onlyvisible --name x5250 # x3270/x5250 doesn't support --pid
 				elif [ -x /usr/bin/x3270 ] ; then
-					echo -en "\n$(date +'%F | %T | ')'$0' Spawning '/usr/bin/x3270 -model 2'." | tee -a /dev/tty8
+					logtty 'Spawning '"'"'/usr/bin/x3270 -model 2'"'"'.'
 					/usr/bin/x3270 -model 2 &
 					xdotool search --sync --onlyvisible --name x3270 # x3270/x5250 doesn't support --pid
 				else
-					echo -en "\n$(date +'%F | %T | ')'$0' Not spawning any x5250 emulation - no suitable executable found." | tee -a /dev/tty8
+					logtty 'Not spawning any x5250 emulation - no suitable executable found.'
 				fi
 			fi
 		elif [ "$APP" = "x3270" ] ; then
-			echo -en "\n$(date +'%F | %T | ')'$0' Spawning one or more x3270 sessions." | tee -a /dev/tty8
+			logtty 'Spawning one or more x3270 sessions.'
 			X3270SESSIONLIST=$(grep -A1 "^execp_tooltip = 3270" ~/.config/tint2/tint2rc | awk -F'=' '$1=="execp_lclick_command " {print $2 ","}')
-			echo -en "\n$(date +'%F | %T | ')'$0' Found these x3270 sessions: '$X3270SESSIONLIST'" | tee -a /dev/tty8
+			logtty "$(printf 'Found these x3270 sessions: '"'"'%s'"'" "${X3270SESSIONLIST}")"
 			if [ -n "${X3270SESSIONLIST}" ]; then
 				oldIFS=$IFS
 				newIFS=","
 				IFS=$newIFS
 				for X3270SESSION in $X3270SESSIONLIST; do
-					echo -en "\n$(date +'%F | %T | ')'$0' Spawning '$X3270SESSION'." | tee -a /dev/tty8
+					logtty "$(printf 'Spawning '"'"'%s'"'"'.' "${X3270SESSION}")"
 					IFS=$oldIFS
 					$X3270SESSION &
 					xdotool search --sync --onlyvisible --name $(echo $X3270SESSION | awk '{gsub(/^.*\//,""); print $1, $NF}') # x3270/x5250 doesn't support --pid
@@ -70,11 +72,11 @@ fi
 			else
 				# check if we have an x3270 command
 				if [ -x /usr/bin/x3270 ] ; then
-					echo -en "\n$(date +'%F | %T | ')'$0' Spawning '/usr/bin/x3270'." | tee -a /dev/tty8
+					logtty 'Spawning '"'"'/usr/bin/x3270'"'"'.'
 					/usr/bin/x3270 &
 					xdotool search --sync --onlyvisible --name x3270 # x3270/x5250 doesn't support --pid
 				else
-					echo -en "\n$(date +'%F | %T | ')'$0' Not spawning any x3270 emulation - no suitable executable found." | tee -a /dev/tty8
+					logtty 'Not spawning any x3270 emulation - no suitable executable found.'
 				fi
 			fi
 		else
@@ -83,25 +85,25 @@ fi
 			# catch this here in case someone specifies the .*desktop file name instead of the app name
 			APPFULLPATHSTRIPPED=$(which "${APP#debian-}")
 			if [ -n "$APPFULLPATH" ]; then
-				echo -en "\n$(date +'%F | %T | ')'$0' Spawning '$APPFULLPATH'." | tee -a /dev/tty8
+				logtty "$(printf 'Spawning '"'"'%s'"'"'.' "${APPFULLPATH}")"
 				$APPFULLPATH &
 				xdotool search --sync --onlyvisible --pid $!
 			elif [ -n "$APPFULLPATHSTRIPPED" ]; then
-				echo -en "\n$(date +'%F | %T | ')'$0' Spawning '$APPFULLPATHSTRIPPED'." | tee -a /dev/tty8
+				logtty "$(printf 'Spawning '"'"'%s'"'"'.' "${APPFULLPATHSTRIPPED}")"
 				$APPFULLPATHSTRIPPED &
 				xdotool search --sync --onlyvisible --pid $!
 			fi
 		fi
 	done
 	if ps -p $XMSG_PID >/dev/null ; then
-		echo -en "\n$(date +'%F | %T | ')'$0' Killing xmessage, PID '$XMSG_PID' ..." | tee -a /dev/tty8
+		logtty "$(printf 'Killing xmessage, PID '"'"'%s'"'"' ...' "${XMSG_PID}")"
 		if kill -9 $XMSG_PID ; then
-			echo -en "\n$(date +'%F | %T | ')'$0' Killed xmessage, PID '$XMSG_PID'." | tee -a /dev/tty8
+			logtty "$(printf 'Killed xmessage, PID '"'"'%s'"'"'.' "${XMSG_PID}")"
 		else
-			echo -en "\n$(date +'%F | %T | ')'$0' Could not kill xmessage, PID '$XMSG_PID'." | tee -a /dev/tty8
+			logtty "$(printf 'Could not kill xmessage, PID '"'"'%s'"'"'.' "${XMSG_PID}")"
 		fi
 	else
-		echo -en "\n$(date +'%F | %T | ')'$0' Could not find a running xmessage instance at PID '$XMSG_PID'." | tee -a /dev/tty8
+		logtty "$(printf 'Could not find a running xmessage instance at PID '"'"'%s'"'"'.' "${XMSG_PID}")"
 	fi
 ) &
-echo -en "\n$(date +'%F | %T | ')'$0' Done." | tee -a /dev/tty8
+logtty 'Done.'
