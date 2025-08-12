@@ -107,7 +107,7 @@ NEWX5250SESSIONTINT2
 	elif [ "$APP" = "x3270" ] && [ -n "$X3270SERVERS" ] && [ -x /usr/bin/x3270 ] ; then
 		# add entries to tint2 taskbar: a two-step process
 		logtty 'x3270 sessions detected and /usr/bin/x3270 executable available.'
-		
+
 		for X3270SESSION in $(printf '%s\n' "${X3270SERVERS}" | tr '|,' ' '); do
 			# step 1: append config at end of file
 			logtty "$(printf 'add tint2 executor config entry for %s.' "${X3270SESSION}")"
