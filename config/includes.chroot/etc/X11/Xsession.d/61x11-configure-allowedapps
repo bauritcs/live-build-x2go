@@ -1,6 +1,8 @@
 # shellcheck shell=dash
 # vim: syntax=sh:
 
+. '/lib/live/config/common.logging'
+
 # allow requested apps in gui
 
 ALLOWEDAPPS=$(sed -e 's/ \([^ ]*\)=/\n\1=/g' -e 's/\([^=]["'"'"']\) /\1\n/g' -e 's/ \([^ "'"'"']\)/\n\1/g' /proc/cmdline | awk -F '=' '$1 == "allowedapps" { print $2 }' | tr -dc '0-9a-zA-Z,$-_.+!*'"'"'();/?:@=&|' | tr ',' ' ')
@@ -38,7 +40,7 @@ for APP in $ALLOWEDAPPS; do
 		|| [ "$APP" = "uxterm" ] \
 		&& [ -f /usr/share/applications/${APP}.desktop ] ; then
 		# add entry to tint2 launcher
-		echo -en "\n$(date +'%F | %T | ')'$0' add tint2 launcher entry for ${APP}." | tee -a /dev/tty8
+		logtty "$(printf 'add tint2 launcher entry for %s.' "${APP}")"
 		NEWENTRYT="launcher_item_app = ${APP}.desktop"
 		sed -e "s#launcher_item_app = /usr/share/applications/tint2-button.desktop#launcher_item_app = /usr/share/applications/tint2-button.desktop\n$NEWENTRYT#" -i ~/.config/tint2/tint2rc
 		# add entries to openbox starter
@@ -60,7 +62,7 @@ for APP in $ALLOWEDAPPS; do
 			# capitalize first letter (of each word)
 			ENTRYNAME=$(echo $ENTRYNAME | sed -e "s/\b\(.\)/\u\1/g") # a bunch of stable geniuses in Debian decided they need to enforce dash, so the sleek bashism ${ENTRYNAME@u} won't work here
 		fi
-		echo -en "\n$(date +'%F | %T | ')'$0' add openbox menu entry for ${APP}." | tee -a /dev/tty8
+		logtty "$(printf 'add openbox menu entry for %s.' "${APP}")"
 		NEWENTRY="  <item label=\"$ENTRYNAME\">\n    <action name=\"Execute\"><execute>${APP}</execute></action>\n  </item>"
 		sed -e "s#<separator/>#$NEWENTRY\n<separator/>#" -i ~/.config/openbox/menu.xml
 	elif [ "$APP" = "x5250" ] && [ -n "$X5250SERVERS" ] && [ -n "$X5250COMMAND" ] && [ -x "${X5250COMMAND%% *}" ] ; then
@@ -72,11 +74,11 @@ for APP in $ALLOWEDAPPS; do
 		fi
 
 		# add entries to tint2 taskbar: a two-step process
-		echo -en "\n$(date +'%F | %T | ')'$0' x5250 sessions detected and executable $X5250COMMAND available." | tee -a /dev/tty8
+		logtty "$(printf 'x5250 sessions detected and executable %s available.' "${X5250COMMAND}")"
 
 		for X5250SESSION in $(echo "$X5250SERVERS" | tr '|,' ' '); do
 			# step 1: append config at end of file
-			echo -en "\n$(date +'%F | %T | ')'$0' add tint2 executor config entry for $X5250SESSION." | tee -a /dev/tty8
+			logtty "$(printf 'add tint2 executor config entry for %s.' "${X5250SESSION}")"
 			cat >>~/.config/tint2/tint2rc <<NEWX5250SESSIONTINT2
 #----------------
 # Executor for $X5250SESSION
@@ -95,21 +97,21 @@ execp_background_id = 2
 
 NEWX5250SESSIONTINT2
 			# step 2: add entry for executor button in panel item sequence
-			echo -en "\n$(date +'%F | %T | ')'$0' add tint2 executor button entry for $X3270SESSION." | tee -a /dev/tty8
+			logtty "$(printf 'add tint2 executor button entry for %s.' "${X3270SESSION}")"
 			sed -e 's/^panel_items = L/panel_items = LE/' -i ~/.config/tint2/tint2rc
 
 			# add entry to openbox starter
-			echo -en "\n$(date +'%F | %T | ')'$0' add openbox menu entry for $X5250SESSION." | tee -a /dev/tty8
+			logtty "$(printf 'add openbox menu entry for %s.' "${X5250SESSION}")"
 			NEWENTRY="  <item label=\"5250 Terminal $X5250SESSION\">\n    <action name=\"Execute\"><execute>$X5250COMMAND $X5250SESSION</execute></action>\n  </item>\n"
 			sed -e "s#<separator/>#$NEWENTRY\n<separator/>#" -i ~/.config/openbox/menu.xml
 		done
 	elif [ "$APP" = "x3270" ] && [ -n "$X3270SERVERS" ] && [ -x /usr/bin/x3270 ] ; then
 		# add entries to tint2 taskbar: a two-step process
-		echo -en "\n$(date +'%F | %T | ')'$0' x3270 sessions detected and /usr/bin/x3270 executable available." | tee -a /dev/tty8
+		logtty 'x3270 sessions detected and /usr/bin/x3270 executable available.'
 		
 		for X3270SESSION in $(echo "$X3270SERVERS" | tr '|,' ' '); do
 			# step 1: append config at end of file
-			echo -en "\n$(date +'%F | %T | ')'$0' add tint2 executor config entry for $X3270SESSION." | tee -a /dev/tty8
+			logtty "$(printf 'add tint2 executor config entry for %s.' "${X3270SESSION}")"
 			cat >>~/.config/tint2/tint2rc <<NEWX3270SESSIONTINT2
 #----------------
 # Executor for $X3270SESSION
@@ -128,11 +130,11 @@ execp_background_id = 2
 
 NEWX3270SESSIONTINT2
 			# step 2: add entry for executor button in panel item sequence
-			echo -en "\n$(date +'%F | %T | ')'$0' add tint2 executor button entry for $X3270SESSION." | tee -a /dev/tty8
+			logtty "$(printf 'add tint2 executor button entry for %s.' "${X3270SESSION}")"
 			sed -e 's/^panel_items = L/panel_items = LE/' -i ~/.config/tint2/tint2rc
 
 			# add entry to openbox starter
-			echo -en "\n$(date +'%F | %T | ')'$0' add openbox menu entry for $X3270SESSION." | tee -a /dev/tty8
+			logtty "$(printf 'add openbox menu entry for %s.' "${X3270SESSION}")"
 			NEWENTRY="  <item label=\"3270 Terminal $X3270SESSION\">\n    <action name=\"Execute\"><execute>x3270 $X3270SESSION</execute></action>\n  </item>\n"
 			sed -e "s#<separator/>#$NEWENTRY\n<separator/>#" -i ~/.config/openbox/menu.xml
 		done
@@ -141,12 +143,12 @@ done
 
 # reload config for both openbox and tint2
 if ps -C openbox >/dev/null ; then
-	echo -en "\n$(date +'%F | %T | ')'$0' reconfiguring running openbox." | tee -a /dev/tty8
+	logtty 'reconfiguring running openbox.'
 	openbox --reconfigure
 fi
 if ps -C tint2 >/dev/null; then
-	echo -en "\n$(date +'%F | %T | ')'$0' reconfiguring running tint2." | tee -a /dev/tty8
+	logtty 'reconfiguring running tint2.'
 	killall -s SIGUSR1 tint2
 fi
 
-echo -en "\n$(date +'%F | %T | ')'$0' Done." | tee -a /dev/tty8
+logtty 'Done.'
