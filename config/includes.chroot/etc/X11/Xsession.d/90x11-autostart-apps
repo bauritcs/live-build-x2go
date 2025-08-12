@@ -31,7 +31,7 @@ fi
 					logtty "$(printf 'Spawning '"'"'%s'"'"'.' "${X5250SESSION}")"
 					IFS=$oldIFS
 					$X5250SESSION &
-					xdotool search --sync --onlyvisible --name $(echo $X5250SESSION | awk '{gsub(/^.*\//,""); print $1, $NF}') # x3270/x5250 doesn't support --pid
+					xdotool search --sync --onlyvisible --name $(printf '%s\n' "${X5250SESSION}" | awk '{gsub(/^.*\//,""); print $1, $NF}') # x3270/x5250 doesn't support --pid
 					IFS=$newIFS
 				done
 				IFS=$oldIFS
@@ -65,7 +65,7 @@ fi
 					logtty "$(printf 'Spawning '"'"'%s'"'"'.' "${X3270SESSION}")"
 					IFS=$oldIFS
 					$X3270SESSION &
-					xdotool search --sync --onlyvisible --name $(echo $X3270SESSION | awk '{gsub(/^.*\//,""); print $1, $NF}') # x3270/x5250 doesn't support --pid
+					xdotool search --sync --onlyvisible --name $(printf '%s\n' "${X3270SESSION}" | awk '{gsub(/^.*\//,""); print $1, $NF}') # x3270/x5250 doesn't support --pid
 					IFS=$newIFS
 				done
 				IFS=$oldIFS
