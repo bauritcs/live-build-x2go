@@ -15,14 +15,13 @@ if [ -z "$ALLOWEDAPPS" ] ; then
 fi
 
 # check if we have an x5250 command or if we need to emulate it with x3270
+X5250COMMAND=''
 if [ -x /usr/local/bin/x5250 ] ; then
 	X5250COMMAND="/usr/local/bin/x5250"
 elif [ -x /usr/bin/x5250 ] ; then
 	X5250COMMAND="/usr/bin/x5250"
 elif [ -x /usr/bin/x3270 ] ; then
 	X5250COMMAND="/usr/bin/x3270 -model 2"
-else
-	X5250COMMAND=""
 fi
 
 # loop through allowed-app-list
