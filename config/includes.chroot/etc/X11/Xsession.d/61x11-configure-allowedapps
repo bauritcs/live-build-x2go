@@ -26,59 +26,58 @@ fi
 
 # loop through allowed-app-list
 for APP in $ALLOWEDAPPS; do
-	if	   [ "$APP" = "x2goclient" ] \
-		|| [ "$APP" = "firefox" ] \
-		|| [ "$APP" = "firefox-esr" ] \
-		|| [ "$APP" = "chromium-browser" ] \
-		|| [ "$APP" = "chromium" ] \
-		|| [ "$APP" = "chrome" ] \
-		|| [ "$APP" = "google-chrome" ] \
-		|| [ "$APP" = "debian-xterm" ] \
-		|| [ "$APP" = "xterm" ] \
-		|| [ "$APP" = "debian-uxterm" ] \
-		|| [ "$APP" = "uxterm" ] \
-		&& [ -f /usr/share/applications/${APP}.desktop ] ; then
-		# add entry to tint2 launcher
-		logtty "$(printf 'add tint2 launcher entry for %s.' "${APP}")"
-		NEWENTRYT="launcher_item_app = ${APP}.desktop"
-		sed -e "s#launcher_item_app = /usr/share/applications/tint2-button.desktop#launcher_item_app = /usr/share/applications/tint2-button.desktop\n$NEWENTRYT#" -i ~/.config/tint2/tint2rc
-		# add entries to openbox starter
-		# strip "debian-" from name
-		ENTRYNAME=${APP#debian-}
-		APP=${APP#debian-}
-		# convert to all lowercase
-		ENTRYNAME=$(printf '%s\n' "${ENTRYNAME}" | tr '[:upper:]' '[:lower:]') # a bunch of stable geniuses in Debian decided they need to enforce dash, so the sleek bashism ${ENTRYNAME@L} won't work here
-		#special treatment for (U)Xterm, Firefox-ESR and X2GoClient
-		if [ "$ENTRYNAME" = "uxterm" ] ; then
-			ENTRYNAME="UXTerm"
-		elif [ "$ENTRYNAME" = "xterm" ] ; then
-			ENTRYNAME="XTerm"
-		elif [ "$ENTRYNAME" = "firefox-esr" ] ; then
-			ENTRYNAME="Firefox-ESR"
-		elif [ "$ENTRYNAME" = "x2goclient" ] ; then
-			ENTRYNAME="X2GoClient"
-		else
-			# capitalize first letter (of each word)
-			ENTRYNAME=$(printf '%s\n' "${ENTRYNAME}" | sed -e "s/\b\(.\)/\u\1/g") # a bunch of stable geniuses in Debian decided they need to enforce dash, so the sleek bashism ${ENTRYNAME@u} won't work here
-		fi
-		logtty "$(printf 'add openbox menu entry for %s.' "${APP}")"
-		NEWENTRY="  <item label=\"$ENTRYNAME\">\n    <action name=\"Execute\"><execute>${APP}</execute></action>\n  </item>"
-		sed -e "s#<separator/>#$NEWENTRY\n<separator/>#" -i ~/.config/openbox/menu.xml
-	elif [ "$APP" = "x5250" ] && [ -n "$X5250SERVERS" ] && [ -n "$X5250COMMAND" ] && [ -x "${X5250COMMAND%% *}" ] ; then
-		# determine icon path
-		if [ -s /usr/share/icons/hicolor/48x48/apps/x5250.png ]; then
-			X5250ICON="/usr/share/icons/hicolor/48x48/apps/x5250.png"
-		else
-			X5250ICON="/usr/share/icons/hicolor/48x48/apps/x5250-lookalike.png"
-		fi
+	case "${APP}" in
+		('x2goclient'| \
+		 'firefox'|'firefox-esr'| \
+		 'chromium-browser'|'chromium'| \
+		 'chrome'|'google-chrome'| \
+		 'debian-xterm'|'xterm'| \
+		 'debian-uxterm'|'uxterm')
+			if [ -f /usr/share/applications/${APP}.desktop ] ; then
+				# add entry to tint2 launcher
+				logtty "$(printf 'add tint2 launcher entry for %s.' "${APP}")"
+				NEWENTRYT="launcher_item_app = ${APP}.desktop"
+				sed -e "s#launcher_item_app = /usr/share/applications/tint2-button.desktop#launcher_item_app = /usr/share/applications/tint2-button.desktop\n$NEWENTRYT#" -i ~/.config/tint2/tint2rc
+				# add entries to openbox starter
+				# strip "debian-" from name
+				ENTRYNAME=${APP#debian-}
+				APP=${APP#debian-}
+				# convert to all lowercase
+				ENTRYNAME=$(printf '%s\n' "${ENTRYNAME}" | tr '[:upper:]' '[:lower:]') # a bunch of stable geniuses in Debian decided they need to enforce dash, so the sleek bashism ${ENTRYNAME@L} won't work here
+				#special treatment for (U)Xterm, Firefox-ESR and X2GoClient
+				if [ "$ENTRYNAME" = "uxterm" ] ; then
+					ENTRYNAME="UXTerm"
+				elif [ "$ENTRYNAME" = "xterm" ] ; then
+					ENTRYNAME="XTerm"
+				elif [ "$ENTRYNAME" = "firefox-esr" ] ; then
+					ENTRYNAME="Firefox-ESR"
+				elif [ "$ENTRYNAME" = "x2goclient" ] ; then
+					ENTRYNAME="X2GoClient"
+				else
+					# capitalize first letter (of each word)
+					ENTRYNAME=$(printf '%s\n' "${ENTRYNAME}" | sed -e "s/\b\(.\)/\u\1/g") # a bunch of stable geniuses in Debian decided they need to enforce dash, so the sleek bashism ${ENTRYNAME@u} won't work here
+				fi
+				logtty "$(printf 'add openbox menu entry for %s.' "${APP}")"
+				NEWENTRY="  <item label=\"$ENTRYNAME\">\n    <action name=\"Execute\"><execute>${APP}</execute></action>\n  </item>"
+				sed -e "s#<separator/>#$NEWENTRY\n<separator/>#" -i ~/.config/openbox/menu.xml
+			fi
+			;;
+		('x5250')
+			if [ -n "$X5250SERVERS" ] && [ -n "$X5250COMMAND" ] && [ -x "${X5250COMMAND%% *}" ] ; then
+				# determine icon path
+				if [ -s /usr/share/icons/hicolor/48x48/apps/x5250.png ]; then
+					X5250ICON="/usr/share/icons/hicolor/48x48/apps/x5250.png"
+				else
+					X5250ICON="/usr/share/icons/hicolor/48x48/apps/x5250-lookalike.png"
+				fi
 
-		# add entries to tint2 taskbar: a two-step process
-		logtty "$(printf 'x5250 sessions detected and executable %s available.' "${X5250COMMAND}")"
+				# add entries to tint2 taskbar: a two-step process
+				logtty "$(printf 'x5250 sessions detected and executable %s available.' "${X5250COMMAND}")"
 
-		for X5250SESSION in $(printf '%s\n' "${X5250SERVERS}" | tr '|,' ' '); do
-			# step 1: append config at end of file
-			logtty "$(printf 'add tint2 executor config entry for %s.' "${X5250SESSION}")"
-			cat >>~/.config/tint2/tint2rc <<NEWX5250SESSIONTINT2
+				for X5250SESSION in $(printf '%s\n' "${X5250SERVERS}" | tr '|,' ' '); do
+					# step 1: append config at end of file
+					logtty "$(printf 'add tint2 executor config entry for %s.' "${X5250SESSION}")"
+					cat >>~/.config/tint2/tint2rc <<NEWX5250SESSIONTINT2
 #----------------
 # Executor for $X5250SESSION
 execp = new
@@ -95,23 +94,26 @@ execp_lclick_command = $X5250COMMAND $X5250SESSION
 execp_background_id = 2
 
 NEWX5250SESSIONTINT2
-			# step 2: add entry for executor button in panel item sequence
-			logtty "$(printf 'add tint2 executor button entry for %s.' "${X3270SESSION}")"
-			sed -e 's/^panel_items = L/panel_items = LE/' -i ~/.config/tint2/tint2rc
+					# step 2: add entry for executor button in panel item sequence
+					logtty "$(printf 'add tint2 executor button entry for %s.' "${X3270SESSION}")"
+					sed -e 's/^panel_items = L/panel_items = LE/' -i ~/.config/tint2/tint2rc
 
-			# add entry to openbox starter
-			logtty "$(printf 'add openbox menu entry for %s.' "${X5250SESSION}")"
-			NEWENTRY="  <item label=\"5250 Terminal $X5250SESSION\">\n    <action name=\"Execute\"><execute>$X5250COMMAND $X5250SESSION</execute></action>\n  </item>\n"
-			sed -e "s#<separator/>#$NEWENTRY\n<separator/>#" -i ~/.config/openbox/menu.xml
-		done
-	elif [ "$APP" = "x3270" ] && [ -n "$X3270SERVERS" ] && [ -x /usr/bin/x3270 ] ; then
-		# add entries to tint2 taskbar: a two-step process
-		logtty 'x3270 sessions detected and /usr/bin/x3270 executable available.'
+					# add entry to openbox starter
+					logtty "$(printf 'add openbox menu entry for %s.' "${X5250SESSION}")"
+					NEWENTRY="  <item label=\"5250 Terminal $X5250SESSION\">\n    <action name=\"Execute\"><execute>$X5250COMMAND $X5250SESSION</execute></action>\n  </item>\n"
+					sed -e "s#<separator/>#$NEWENTRY\n<separator/>#" -i ~/.config/openbox/menu.xml
+				done
+			fi
+			;;
+		('x3270')
+			if [ -n "$X3270SERVERS" ] && [ -x /usr/bin/x3270 ] ; then
+				# add entries to tint2 taskbar: a two-step process
+				logtty 'x3270 sessions detected and /usr/bin/x3270 executable available.'
 
-		for X3270SESSION in $(printf '%s\n' "${X3270SERVERS}" | tr '|,' ' '); do
-			# step 1: append config at end of file
-			logtty "$(printf 'add tint2 executor config entry for %s.' "${X3270SESSION}")"
-			cat >>~/.config/tint2/tint2rc <<NEWX3270SESSIONTINT2
+				for X3270SESSION in $(printf '%s\n' "${X3270SERVERS}" | tr '|,' ' '); do
+					# step 1: append config at end of file
+					logtty "$(printf 'add tint2 executor config entry for %s.' "${X3270SESSION}")"
+					cat >>~/.config/tint2/tint2rc <<NEWX3270SESSIONTINT2
 #----------------
 # Executor for $X3270SESSION
 execp = new
@@ -128,16 +130,21 @@ execp_lclick_command = x3270 $X3270SESSION
 execp_background_id = 2
 
 NEWX3270SESSIONTINT2
-			# step 2: add entry for executor button in panel item sequence
-			logtty "$(printf 'add tint2 executor button entry for %s.' "${X3270SESSION}")"
-			sed -e 's/^panel_items = L/panel_items = LE/' -i ~/.config/tint2/tint2rc
+					# step 2: add entry for executor button in panel item sequence
+					logtty "$(printf 'add tint2 executor button entry for %s.' "${X3270SESSION}")"
+					sed -e 's/^panel_items = L/panel_items = LE/' -i ~/.config/tint2/tint2rc
 
-			# add entry to openbox starter
-			logtty "$(printf 'add openbox menu entry for %s.' "${X3270SESSION}")"
-			NEWENTRY="  <item label=\"3270 Terminal $X3270SESSION\">\n    <action name=\"Execute\"><execute>x3270 $X3270SESSION</execute></action>\n  </item>\n"
-			sed -e "s#<separator/>#$NEWENTRY\n<separator/>#" -i ~/.config/openbox/menu.xml
-		done
-	fi
+					# add entry to openbox starter
+					logtty "$(printf 'add openbox menu entry for %s.' "${X3270SESSION}")"
+					NEWENTRY="  <item label=\"3270 Terminal $X3270SESSION\">\n    <action name=\"Execute\"><execute>x3270 $X3270SESSION</execute></action>\n  </item>\n"
+					sed -e "s#<separator/>#$NEWENTRY\n<separator/>#" -i ~/.config/openbox/menu.xml
+				done
+			fi
+			;;
+		(*)
+			logtty "$(printf 'Unknown application %s - not processing.' "${APP}")"
+			;;
+	esac
 done
 
 # reload config for both openbox and tint2
