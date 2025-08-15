@@ -1,6 +1,7 @@
 #!/bin/bash
 
 # shellcheck shell=dash
+# vim: syntax=sh:
 
 # When your boot parameter string has gotten too long for your bootloader, you can place the X2Go-TCE-related parameters in a file instead
 # This file may contain name=value pairs either separated by blanks, as in a regular boot parameter string, or one name=value pair on each line
