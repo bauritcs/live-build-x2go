@@ -1,5 +1,7 @@
 #!/bin/sh
 
+# shellcheck shell=dash
+
 # (temporary?) workaround to switch the default system shell from dash to bash
 Init ()
 {

@@ -1,5 +1,7 @@
 #!/bin/sh
 
+# shellcheck shell=dash
+
 . '/lib/live/config/common.logging'
 
 # this is not /bin/bash, so "echo -e" is not supported, but the default when calling "echo"
