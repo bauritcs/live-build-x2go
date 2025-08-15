@@ -1,5 +1,7 @@
 #!/bin/sh
 
+# shellcheck shell=dash
+
 X2GoPowerbuttonMonitor ()
 {
 # Output startup message
