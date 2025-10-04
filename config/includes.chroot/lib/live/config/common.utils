@@ -1,0 +1,8 @@
+#!/bin/dash
+
+# shellcheck shell=dash
+# vim: syntax=sh:
+
+urldecode() {
+	printf '%s\n' "${*}" | perl -pe '${_} =~ s/\+/ /g; ${_} =~ s/%([A-Fa-f\d]{2})/chr (hex (${1}))/eg;'
+}
