@@ -13,12 +13,12 @@ FirefoxConfig ()
 	#
 	echo -n " firefoxconfig"
 
-	HOMEPAGEURL=$(sed -e 's/ \([^ ]*\)=/\n\1=/g' -e 's/\([^=]["'"'"']\) /\1\n/g' -e 's/ \([^ "'"'"']\)/\n\1/g' /proc/cmdline | \
-		      awk -F'=' ' /^homepageurl=/ { print $2 } ')
-	if [ -z "$HOMEPAGEURL" ] ; then
+	HOMEPAGEURL="$(sed -e 's/ \([^ ]*\)=/\n\1=/g' -e 's/\([^=]["'"'"']\) /\1\n/g' -e 's/ \([^ "'"'"']\)/\n\1/g' '/proc/cmdline' | \
+		       awk -F'=' ' /^homepageurl=/ { print $2 } ')"
+	if [ -z "${HOMEPAGEURL}" ] ; then
 		HOMEPAGEURL='http://www.x2go.org/'
 	else
-		HOMEPAGEURL=$(echo -e "$(urldecode "$HOMEPAGEURL")")
+		HOMEPAGEURL="$(echo -e "$(urldecode "${HOMEPAGEURL}")")"
 	fi
 	sed -i	-e '/"browser.newtabpage.activity-stream.aboutHome.enabled"/d' \
 		-e '/"browser.rights.3.shown"/d' \
@@ -33,8 +33,8 @@ FirefoxConfig ()
 		-e '/"privacy.donottrackheader.enabled"/d' \
 		-e '/"toolkit.telemetry.prompted"/d' \
 		-e '/"browser.translations.enable"/d' \
-		/etc/firefox-esr/firefox-esr.js
-	cat >>/etc/firefox-esr/firefox-esr.js <<FIREFOXCONFIG
+		'/etc/firefox-esr/firefox-esr.js'
+	cat >> '/etc/firefox-esr/firefox-esr.js' <<FIREFOXCONFIG
 
 //set some sane browser defaults
 lockPref("browser.newtabpage.activity-stream.aboutHome.enabled", false);
@@ -42,7 +42,7 @@ lockPref("browser.rights.3.shown", true);
 lockPref("browser.rights.override", true);
 lockPref("browser.shell.checkDefaultBrowser", false);
 lockPref("browser.startup.homepage_override.mstone","ignore");
-lockPref("browser.startup.homepage", "$HOMEPAGEURL");
+lockPref("browser.startup.homepage", "${HOMEPAGEURL}");
 lockPref("browser.uiCustomization.state", '{"placements":{"widget-overflow-fixed-list":[],"unified-extensions-area":[],"nav-bar":["back-button","forward-button","stop-reload-button","customizableui-special-spring1","urlbar-container","customizableui-special-spring2","save-to-pocket-button","downloads-button","fxa-toolbar-menu-button","unified-extensions-button","ublock0_raymondhill_net-browser-action"],"toolbar-menubar":["menubar-items"],"TabsToolbar":["firefox-view-button","tabbrowser-tabs","new-tab-button","alltabs-button"],"PersonalToolbar":["import-button","personal-bookmarks"]},"seen":["save-to-pocket-button","developer-button","ublock0_raymondhill_net-browser-action"],"dirtyAreaCache":["nav-bar","unified-extensions-area","PersonalToolbar","toolbar-menubar","TabsToolbar"],"currentVersion":20,"newElementCount":2}');
 lockPref("browser.usedOnWindows10", true);
 lockPref("datareporting.policy.dataSubmissionPolicyBypassNotification", true);
