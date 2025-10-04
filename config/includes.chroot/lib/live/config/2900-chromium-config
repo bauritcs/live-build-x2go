@@ -15,7 +15,7 @@ ChromiumConfig ()
 
 	HOMEPAGEURL=$(sed -e 's/ \([^ ]*\)=/\n\1=/g' -e 's/\([^=]["'"'"']\) /\1\n/g' -e 's/ \([^ "'"'"']\)/\n\1/g' /proc/cmdline | \
 		      awk -F'=' ' /^homepageurl=/ { print $2 } ')
-	if [ -z "$HOMEPAGEURL" ] ; then 
+	if [ -z "$HOMEPAGEURL" ] ; then
 		HOMEPAGEURL='http://www.x2go.org/'
 	else
 		HOMEPAGEURL=$(echo -e '"'"$(urldecode "$HOMEPAGEURL")"'"' | sed -e 's#|#", "#g')
