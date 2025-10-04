@@ -57,6 +57,6 @@ ChromiumConfig ()
 CHROMIUMCONFIG
 }
 
-if which chromium >/dev/null || which chromium-browser >/dev/null || which chrome >/dev/null || which chrome-broser >/dev/null; then
+if which chromium >/dev/null || which chromium-browser >/dev/null || which chrome >/dev/null || which chrome-browser >/dev/null; then
        	ChromiumConfig
 fi
