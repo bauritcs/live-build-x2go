@@ -3,9 +3,7 @@
 # shellcheck shell=dash
 # vim: syntax=sh:
 
-function urldecode() {
-	        : "${*//+/ }"; echo -e "${_//%/\\x}";
-	}
+. '/lib/live/config/common.utils'
 
 ChromiumConfig ()
 {
