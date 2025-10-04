@@ -80,10 +80,10 @@ fi
 				fi
 			fi
 		else
-			APPFULLPATH=$(which "$APP")
+			APPFULLPATH="$(command -v "${APP}")"
 			# some *.desktop files have "debian-" prefixed to the name of the actual executable
 			# catch this here in case someone specifies the .*desktop file name instead of the app name
-			APPFULLPATHSTRIPPED=$(which "${APP#debian-}")
+			APPFULLPATHSTRIPPED="$(command -v "${APP#debian-}")"
 			if [ -n "$APPFULLPATH" ]; then
 				logtty "$(printf 'Spawning '"'"'%s'"'"'.' "${APPFULLPATH}")"
 				$APPFULLPATH &
