@@ -11,14 +11,14 @@ ChromiumConfig ()
 {
 	# Output startup message
 	#
-	echo -n " chromiumconfig"
+	printf ' %s' 'chromiumconfig'
 
 	HOMEPAGEURL="$(sed -e 's/ \([^ ]*\)=/\n\1=/g' -e 's/\([^=]["'"'"']\) /\1\n/g' -e 's/ \([^ "'"'"']\)/\n\1/g' '/proc/cmdline' | \
 		       awk -F'=' ' /^homepageurl=/ { print $2 } ')"
 	if [ -z "${HOMEPAGEURL}" ] ; then
 		HOMEPAGEURL='http://www.x2go.org/'
 	else
-		HOMEPAGEURL="$(echo -e '"'"$(urldecode "$HOMEPAGEURL")"'"' | sed -e 's#|#", "#g')"
+		HOMEPAGEURL="$(printf '%s\n' '"'"$(urldecode "${HOMEPAGEURL}")"'"' | sed -e 's#|#", "#g')"
 	fi
 	mkdir -p '/etc/chromium/policies/managed'
 	mkdir -p '/etc/chromium/policies/recommended'
