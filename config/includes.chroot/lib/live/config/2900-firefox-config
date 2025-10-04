@@ -53,6 +53,6 @@ pref("browser.translations.enable", false);
 FIREFOXCONFIG
 }
 
-if which firefox-esr >/dev/null || which firefox >/dev/null; then
+if command -v 'firefox-esr' >/dev/null || command -v 'firefox' >/dev/null; then
 	FirefoxConfig
 fi
