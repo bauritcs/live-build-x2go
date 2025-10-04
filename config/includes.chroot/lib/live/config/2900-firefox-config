@@ -11,14 +11,14 @@ FirefoxConfig ()
 {
 	# Output startup message
 	#
-	echo -n " firefoxconfig"
+	printf ' %s' 'firefoxconfig'
 
 	HOMEPAGEURL="$(sed -e 's/ \([^ ]*\)=/\n\1=/g' -e 's/\([^=]["'"'"']\) /\1\n/g' -e 's/ \([^ "'"'"']\)/\n\1/g' '/proc/cmdline' | \
 		       awk -F'=' ' /^homepageurl=/ { print $2 } ')"
 	if [ -z "${HOMEPAGEURL}" ] ; then
 		HOMEPAGEURL='http://www.x2go.org/'
 	else
-		HOMEPAGEURL="$(echo -e "$(urldecode "${HOMEPAGEURL}")")"
+		HOMEPAGEURL="$(printf '%s\n' "$(urldecode "${HOMEPAGEURL}")")"
 	fi
 	sed -i	-e '/"browser.newtabpage.activity-stream.aboutHome.enabled"/d' \
 		-e '/"browser.rights.3.shown"/d' \
