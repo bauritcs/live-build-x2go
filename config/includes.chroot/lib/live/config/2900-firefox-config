@@ -15,7 +15,7 @@ FirefoxConfig ()
 
 	HOMEPAGEURL=$(sed -e 's/ \([^ ]*\)=/\n\1=/g' -e 's/\([^=]["'"'"']\) /\1\n/g' -e 's/ \([^ "'"'"']\)/\n\1/g' /proc/cmdline | \
 		      awk -F'=' ' /^homepageurl=/ { print $2 } ')
-	if [ -z "$HOMEPAGEURL" ] ; then 
+	if [ -z "$HOMEPAGEURL" ] ; then
 		HOMEPAGEURL='http://www.x2go.org/'
 	else
 		HOMEPAGEURL=$(echo -e "$(urldecode "$HOMEPAGEURL")")
@@ -37,7 +37,7 @@ FirefoxConfig ()
 	cat >>/etc/firefox-esr/firefox-esr.js <<FIREFOXCONFIG
 
 //set some sane browser defaults
-lockPref("browser.newtabpage.activity-stream.aboutHome.enabled", false); 
+lockPref("browser.newtabpage.activity-stream.aboutHome.enabled", false);
 lockPref("browser.rights.3.shown", true);
 lockPref("browser.rights.override", true);
 lockPref("browser.shell.checkDefaultBrowser", false);
