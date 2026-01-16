@@ -30,7 +30,7 @@ check_timestamp ()
 	if ! $DOWNLOADCOMMANDFORTIMESTAMP; then
 		return 1
 	else
-		RUNNINGVERSION=$(stat -c %Y $LIVEMOUNTPOINT/rootfs/filesystem.squashfs/lib)
+		RUNNINGVERSION=$(stat -c %Y $LIVEMEDIAMOUNTPOINT/rootfs/filesystem.squashfs/lib)
 		if [ $RUNNINGVERSION -ge $(cat $TEMPDIR/x2go-tce-timestamp) ] ; then
 			return 5
 		fi
@@ -40,7 +40,7 @@ check_timestamp ()
 
 show_versions ()
 { # this prints the TCE versions that are stored on the local medium to the log output
-	LISTOFTIMESTAMPFILES=$(find $LIVEMOUNTPOINT/findiso/boot -name "x2go-tce-timestamp")
+	LISTOFTIMESTAMPFILES=$(find $LIVEMEDIAMOUNTPOINT/findiso/boot -name "x2go-tce-timestamp")
 	if [ -n "$LISTOFTIMESTAMPFILES" ]; then
 		logconcolon 'List of locally stored TCE versions:'
 		echo "--- BEGIN TIMESTAMPS ---" >/var/run/x2go-tce-timestamps
@@ -125,16 +125,19 @@ printf ' %s' 'live-autoupdater (backgrounding update task)'
 
 	# Define our live-system mountpoint
 	for LIVEMOUNTPOINT in /lib/live/mount /run/live ; do
-                if ! [ -d $LIVEMOUNTPOINT ] ; then
-                        logconcolon 'live mount point not found, exiting.'
-			exit 1
-                fi
+                if [ -d $LIVEMOUNTPOINT ] ; then
+			LIVEDISKMOUNTPOINT=$LIVEMOUNTPOINT
+		fi
         done
+	if [ -z "$LIVEMEDIAMOUNTPOINT" ] ; then
+		logconcolon 'live mount point not found, exiting.'
+		exit 1
+	fi
 
 	# Define our disk mountpoint and check if we're capable of auto-updating
 	NTFSROOT=$(sed -e 's/ \([^ ]*\)=/\n\1=/g' -e 's/\([^=]["'"'"']\) /\1\n/g' -e 's/ \([^ "'"'"']\)/\n\1/g' -e 's/ \([^ "'"'"']\)/\n\1/g' /proc/cmdline | awk -F '=' '/^ntfs-uuid/ { print $2 }' |  tr -dc 'a-zA-Z0-9_\-')
 	if [ -n "$NTFSROOT" ]; then
-		mkdir -p $LIVEMOUNTPOINT/ntfsroot
+		mkdir -p $LIVEMEDIAMOUNTPOINT/ntfsroot
 		# This is in case we've been passed an incomplete UUID and/or one with dashes
 		# For example, "vol c:" on Windows will return the last 8 digits of the UUID
 		# only, and separate them with a dash.
@@ -145,29 +148,29 @@ printf ' %s' 'live-autoupdater (backgrounding update task)'
 			fi
 		fi
 
-		if mount -t 'ntfs-3g' -o 'rw' "/dev/disk/by-uuid/${NTFSROOT}" $LIVEMOUNTPOINT'/ntfsroot' ; then
+		if mount -t 'ntfs-3g' -o 'rw' "/dev/disk/by-uuid/${NTFSROOT}" $LIVEMEDIAMOUNTPOINT'/ntfsroot' ; then
 			logconcolon "$(printf 'Mounted '"'"'/dev/disk/by-uuid/%s'"'"'.' "${NTFSROOT}")"
 		else
 			logconcolon "$(printf 'Unable to mount '"'"'/dev/disk/by-uuid/%s'"'"'.' "${NTFSROOT}")"
 		fi
 		# TODO: Further error handling
-		MOUNTPOINT="$LIVEMOUNTPOINT/ntfsroot/"
+		MOUNTPOINT="$LIVEMEDIAMOUNTPOINT/ntfsroot/"
 		# create a temporary directory
 		TEMPDIR=$(mktemp -d --tmpdir=$MOUNTPOINT)
 	else
-		MOUNTPOINT="$LIVEMOUNTPOINT/findiso/"
+		MOUNTPOINT="$LIVEMEDIAMOUNTPOINT/findiso/"
 		# create a temporary directory and mount a tmpfs there
 		TEMPDIR=$(mktemp -d --tmpdir=/mnt)
 		
-		if [ -d $LIVEMOUNTPOINT/findiso/ ] ; then
+		if [ -d $LIVEMEDIAMOUNTPOINT/findiso/ ] ; then
 			# if we have access to the entire filesystem, use the
 			# directory size as base size for the current image - 
 			# and if the download directory is even bigger, use that size
-			IMGSIZE=$(du -s "$LIVEMOUNTPOINT/findiso/$(dirname $(sed -e 's/^.*findiso/findiso/' -e 's/ .*$//' /proc/cmdline | awk -F '=' '{ print $2 }' | tr -dc 'a-zA-Z0-9./ _\-'))" | awk '{ print $1}')
-			IMGSIZEDOWNLOAD=$(du -s "$LIVEMOUNTPOINT/findiso/boot/X2Go-live-download" | awk '{ print $1}' || echo "0")
+			IMGSIZE=$(du -s "$LIVEMEDIAMOUNTPOINT/findiso/$(dirname $(sed -e 's/^.*findiso/findiso/' -e 's/ .*$//' /proc/cmdline | awk -F '=' '{ print $2 }' | tr -dc 'a-zA-Z0-9./ _\-'))" | awk '{ print $1}')
+			IMGSIZEDOWNLOAD=$(du -s "$LIVEMEDIAMOUNTPOINT/findiso/boot/X2Go-live-download" | awk '{ print $1}' || echo "0")
 			[ $IMGSIZEDOWNLOAD -gt $IMGSIZE ] && IMGSIZE=$IMGSIZEDOWNLOAD
 		else
-			IMGSIZE=$(df $LIVEMOUNTPOINT/medium | awk ' /medium/ { print $2}')
+			IMGSIZE=$(df $LIVEMEDIAMOUNTPOINT/medium | awk ' /medium/ { print $2}')
 		fi
 		# multiply current size by 1.5 as safety margin
 		mount -t 'tmpfs' -o "size=$((IMGSIZE*15/10))k" 'tmpfs' "${TEMPDIR}"
@@ -192,10 +195,10 @@ printf ' %s' 'live-autoupdater (backgrounding update task)'
 		return 0
 	fi
 
-	if ! [ -d $LIVEMOUNTPOINT/findiso ] ; then
-		logconcolon "'"$LIVEMOUNTPOINT'/findiso'"'"' directory not found. Scanning for partitions.'
+	if ! [ -d $LIVEMEDIAMOUNTPOINT/findiso ] ; then
+		logconcolon "'"$LIVEMEDIAMOUNTPOINT'/findiso'"'"' directory not found. Scanning for partitions.'
 		LISTOFPARTITIONS=$(grep -H ^0$ /sys/block/*/removable | awk -F '/' '{ print $4 }' | xargs -n 1 -I XXX fdisk -l /dev/XXX 2>/dev/null | awk '$0 ~ /Linux$/ { print $1}')
-		TEMPMOUNT=$(mktemp -d -p $LIVEMOUNTPOINT/)
+		TEMPMOUNT=$(mktemp -d -p $LIVEMEDIAMOUNTPOINT/)
 		FINDFILE=$(sed -e 's/ \([^ ]*\)=/\n\1=/g' -e 's/\([^=]["'"'"']\) /\1\n/g' -e 's/ \([^ "'"'"']\)/\n\1/g' -e 's/ \([^ "'"'"']\)/\n\1/g' /proc/cmdline | awk -F '=' '$1 == "findiso" { print $2 }' | tr -dc 'a-zA-Z0-9./ _\-')
 		[ -z "$FINDFILE" ] && exit 0
 		for PARTITION in $LISTOFPARTITIONS ; do
@@ -205,18 +208,18 @@ printf ' %s' 'live-autoupdater (backgrounding update task)'
 			else
 				umount $TEMPMOUNT
 				rmdir $TEMPMOUNT
-				mkdir $LIVEMOUNTPOINT/findiso
-				if mount -o 'ro' "${PARTITION}" '$LIVEMOUNTPOINT/findiso' ; then
-					logconcolon "$(printf 'mounted %s as '"'"$LIVEMOUNTPOINT'/findiso'"'"'.' "${PARTITION}")"
+				mkdir $LIVEMEDIAMOUNTPOINT/findiso
+				if mount -o 'ro' "${PARTITION}" '$LIVEMEDIAMOUNTPOINT/findiso' ; then
+					logconcolon "$(printf 'mounted %s as '"'"$LIVEMEDIAMOUNTPOINT'/findiso'"'"'.' "${PARTITION}")"
 					RAMDISKMODE="yes"
 				else
-					logconcolon "$(printf 'error mounting %s as '"'"$LIVEMOUNTPOINT'/findiso'"'"'.' "${PARTITION}")"
+					logconcolon "$(printf 'error mounting %s as '"'"$LIVEMEDIAMOUNTPOINT'/findiso'"'"'.' "${PARTITION}")"
 				fi
 				break
 			fi
 		done
 	fi
-	if ! [ -d $LIVEMOUNTPOINT/findiso ] ; then
+	if ! [ -d $LIVEMEDIAMOUNTPOINT/findiso ] ; then
 		logconcolon 'Local update directory not found. Exiting.'
 		return 0
 	fi
@@ -468,7 +471,7 @@ printf ' %s' 'live-autoupdater (backgrounding update task)'
 	rm -rf $TEMPDIR/*
 	if [ -n "$NTFSROOT" ]; then
 		logconcolon "$(printf 'NTFSROOT detected. Attempting to mount '"'"'/dev/disk/by-uuid/%s'"'"'.' "${NTFSROOT}")"
-		if mount -t 'ntfs-3g' -o 'rw' "/dev/disk/by-uuid/${NTFSROOT}" $LIVEMOUNTPOINT'/ntfsroot'; then
+		if mount -t 'ntfs-3g' -o 'rw' "/dev/disk/by-uuid/${NTFSROOT}" $LIVEMEDIAMOUNTPOINT'/ntfsroot'; then
 			logconcolon 'Mount successful.'
 		else
 			logconcolon 'Failed to mount NTFSROOT.'
