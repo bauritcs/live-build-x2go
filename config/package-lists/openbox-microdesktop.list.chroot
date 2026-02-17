@@ -1,6 +1,9 @@
-chromium
-chromium-l10n
-firefox-esr
+#chrome
+#chromium
+#chromium-l10n
+#firefox-esr
+#google-chrome
+#microsoft-edge
 fonts-liberation2
 pavucontrol
 pnmixer

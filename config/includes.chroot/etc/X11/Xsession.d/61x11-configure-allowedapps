@@ -31,6 +31,7 @@ for APP in $ALLOWEDAPPS; do
 		 'firefox'|'firefox-esr'| \
 		 'chromium-browser'|'chromium'| \
 		 'chrome'|'google-chrome'| \
+		 'microsoft-edge'| \
 		 'debian-xterm'|'xterm'| \
 		 'debian-uxterm'|'uxterm')
 			if [ -f /usr/share/applications/${APP}.desktop ] ; then
