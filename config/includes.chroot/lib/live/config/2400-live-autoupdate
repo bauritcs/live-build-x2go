@@ -124,9 +124,9 @@ printf ' %s' 'live-autoupdater (backgrounding update task)'
 	unset LC_MESSAGES
 
 	# Define our live-system mountpoint
-	for LIVEMOUNTPOINT in /lib/live/mount /run/live ; do
-                if [ -d $LIVEMOUNTPOINT ] ; then
-			LIVEDISKMOUNTPOINT=$LIVEMOUNTPOINT
+	for LIVEMEDIAMOUNTPOINT in /lib/live/mount /run/live ; do
+                if [ -d $LIVEMEDIAMOUNTPOINT ] ; then
+			LIVEDISKMOUNTPOINT=$LIVEMEDIAMOUNTPOINT
 		fi
         done
 	if [ -z "$LIVEMEDIAMOUNTPOINT" ] ; then
