@@ -1,0 +1,44 @@
+#!/bin/bash
+
+# script to enforce wake on lan behavior
+# wol=[pumbgd] -> sets the desired parameter(s) for all network interfaces
+# see the ethtool man page for details.
+# currently, "s" is not really supported by this script -
+# as of now, there is no way to set the "sopass" parameter required by "s"
+# (this exercise is left to the reader and/or a sponsor)
+#                  p   Wake on PHY activity
+#                  u   Wake on unicast messages
+#                  m   Wake on multicast messages
+#                  b   Wake on broadcast messages
+#                  a   Wake on ARP
+#                  g   Wake on MagicPacket™
+#                  s   Enable SecureOn™ password for MagicPacket™
+#                  f   Wake on filter(s)
+#                  d   Disable (wake on nothing).  This  option  clears
+#                      all previous options.
+
+# EXAMPLES
+# to make all interfaces respond to a magic packet:
+# wol=g
+# to make eth0 respond to PHY activity,
+# disable wol support for eth1, 
+# and to make eth2 respond to unicast, multicast, and broadcast messages:
+# wol=eth0:p,eth1:d,eth2:umb # NOTE: instead of ",", you may also use ";"
+
+if grep -q ' wol=' /proc/cmdline ; then
+	if [ "$METHOD" = "loopback" ] || [ "$METHOD" = "none" ]; then
+        	exit 0
+	fi
+	
+	WOLCMDLINEPARAMS=$(cat /proc/cmdline | tr ' ' '\n' | awk -F '=' '$1=="wol" { print $2 }')
+	if echo "$WOLCMDLINEPARAMS" | grep -q '^[pumbagsfd][pumbagsf]*$'; then
+		WOLPARAMS=$WOLCMDLINEPARAMS		
+	else
+		WOLPARAMS_PER_IFACE=$(echo $WOLCMDLINEPARAMS| tr ',;' '\n')
+		WOLPARAMS=$(echo -e "$WOLPARAMS_PER_IFACE" | awk -F':' '$1 == "'${IFACE}'" { print $2 }' | tr -d -c 'pumbagsfd')
+	fi
+	if [ -n "$IFACE" ] && [ -n "$WOLPARAMS" ] ; then
+		ethtool -s "$IFACE" wol "$WOLPARAMS"
+	fi
+fi
+
