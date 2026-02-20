@@ -25,7 +25,7 @@
 # and to make eth2 respond to unicast, multicast, and broadcast messages:
 # wol=eth0:p,eth1:d,eth2:umb # NOTE: instead of ",", you may also use ";"
 
-if grep -q ' wol=' /proc/cmdline ; then
+if grep -q ' wol=' /proc/cmdline && [ -x /usr/sbin/ethtool ] ; then
 	if [ "$METHOD" = "loopback" ] || [ "$METHOD" = "none" ]; then
         	exit 0
 	fi
