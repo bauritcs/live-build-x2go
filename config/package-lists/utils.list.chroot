@@ -2,6 +2,7 @@ acpid
 acpi-support 
 atftp 
 ca-certificates
+curl
 iputils-ping
 kbd 
 less 

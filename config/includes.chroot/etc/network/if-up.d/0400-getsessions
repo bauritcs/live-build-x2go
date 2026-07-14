@@ -39,8 +39,8 @@ if [ -n "$SESSIONSURL" ] && [ -d /etc/x2go ] ; then
 				done
 			fi
 		else
-			while ! wget -q -O $SESSIONSDESTINATION "$SESSIONSURL" ; do
-				echo -en "\n$(date +'%F | %T | ')still waiting for session config data (wget) ..." | tee -a /dev/tty8
+			while ! curl -s -o $SESSIONSDESTINATION "$SESSIONSURL" ; do
+				echo -en "\n$(date +'%F | %T | ')still waiting for session config data (curl) ..." | tee -a /dev/tty8
 				sleep 5 
 			done
 		fi
