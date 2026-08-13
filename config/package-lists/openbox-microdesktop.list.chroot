@@ -5,12 +5,14 @@ ca-certificates
 #firefox-esr
 #google-chrome
 #microsoft-edge
+netcat-openbsd
 fonts-liberation2
 pavucontrol
 pnmixer
 pr3287
 tint2
 #webext-ublock-origin-firefox
+x11-utils
 x3270
 xcape
 xdotool
