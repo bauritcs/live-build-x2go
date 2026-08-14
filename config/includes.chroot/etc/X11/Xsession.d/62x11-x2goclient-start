@@ -3,14 +3,22 @@
 
 . '/lib/live/config/common.logging'
 
-# Spawn x2goclient wrapper
-if [ -x /usr/local/bin/x2goclient ] ; then
-        if ps -C x2goclient -ouser --no-header | grep -q "$USER" ; then
-		logtty "$(printf 'Not spawning x2goclient wrapper - already running for user '"'"'%s'"'"'.' "${USER}")"
+# configure autostartapps
+AUTOSTARTAPPS=$(sed -e 's/ \([^ ]*\)=/\n\1=/g' -e 's/\([^=]["'"'"']\) /\1\n/g' -e 's/ \([^ "'"'"']\)/\n\1/g' /proc/cmdline | awk -F '=' '$1 == "autostartapps" { print $2 }' | tr -dc '0-9a-zA-Z,$-_.+!*'"'"'();/?:@=&|' | tr ',' ' ')
+
+# only start x2goclient if no AUTOSTARTAPPS are set (default) or if x2goclient is listed in AUTOSTARTAPPS
+if [ -z "$AUTOSTARTAPPS" ] || echo "$AUTOSTARTAPPS" | grep -q "x2goclient" ]; then
+	# spawn x2goclient wrapper if present
+	if [ -x /usr/local/bin/x2goclient ] ; then
+		if ps -C x2goclient -ouser --no-header | grep -q "$USER" ; then
+			logtty "$(printf 'Not spawning x2goclient wrapper - already running for user '"'"'%s'"'"'.' "${USER}")"
+		else
+			/usr/local/bin/x2goclient &
+			logtty 'spawned x2goclient wrapper.'
+		fi
 	else
-		/usr/local/bin/x2goclient &
-		logtty 'spawned x2goclient wrapper.'
+		logtty 'Not spawning x2goclient wrapper - wrapper script not found.'
 	fi
 else
-	logtty 'Not spawning x2goclient wrapper - wrapper script not found.'
+	logtty 'Not spawning x2goclient wrapper - AUTOSTARTAPPS variable is non-empty and does not contain x2goclient.'
 fi
