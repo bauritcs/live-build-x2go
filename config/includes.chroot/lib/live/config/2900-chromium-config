@@ -53,6 +53,12 @@ ChromiumConfig ()
  "TranslateEnabled": false
 }
 CHROMIUMCONFIG
+
+	if grep -q ' *kioskbrowser *' /proc/cmdline ; then
+		echo "#!/bin/bash" > /usr/local/bin/chromium
+		echo "$(which chromium) --kiosk --incognito --no-first-run --no-default-browser-check $@" >> /usr/local/bin/chromium
+		chmod 755 /usr/local/bin/chromium
+	fi
 }
 
 if command -v 'chromium' >/dev/null || command -v 'chromium-browser' >/dev/null || command -v 'chrome' >/dev/null || command -v 'chrome-browser' >/dev/null; then

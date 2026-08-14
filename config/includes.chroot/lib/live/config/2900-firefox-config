@@ -49,6 +49,12 @@ lockPref("privacy.donottrackheader.enabled", true);
 lockPref("toolkit.telemetry.prompted", 2); 
 pref("browser.translations.enable", false);
 FIREFOXCONFIG
+
+	if grep -q ' *kioskbrowser *' /proc/cmdline ; then
+		echo "#!/bin/bash" > /usr/local/bin/firefox-esr
+		echo "$(which firefox-esr) -kiosk -private-window $@" >> /usr/local/bin/firefox-esr
+		chmod 755 /usr/local/bin/firefox-esr
+	fi
 }
 
 if command -v 'firefox-esr' >/dev/null || command -v 'firefox' >/dev/null; then

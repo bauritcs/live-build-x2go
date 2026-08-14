@@ -1,8 +1,9 @@
 #!/bin/bash
 
-function urldecode() {
-	        : "${*//+/ }"; echo -e "${_//%/\\x}";
-	}
+# shellcheck shell=dash
+# vim: syntax=sh:
+
+. '/lib/live/config/common.utils'
 
 EdgeConfig ()
 {
@@ -52,6 +53,12 @@ EdgeConfig ()
  "TranslateEnabled": false
 }
 MSEDGECONFIG
+
+	if grep -q ' *kioskbrowser *' /proc/cmdline ; then
+		echo "#!/bin/bash" > /usr/local/bin/microsoft-edge
+		echo "$(which microsoft-edge) --kiosk $@ --edge-kiosk-type=public-browsing --no-first-run --no-default-browser-check" >> /usr/local/bin/microsoft-edge
+		chmod 755 /usr/local/bin/microsoft-edge
+	fi
 }
 
 if which microsoft-edge >/dev/null; then
