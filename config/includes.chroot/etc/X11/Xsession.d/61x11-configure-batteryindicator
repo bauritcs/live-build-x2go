@@ -3,7 +3,7 @@
 
 . '/lib/live/config/common.logging'
 
-# allow xterm if requested
+# show battery state if requested
 
 if grep -q '\W*showbattstate\W*' /proc/cmdline ; then
 	
