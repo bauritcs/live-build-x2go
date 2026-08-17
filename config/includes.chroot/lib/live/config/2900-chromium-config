@@ -56,7 +56,7 @@ CHROMIUMCONFIG
 
 	if grep -q ' *kioskbrowser *' /proc/cmdline ; then
 		echo "#!/bin/bash" > /usr/local/bin/chromium
-		echo '$(which chromium) --kiosk --no-first-run --no-default-browser-check $@' >> /usr/local/bin/chromium
+		echo '$(which chromium) --kiosk --no-first-run --no-default-browser-check "$@"' >> /usr/local/bin/chromium
 		chmod 755 /usr/local/bin/chromium
 	fi
 }
