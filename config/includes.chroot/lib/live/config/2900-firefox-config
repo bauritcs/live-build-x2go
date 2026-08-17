@@ -53,7 +53,10 @@ FIREFOXCONFIG
 	if grep -q ' *kioskbrowser *' /proc/cmdline ; then
 		echo "#!/bin/bash" > /usr/local/bin/firefox-esr
 		echo '$(which firefox-esr) -kiosk $@' >> /usr/local/bin/firefox-esr
-		chmod 755 /usr/local/bin/firefox-esr
+		chmod 755 /usr/local/bin/firefox
+		echo "#!/bin/bash" > /usr/local/bin/firefox
+		echo '$(which firefox) -kiosk $@' >> /usr/local/bin/firefox
+		chmod 755 /usr/local/bin/firefox
 	fi
 }
 
