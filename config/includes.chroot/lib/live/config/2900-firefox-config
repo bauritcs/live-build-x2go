@@ -54,9 +54,13 @@ FIREFOXCONFIG
 		echo "#!/bin/bash" > /usr/local/bin/firefox-esr
 		echo "$(which firefox-esr)"' -kiosk $@' >> /usr/local/bin/firefox-esr
 		chmod 755 /usr/local/bin/firefox-esr
+		[ -f /usr/share/applications/firefox-esr.desktop ] && \
+		sed -e '/^Exec=/c Exec=/usr/local/bin/firefox-esr' -i /usr/share/applications/firefox-esr.desktop
 		echo "#!/bin/bash" > /usr/local/bin/firefox
 		echo "$(which firefox)"' -kiosk "$@"' >> /usr/local/bin/firefox
 		chmod 755 /usr/local/bin/firefox
+		[ -f /usr/share/applications/firefox.desktop ] && \
+		sed -e '/^Exec=/c Exec=/usr/local/bin/firefox' -i /usr/share/applications/firefox.desktop
 	fi
 }
 

@@ -58,6 +58,8 @@ CHROMIUMCONFIG
 		echo "#!/bin/bash" > /usr/local/bin/chromium
 		echo "$(which chromium)"' --kiosk --no-first-run --no-default-browser-check "$@"' >> /usr/local/bin/chromium
 		chmod 755 /usr/local/bin/chromium
+		[ -f /usr/share/applications/chromium.desktop ] && \
+		sed -e '/^Exec=/c Exec=/usr/local/bin/chromium' -i /usr/share/applications/chromium.desktop
 	fi
 }
 
