@@ -54,9 +54,13 @@ EdgeConfig ()
 }
 MSEDGECONFIG
 
-	if grep -q ' *kioskbrowser *' /proc/cmdline ; then
+	if egrep -q ' *kioskbrowser *| *kioskbrowserloop *' /proc/cmdline ; then
 		echo "#!/bin/bash" > /usr/local/bin/microsoft-edge
 		echo "$(which microsoft-edge)"' --kiosk "$@" --edge-kiosk-type=public-browsing --no-first-run --no-default-browser-check' >> /usr/local/bin/microsoft-edge
+		echo 'while grep -q " *kioskbrowserloop *" /proc/cmdline; do' >>/usr/local/bin/microsoft-edge
+		echo "        sleep 5' >> /usr/local/bin/microsoft-edge
+		echo "        $(which microsoft-edge)"' --kiosk "$@" --edge-kiosk-type=public-browsing --no-first-run --no-default-browser-check' >> /usr/local/bin/microsoft-edge
+		echo 'done' >> /usr/local/bin/microsoft-edge
 		chmod 755 /usr/local/bin/microsoft-edge
 		[ -f /usr/share/applications/microsoft-edge.desktop ] && \
 		sed -e '/^Exec=/c Exec=/usr/local/bin/microsoft-edge' -i /usr/share/applications/microsoft-edge.desktop

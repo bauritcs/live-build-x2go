@@ -50,14 +50,22 @@ lockPref("toolkit.telemetry.prompted", 2);
 pref("browser.translations.enable", false);
 FIREFOXCONFIG
 
-	if grep -q ' *kioskbrowser *' /proc/cmdline ; then
+	if egrep -q ' *kioskbrowser *| *kioskbrowserloop *' /proc/cmdline ; then
 		echo "#!/bin/bash" > /usr/local/bin/firefox-esr
 		echo "$(which firefox-esr)"' -kiosk $@' >> /usr/local/bin/firefox-esr
+		echo 'while grep -q " *kioskbrowserloop *" /proc/cmdline; do' >>/usr/local/bin/firefox-esr
+		echo '        sleep 5' >> /usr/local/bin/firefox-esr
+		echo "        $(which firefox-esr)"' -kiosk $@' >> /usr/local/bin/firefox-esr
+		echo 'done' >> /usr/local/bin/firefox-esr
 		chmod 755 /usr/local/bin/firefox-esr
 		[ -f /usr/share/applications/firefox-esr.desktop ] && \
 		sed -e '/^Exec=/c Exec=/usr/local/bin/firefox-esr' -i /usr/share/applications/firefox-esr.desktop
 		echo "#!/bin/bash" > /usr/local/bin/firefox
 		echo "$(which firefox)"' -kiosk "$@"' >> /usr/local/bin/firefox
+		echo 'while grep -q " *kioskbrowserloop *" /proc/cmdline; do' >>/usr/local/bin/firefox
+		echo '        sleep 5' >> /usr/local/bin/firefox
+		echo "        $(which firefox)"' -kiosk "$@"' >> /usr/local/bin/firefox
+		echo 'done' >> /usr/local/bin/firefox-esr
 		chmod 755 /usr/local/bin/firefox
 		[ -f /usr/share/applications/firefox.desktop ] && \
 		sed -e '/^Exec=/c Exec=/usr/local/bin/firefox' -i /usr/share/applications/firefox.desktop
