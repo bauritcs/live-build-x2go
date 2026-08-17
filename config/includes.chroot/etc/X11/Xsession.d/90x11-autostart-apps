@@ -87,11 +87,23 @@ fi
 			if [ -n "$APPFULLPATH" ]; then
 				logtty "$(printf 'Spawning '"'"'%s'"'"'.' "${APPFULLPATH}")"
 				$APPFULLPATH &
-				xdotool search --sync --onlyvisible --pid $!
+				APP_PID=$!
+				# if APP is actually a wrapper script, get true PID of APP started within the wrapper, and set APP_PID to that
+				PGREP_RESULT=$(pgrep -P $APP_PID -l | head -n 1)
+				if echo "$PGREP_RESULT" | awk '{ print $2 }' | grep -q "$APP" ; then
+					APP_PID=$(echo "$PGREP_RESULT" | awk '{ print $1 }')
+				fi
+				xdotool search --sync --onlyvisible --pid $APP_PID
 			elif [ -n "$APPFULLPATHSTRIPPED" ]; then
 				logtty "$(printf 'Spawning '"'"'%s'"'"'.' "${APPFULLPATHSTRIPPED}")"
 				$APPFULLPATHSTRIPPED &
-				xdotool search --sync --onlyvisible --pid $!
+				APP_PID=$!
+				# if APP is actually a wrapper script, get true PID of APP started within the wrapper, and set APP_PID to that
+				PGREP_RESULT=$(pgrep -P $APP_PID -l | head -n 1)
+				if echo "$PGREP_RESULT" | awk '{ print $2 }' | grep -q "$APP" ; then
+					APP_PID=$(echo "$PGREP_RESULT" | awk '{ print $1 }')
+				fi
+				xdotool search --sync --onlyvisible --pid $APP_PID
 			fi
 		fi
 	done
